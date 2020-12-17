@@ -1,0 +1,33 @@
+# Python
+*.pyc
+*~
+__pycache__
+
+# Env
+.env
+myenv/
+myvenv/
+venv/
+
+# Database
+db.sqlite3
+
+# macOS
+._*
+.SD_Store
+.fseventsd
+.Spotlight-V100
+
+# Windows
+Thumbs.db*
+ehthumbs*.db
+[Dd]esktop.in
+$RECYCLE.BIN/
+
+#Visual Studio
+.vscode/
+.history/
+*.code-workspace
+
+
+
