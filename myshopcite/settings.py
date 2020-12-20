@@ -27,7 +27,7 @@ SECRET_KEY = 'wb%!4517pdre1b(ys&$08q524dt8s3yg@0o0y!f)8=p=3&9iwy'
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
-#AUTH_USER_MODEL ='account.User'
+AUTH_USER_MODEL ='account.User'
 
 # Application definition
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'myshopcite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,4 +122,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'asset')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+# Media URL
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
