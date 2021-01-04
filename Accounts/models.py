@@ -49,26 +49,27 @@ class UserManager(BaseUserManager):
     
 
 class User(AbstractBaseUser, PermissionsMixin):
-    #username_validator = UnicodeUsernameValidator()
+    username_validator = UnicodeUsernameValidator()
 
-    #id =models.AutoField(primary_key=True)
-    email = models.EmailField(_('email address'), blank=True)
+#    id =models.AutoField(primary_key=True)
+    email = models.EmailField(_('email address'), unique=True, db_index=True ,blank=False, null=False)
     mobile = models.IntegerField( 
         _('mobile number is like 09127770077'), 
         max_length=11, 
         unique=True, 
         db_index=True
         )
-    first_name = models.CharField(_('first name'), max_length=150,)
-    last_name = models.CharField(_('last name'), max_length=150)
-    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    first_name = models.CharField(_('first name'), max_length=150, null=False, blank=False)
+    last_name = models.CharField(_('last name'), max_length=150, null=False, blank=False)
     image = models.ImageField(_('image'), upload_to='accounts/user/images', blank=True)
+    
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
 
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-        #abstract = True
+#        abstract = True
 
 
     ###   All this for creating the user ###
@@ -95,9 +96,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
-    #def get_short_name(self):
-    #    """Return the short name for the user."""
-    #    return self.first_name
+#    def get_short_name(self):
+#        """Return the short name for the user."""
+#        return self.first_name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
@@ -106,32 +107,53 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.get_full_name()   
 
+class Profile(models.Model):
+    pass
+
 
 class Address():
-    #id =models.AutoField(primary_key=True)
+#    id =models.AutoField(primary_key=True)
     user = models.ForeignKey(User, verbose_name=_('User'), on_delete=models.CASCADE)
+                            #related_name='email_sent', related_query_name='email_sent')
+                            ##in related_name you give a name to the attribute that you can 
+                            # use for the relation (named reverse realationship) from the 
+                            # related object http://127.0.0.1:8000/http://127.0.0.1:8000/back to this one (from Author to Article). 
+                            # After defining this you can retrieve the articles of an user like 
+                            # so:author.articles.all()
+                            ##in related_query_name 
     city = models.CharField(_('city name'), max_length=300)
-    street = models.CharField(_('street name'), max_length=1000)
-    plak = models.IntegerField(_('plak number'), max_length=50)
+    street = models.CharField(_('streets name'), max_length=1000)
+    number = models.IntegerField(_('house number'), max_length=50)
     zip_code = models.IntegerField(_('zip code number'), max_length=10)
+#    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+#    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
 
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
-        unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
+#        unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
 
     def __str__(self):
-        return self.user
+        return self.user #return str(self.user)
+
+#    def get_absolute_url(self):
+#        return reverse("Address_detail", kwargs={"pk": self.pk})
 
 
 class Shop():
-    #id =models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, verbose_name=_('User'), on_delete=models.CASCADE)
-    slug = models.SlugField(_('slug'))
+#    id =models.AutoField(primary_key=True)
+    user = models.ForeignKey('User', verbose_name=_('User'), on_delete=models.CASCADE)
+#    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
+#        "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
+    slug = models.SlugField(_('slug'), unique=True)
     name = models.CharField(_('name'), max_length=1000)
     discription = models.CharField(_('discription'))
-    image = models.ImageField(_('image'), upload_to='accounts/shop/images')
-
+    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
+                                 #height_field=None, width_field=None, max_length=None)
+#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+#    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    
     class Meta:
         verbose_name = _('Shop')
         verbose_name_plural = _('Shops')
@@ -141,12 +163,17 @@ class Shop():
 
 
 class Email():
-    #id =models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, verbose_name=_('User'), on_delete=models.CASCADE)
+#    id =models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, verbose_name=_('user'), on_delete=models.CASCADE)
+                            #related_name='emails', related_query_name='email')
     subject = models.CharField(_('subject'))
-    image = models.ImageField(_('image'), upload_to='accounts/email/images')
+#    to = models.EmailField(_('to'))
+#    image = models.ImageField(_('image'), upload_to='accounts/email/images')
     body = models.CharField(_('subject'))
-
+#    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+#    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+#    draft = models.BooleanField(_('Draft'), default=True)
+ 
     class Meta:
         verbose_name = _('Email')
         verbose_name_plural = _('Emails')
@@ -154,3 +181,5 @@ class Email():
     def __str__(self):
         return self.subject
 
+#    def get_email(self):
+#        return str(self.to)

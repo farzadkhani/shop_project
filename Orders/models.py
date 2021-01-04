@@ -8,97 +8,68 @@ from django.utils import timezone
 from django.conf import settings
 #for call user from call "settings.AUTH_USER_MODEL"
 #import Brand ####
+from Products.models import Product
 from Accounts.models import Shop
 
-class Product():
+
+class Basket():
     #id =models.AutoField(primary_key=True)
-    brand = models.ForeignKey('Brand', verbose_name=_('Brand'), on_delete=models.CASCADE)
-    slug = models.SlugField(_('slug'))
-    name = models.CharField(_('product name'))
-    image = models.ImageField(_('image'), upload_to='orders/product/images')
-    detail = models.CharField(_('product detail'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'), on_delete=models.CASCADE)
+                            #related_name='Basket', related_query_name='Basket')
+#    slug = models.SlugField(_('slug'), unique=True)
+    name = models.CharField(_('name'))
+#    discription = models.CharField(_('discription'))
+#    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
+    products = models.ManyToManyField(Product, verbose_name=_('User'), on_delete=models.CASCADE)
+                            #related_name='Orders', related_query_name='Orders')
+#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
-        verbose_name = _('Product')
-        verbose_name_plural = _('Products')
-        
-    def __str__(self):
-        return self.brand
+        verbose_name = _('Basket')
+        verbose_name_plural = _('Baskets')
 
-
-class Category():
-    #id =models.AutoField(primary_key=True)
-    name = models.CharField(_('product name'))
-    slug = models.SlugField(_('slug'))
-    detais = models.CharField(_('cateqory detail'))
-    image = models.ImageField(_('image'), upload_to='orders/category/images')
-    #parent = models.ForeignKey(Parent, verbose_name=_('Parent'), on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = _('Category')
-        verbose_name_plural = _('Category')
-        
     def __str__(self):
         return self.name
 
 
-
-class ShopProduct():
+class Orders():
     #id =models.AutoField(primary_key=True)
-    shop = models.ForeignKey(Shop, verbose_name=_('Shop'), on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, verbose_name=_('Product'), on_delete=models.CASCADE)
-    name = models.ImageField(_('product price'))
-    quantity = models.ImageField(_('number of product'))
-    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'), on_delete=models.CASCADE)
+                            #related_name='Orders', related_query_name='Orders')
+#    slug = models.SlugField(_('slug'), unique=True)
+    name = models.CharField(_('name'))
+#    discription = models.CharField(_('discription'))
+#    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
+    products = models.ManyToManyField(Product, verbose_name=_('User'), on_delete=models.CASCADE)
+                            #related_name='Orders', related_query_name='Orders')
+#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+
 
     class Meta:
-        verbose_name = _('shop stor')
-        verbose_name_plural = _('shop stor')
-        
+        verbose_name = _('Orders')
+        #verbose_name_plural = _('Orders')
+
     def __str__(self):
         return self.name
 
 
-class Brand():
-    #id =models.AutoField(primary_key=True)
-    name = models.ImageField(_('Brand name'))
-    details = models.CharField(_('Brand details'))
-    image = models.ImageField(_('image'), upload_to='orders/brand/images')
-    
+class Peyment():
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'),
+    #                         related_name='payment', related_query_name='payment')
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, verbose_name=_('Order'),
+    #                             related_name='payment', related_query_name='payment')
+    total_price = models.IntegerField(_('Total price'))
+    pay_date = models.DateTimeField(_('Pay date'), auto_now_add=True)
+#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
-        verbose_name = _('Brand')
-        verbose_name_plural = _('Brands')
-        
+        verbose_name = _('Payment')
+        verbose_name_plural = _('Payments')
+
     def __str__(self):
-        return self.name
-
-
-class Images():
-    #id =models.AutoField(primary_key=True)
-    product = models.ForeignKey(Product, verbose_name=_('Product'), on_delete=models.CASCADE)
-    image = models.ImageField(_('image'), upload_to='orders/images/images')
-
-    class Meta:
-        verbose_name = _('Image')
-        verbose_name_plural = _('Images')
-        
-    def __str__(self):
-        return self.name
-
-
-class off():
-    #id =models.AutoField(primary_key=True)
-    name = models.CharField(_('off name'))
-    number = models.IntegerField(_('number of price of'))
-    
-
-    class Meta:
-        verbose_name = _('off')
-        verbose_name_plural = _('offes')
-        
-    def __str__(self):
-        return self.name
-
+        return str(self.user)
 
 
