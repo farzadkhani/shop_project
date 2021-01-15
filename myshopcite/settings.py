@@ -27,7 +27,11 @@ SECRET_KEY = 'wb%!4517pdre1b(ys&$08q524dt8s3yg@0o0y!f)8=p=3&9iwy'
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
-AUTH_USER_MODEL ='account.User'
+AUTH_USER_MODEL ='Accounts.User'
+LOGIN_REDIRECT_URL = 'post_list'
+LOGOUT_REDIRECT_URL = 'post_list'
+#LOGIN_URL = 'post_list'
+#LOGOUT_URL = 'post_list'
 
 # Application definition
 
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'siteview',
     'Accounts',
     'Products',
     'Orders',

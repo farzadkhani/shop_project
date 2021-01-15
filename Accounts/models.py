@@ -6,6 +6,8 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.urls import reverse
 
 
 
@@ -16,8 +18,6 @@ class UserManager(BaseUserManager):
         """
         Create and save a user with the given username, email, and password.
         """
-        if not username:
-            raise ValueError('The given username must be set')
         email = self.normalize_email(email)
         user = self.model(
             email=email, 
@@ -50,18 +50,16 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
-
-#    id =models.AutoField(primary_key=True)
     email = models.EmailField(_('email address'), unique=True, db_index=True ,blank=False, null=False)
     mobile = models.IntegerField( 
         _('mobile number is like 09127770077'), 
-        max_length=11, 
+        #max_length=11, 
         unique=True, 
         db_index=True
         )
     first_name = models.CharField(_('first name'), max_length=150, null=False, blank=False)
     last_name = models.CharField(_('last name'), max_length=150, null=False, blank=False)
-    image = models.ImageField(_('image'), upload_to='accounts/user/images', blank=True)
+    image = models.ImageField(_('image'), upload_to='accounts/user/images', null=True, blank=True)
     
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
@@ -81,6 +79,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('active'),
         default=True,
     )
+    created_at = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
 
     objects = UserManager()
 
@@ -111,10 +111,14 @@ class Profile(models.Model):
     pass
 
 
-class Address():
-#    id =models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, verbose_name=_('User'), on_delete=models.CASCADE)
-                            #related_name='email_sent', related_query_name='email_sent')
+class Address(models.Model):
+    user = models.ForeignKey(
+        'User', 
+        verbose_name=_('User'), 
+        on_delete=models.CASCADE, 
+        related_name='address', 
+        related_query_name='address'
+        )
                             ##in related_name you give a name to the attribute that you can 
                             # use for the relation (named reverse realationship) from the 
                             # related object http://127.0.0.1:8000/http://127.0.0.1:8000/back to this one (from Author to Article). 
@@ -123,10 +127,10 @@ class Address():
                             ##in related_query_name 
     city = models.CharField(_('city name'), max_length=300)
     street = models.CharField(_('streets name'), max_length=1000)
-    number = models.IntegerField(_('house number'), max_length=50)
-    zip_code = models.IntegerField(_('zip code number'), max_length=10)
-#    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
-#    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+    number = models.IntegerField(_('house number'))
+    zip_code = models.IntegerField(_('zip code number'))
+    created_at = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
 
     class Meta:
         verbose_name = _('Address')
@@ -140,19 +144,24 @@ class Address():
 #        return reverse("Address_detail", kwargs={"pk": self.pk})
 
 
-class Shop():
-#    id =models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', verbose_name=_('User'), on_delete=models.CASCADE)
+class Shop(models.Model):
+    user = models.ForeignKey(
+        'User', 
+        verbose_name=_('User'), 
+        on_delete=models.CASCADE,
+        related_name="Shop", 
+        related_query_name='Shop'
+        )
 #    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
 #        "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
     slug = models.SlugField(_('slug'), unique=True)
     name = models.CharField(_('name'), max_length=1000)
-    discription = models.CharField(_('discription'))
+    discription = models.CharField(_('discription'), max_length=2000)
     image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
                                  #height_field=None, width_field=None, max_length=None)
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
     
     class Meta:
         verbose_name = _('Shop')
@@ -162,17 +171,22 @@ class Shop():
         return self.name
 
 
-class Email():
-#    id =models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, verbose_name=_('user'), on_delete=models.CASCADE)
+class Email(models.Model):
+    user = models.ForeignKey(
+        'User', 
+        verbose_name=_('user'), 
+        on_delete=models.CASCADE,
+        related_name='Email', 
+        related_query_name='Email'
+        )
                             #related_name='emails', related_query_name='email')
-    subject = models.CharField(_('subject'))
-#    to = models.EmailField(_('to'))
-#    image = models.ImageField(_('image'), upload_to='accounts/email/images')
-    body = models.CharField(_('subject'))
-#    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
-#    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
-#    draft = models.BooleanField(_('Draft'), default=True)
+    subject = models.CharField(_('subject'), max_length=500)
+    to = models.EmailField(_('to'))
+    image = models.ImageField(_('image'), upload_to='accounts/email/images')
+    body = models.CharField(_('subject'), max_length=2000)
+    created_at = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+    draft = models.BooleanField(_('Draft'), default=True)
  
     class Meta:
         verbose_name = _('Email')
@@ -181,5 +195,5 @@ class Email():
     def __str__(self):
         return self.subject
 
-#    def get_email(self):
-#        return str(self.to)
+    def get_email(self):
+        return str(self.to)

@@ -8,23 +8,31 @@ from django.utils import timezone
 from django.conf import settings
 
 #for call user from call "settings.AUTH_USER_MODEL"
-import Brand ####
-from Accounts.models import Shop
 
 
-class Product():
-#    id =models.AutoField(primary_key=True)
-    brand = models.ForeignKey('Brand', verbose_name=_('Brand'), on_delete=models.CASCADE)
-                            #related_name='Brand', related_query_name='Brand')
+
+class Product(models.Model):
+    brand = models.ForeignKey(
+        'Brand', 
+        verbose_name=_('Brand'), 
+        on_delete=models.CASCADE,
+        related_name='brand', 
+        related_query_name='brand'
+        )
     slug = models.SlugField(_('slug'))
-    name = models.CharField(_('product name'))
+    name = models.CharField(_('product name'), max_length=500)
     image = models.ImageField(_('image'), upload_to='orders/product/images', blank=True, null=True)
-    detail = models.CharField(_('product detail'))
-    category = models.ForeignKey('Category', verbose_name=_('Category'), on_delete=models.CASCADE)
-                            #related_name='Category', related_query_name='Category')
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    detail = models.CharField(_('product detail'), max_length=2000)
+    category = models.ForeignKey(
+        'Category', 
+        verbose_name=_('Category'), 
+        on_delete=models.CASCADE,
+        related_name='product', 
+        related_query_name='product'
+        )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
         verbose_name = _('Product')
@@ -34,39 +42,38 @@ class Product():
         return self.name
 
 
-#class ProductMeta(models.Model):
-#    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('Product'),
-#                                related_name='meta_field', related_query_name='meta_field')
-#    label = models.CharField(_('Label'), max_length=100)
-#    value = models.CharField(_('Value'), max_length=100)
-#
-#    class Meta:
-#        verbose_name = _('Product Meta Data')
-#        verbose_name_plural = _('Product Meta Detail')
-#
-#    def __str__(self):
-#        return str(self.product) + f'({self.label})'
-#
+class ProductMeta(models.Model):
+    product = models.ForeignKey(
+        'Product', 
+        on_delete=models.CASCADE, 
+        verbose_name=_('Product'),
+        related_name='product_meta', 
+        related_query_name='product_meta'
+        )
+
+    class Meta:
+        verbose_name = _('ProductMeta')
+        verbose_name_plural = _('ProductMeta')
+
+    def __str__(self):
+        return str(self.product)
 
 
-class Category():
-#    id =models.AutoField(primary_key=True)
-    name = models.CharField(_('product name'))
+class Category(models.Model):
+    name = models.CharField(_('product name'), max_length=500)
     slug = models.SlugField(_('slug'))
-    detais = models.CharField(_('cateqory detail'))
+    detais = models.CharField(_('cateqory detail'), max_length=2000)
     image = models.ImageField(_('image'), upload_to='Products/category/images')
-#    parent = models.ForeignKey('Parent', verbose_name=_('Parent'), on_delete=models.CASCADE)
-                               #related_name='children', related_query_name='children')
-#    parent = models.ForeignKey('self', verbose_name=_("Parent"), on_delete=models.SET_NULL, null=True, blank=True)
-#    parent = models.ForeignKey(
-#        "self", 
-#        verbose_name=_("parent"),
-#        related_name='child' ,
-#        on_delete=models.SET_NULL,
-#        null=True,blank=True
-#        ) 
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    parent = models.ForeignKey(
+        "self", 
+        verbose_name=_("Parent"),
+        related_name='child' ,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+        ) 
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
  
     class Meta:
         verbose_name = _('Category')
@@ -76,17 +83,25 @@ class Category():
         return self.name
 
 
-
-class ShopProduct():
-#    id =models.AutoField(primary_key=True)
-    shop = models.ForeignKey('Shop', verbose_name=_('Shop'), on_delete=models.CASCADE)
-                             #related_name='product_shop', related_query_name='product_shop')
-    product = models.ForeignKey(Product, verbose_name=_('Product'), on_delete=models.CASCADE)
-                             #related_name='Product', related_query_name='Product')
+class ShopProduct(models.Model):
+    shop = models.ForeignKey(
+        'Accounts.Shop', 
+        verbose_name=_('Shop'), 
+        on_delete=models.CASCADE,
+        related_name='ShopProduct', 
+        related_query_name='ShopProduct'
+        )
+    product = models.ForeignKey(
+        'Product', 
+        verbose_name=_('Product'), 
+        on_delete=models.CASCADE,
+        related_name='shop_product', 
+        related_query_name='shop_product'
+        )
     price = models.IntegerField(_('product price'))
     quantity = models.IntegerField(_('number of product'))
-#    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
-#    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
     
 
     class Meta:
@@ -94,18 +109,17 @@ class ShopProduct():
         verbose_name_plural = _('shop stor')
         
     def __str__(self):
-        return str(self.user)
-#        return "shop:"+str(self.shop)+",product"+str(self.product)
+        return "shop:"+str(self.shop)+",product"+str(self.product)
 
-class Brand():
-#    id =models.AutoField(primary_key=True)
+
+class Brand(models.Model):
     name = models.ImageField(_('Brand name'))
-    details = models.CharField(_('Brand details'))
+    details = models.CharField(_('Brand details'), max_length=2000)
     image = models.ImageField(_('image'), upload_to='Products/brand/images')
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
-#    slug = models.SlugField(_('Slug'))
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    slug = models.SlugField(_('Slug'))
 
     class Meta:
         verbose_name = _('Brand')
@@ -115,14 +129,18 @@ class Brand():
         return self.name
 
 
-class Images():
-#    id =models.AutoField(primary_key=True)
-    product = models.ForeignKey(Product, verbose_name=_('Product'), on_delete=models.CASCADE)
-                               #related_name='Product', related_query_name='Product')    
+class Images(models.Model):
+    product = models.ForeignKey(
+        'Product', 
+        verbose_name=_('Product'), 
+        on_delete=models.CASCADE,
+        related_name='images', 
+        related_query_name='images'
+        )    
     image = models.ImageField(_('image'), upload_to='Products/images/images')
 
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
         verbose_name = _('Image')
@@ -131,17 +149,18 @@ class Images():
     def __str__(self):
         return str(self.product)
 
-#    def __str__(self):
-#        return self.name
 
-class off():
-#    id =models.AutoField(primary_key=True)
+class Off(models.Model):
     name = models.CharField(_('off name'), max_length=150)
     number = models.IntegerField(_('number of price off'))
-    product = models.ManyToManyField(Product, verbose_name=_('Product'),
-                                     #related_name='product', related_query_name='product')    
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    product = models.ManyToManyField(
+        'Product', 
+        verbose_name=_('Product'),
+        related_name='Off', 
+        related_query_name='Off'
+        )    
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
         verbose_name = _('off')
@@ -152,34 +171,28 @@ class off():
 
 
 class Comments(models.Model):
-    product = models.ForeignKey('Product', on_delete=models.CASCADE, verbose_name=_('Product'),
-                                #related_name='Product', related_query_name='Product')
-#    product = models.ForeignKey("Product", verbose_name=_(
-#        "Product"),related_name="product_comment", on_delete=models.SET_NULL, null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'),
-                             #related_name='User', related_query_name='User')
+    product = models.ForeignKey(
+        'Product', 
+        on_delete=models.CASCADE, 
+        verbose_name=_('Products'),
+        related_name='comments', 
+        related_query_name='comments'
+        )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        verbose_name=_('User'),
+        related_name='comments', 
+        related_query_name='comments'
+        )
     text = models.TextField(_('Text'))
-#    ONE = 1
-#    TWO = 2
-#    TREE = 3
-#    FOUR = 4
-#    FIVE = 5
-    RATE = [
-        (ONE, 1),
-        (TWO, 2),
-        (TREE, 3),
-        (FOUR, 4),
-        (FIVE, 5),
-    ]
     rate = models.IntegerField(
-        max_length=1,
-        choices=RATE,
-#        default=ONE,
+        #max_length=1,
+        blank=True,
+        null=True
     )
-#    rate = models.IntegerField(_("Rate"))  #how to limited?
-
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
         verbose_name = _('Comments')
@@ -190,13 +203,23 @@ class Comments(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'),
-                             #related_name='like', related_query_name='like')
-    products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('Products liked'),
-                                 #related_name='likes', related_query_name='likes')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        verbose_name=_('User'),
+        related_name='like', 
+        related_query_name='like'
+        )
+    products = models.ForeignKey(
+        'Product', 
+        on_delete=models.CASCADE, 
+        verbose_name=_('Products'),
+        related_name='likes', 
+        related_query_name='likes'
+        )
     like = models.BooleanField(_('like'),default=False)
-#    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-#    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
         verbose_name = _('Like')
