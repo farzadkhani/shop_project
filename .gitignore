@@ -29,5 +29,9 @@ $RECYCLE.BIN/
 .history/
 *.code-workspace
 
+#text
+pages.txt
 
-
+#media
+.media/Products
+.media/siteview

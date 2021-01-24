@@ -207,9 +207,10 @@
 	/* ..............................................
 	   NiceScroll
 	   ................................................. */
-
-	$(".brand-box").niceScroll({
-		cursorcolor: "#9b9b9c",
+	$(function() {
+		$(".brand-box").niceScroll({
+			cursorcolor: "#9b9b9c",
+		})
 	});
 	
 	

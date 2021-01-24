@@ -11,20 +11,42 @@
     <!-- Start Slider -->
     <div id="slides-shop" class="cover-slides">
         <ul class="slides-container">
-            {% for baner in baner_slide %} 
-                <li class="text-left">
-                    <img src="{{ baner.image.url }}" alt="">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h1 class="m-b-20"><strong>{{ baner.title_one }}<br>{{ baner.title_two }}</strong></h1>
-                                <p class="m-b-40">{{ baner.detail }}</p>
-                                <p><a class="btn hvr-hover" href="#">Shop New</a></p>
-                            </div>
+            <li class="text-left">
+                <img src="{% static 'images/banner-01.jpg' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
                         </div>
                     </div>
-                </li>
-            {% endfor %}
+                </div>
+            </li>
+            <li class="text-center">
+                <img src="{% static 'images/banner-02.jpg' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-right">
+                <img src="{% static 'images/banner-03.jpg' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
         </ul>
         <div class="slides-navigation">
             <a href="#" class="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
@@ -34,20 +56,38 @@
     <!-- End Slider -->
 
     <!-- Start Categories  -->
-
     <div class="categories-shop">
         <div class="container">
-            <div class="title-all text-center">">
-                <h1>Categories</h1>
-                <div class="row">
-                    {% for cat in category_list%}
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="shop-cat-box">
-                            <img class="img-fluid" src="{{ cat.image.url }}" alt="" />
-                                <a class="btn hvr-hover" href="#">{{ cat.name }}</a>
-                            </div>
-                        </div>
-                    {% endfor%}
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/t-shirts-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">T-shirts</a>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/shirt-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">Shirt</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/wallet-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">Wallet</a>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/women-bag-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">Bags</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/shoes-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">Shoes</a>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/women-shoes-img.jpg' %}" alt="" />
+                        <a class="btn hvr-hover" href="#">Women Shoes</a>
+                    </div>
                 </div>
             </div>
         </div>

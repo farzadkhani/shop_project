@@ -1,9 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.mail import send_mail
-from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.conf import settings
 
@@ -62,7 +59,7 @@ class ProductMeta(models.Model):
 class Category(models.Model):
     name = models.CharField(_('product name'), max_length=500)
     slug = models.SlugField(_('slug'))
-    detais = models.CharField(_('cateqory detail'), max_length=2000)
+    details = models.CharField(_('cateqory detail'), max_length=2000)
     image = models.ImageField(_('image'), upload_to='Products/category/images')
     parent = models.ForeignKey(
         "self", 
@@ -74,7 +71,8 @@ class Category(models.Model):
         ) 
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
- 
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+
     class Meta:
         verbose_name = _('Category')
         verbose_name_plural = _('Category')
@@ -100,8 +98,9 @@ class ShopProduct(models.Model):
         )
     price = models.IntegerField(_('product price'))
     quantity = models.IntegerField(_('number of product'))
-    created = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
-    updated = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+    created_at = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
     
 
     class Meta:
@@ -140,6 +139,7 @@ class Images(models.Model):
     image = models.ImageField(_('image'), upload_to='Products/images/images')
 
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
@@ -153,13 +153,15 @@ class Images(models.Model):
 class Off(models.Model):
     name = models.CharField(_('off name'), max_length=150)
     number = models.IntegerField(_('number of price off'))
-    product = models.ManyToManyField(
-        'Product', 
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.CASCADE,
         verbose_name=_('Product'),
         related_name='Off', 
         related_query_name='Off'
         )    
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
@@ -192,7 +194,7 @@ class Comments(models.Model):
         null=True
     )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     class Meta:
         verbose_name = _('Comments')
@@ -219,7 +221,7 @@ class Like(models.Model):
         )
     like = models.BooleanField(_('like'),default=False)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     class Meta:
         verbose_name = _('Like')

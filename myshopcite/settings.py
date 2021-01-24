@@ -28,10 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 AUTH_USER_MODEL ='Accounts.User'
-LOGIN_REDIRECT_URL = 'post_list'
-LOGOUT_REDIRECT_URL = 'post_list'
-#LOGIN_URL = 'post_list'
-#LOGOUT_URL = 'post_list'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'home'
+LOGOUT_URL = 'home'
 
 # Application definition
 
