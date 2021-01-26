@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% load static %}
+<DOCTYPE html>
+
+{% block title %}
+    signup in TheWay Shop
+{% endblock %}
+
+
+{% block content %}
+    <h2>Sign up</h2>
+    <form method='POST' action="" enctype="multipart/form-data" class='post-form'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+    <h4><a href='{% url 'login' %}'>or Log in</a></h4>
+  </form>
+{% endblock %}
