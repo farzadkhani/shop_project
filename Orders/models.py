@@ -6,60 +6,78 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.conf import settings
+from Products.models import ShopProduct
 #for call user from call "settings.AUTH_USER_MODEL"
 #import Brand ####
 
 class Basket(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
         verbose_name=_('User'), 
         on_delete=models.CASCADE,
-        related_name='basket', 
-        related_query_name='basket'
+        related_name='Basket', 
+        related_query_name='Basket'
         )
-    slug = models.SlugField(_('slug'), unique=True)
-    name = models.CharField(_('name'), max_length=500)
-    discription = models.CharField(_('discription'), max_length=2000)
-    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
-    products = models.ForeignKey(
-        'Products.Product', 
-        verbose_name=_('Products'), 
-        on_delete=models.CASCADE,
-        related_name='basket', 
-        related_query_name='basket'
-        )
+    #slug = models.SlugField(_('slug'), unique=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    
 
     class Meta:
         verbose_name = _('Basket')
         verbose_name_plural = _('Baskets')
 
     def __str__(self):
-        return self.name
+        return str(self.user)
 
 
-class Orders(models.Model):
-    user = models.ForeignKey(
+class BasketItems(models.Model):
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
-        verbose_name=_('Orders'), 
+        verbose_name=_('User'), 
         on_delete=models.CASCADE,
-        related_name='orders', 
-        related_query_name='orders'
+        related_name='BasketItems', 
+        related_query_name='BasketItems'
         )
-    slug = models.SlugField(_('slug'), unique=True)
-    name = models.CharField(_('name'), max_length=500)
-    discription = models.CharField(_('discription'), max_length=2000)
-    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
-    products = models.ForeignKey(
-        'Products.Product', 
-        verbose_name=_('Products'), 
+    basket = models.ForeignKey(
+        'Basket', 
+        verbose_name=_("Basket"), 
         on_delete=models.CASCADE,
-        related_name='orders', 
-        related_query_name='orders'
+        related_name='BasketItems', 
+        related_query_name='BasketItems'
+        )
+    shopproduct = models.ForeignKey(
+        ShopProduct, 
+        verbose_name=_("ShopProduct"), 
+        on_delete=models.CASCADE,
+        related_name='BasketItems', 
+        related_query_name='BasketItems'
         )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+
+    def __str__(self):
+        return str(self.user)
+
+class Orders(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        verbose_name=_('User'), 
+        on_delete=models.CASCADE,
+        related_name='Orders', 
+        related_query_name='Orders'
+        )
+    basket = models.OneToOneField(
+        'Basket', 
+        verbose_name=_('Orders'), 
+        on_delete=models.CASCADE,
+        related_name='Basket', 
+        related_query_name='Basket'
+        )
+    #slug = models.SlugField(_('slug'), unique=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+
 
 
     class Meta:
@@ -67,28 +85,27 @@ class Orders(models.Model):
         verbose_name_plural = _('Orders')
 
     def __str__(self):
-        return self.name
+        return str(self.user)
 
 
 class Peyment(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         verbose_name=_('User'),
         related_name='payment', 
         related_query_name='payment'
         )
-    order = models.ForeignKey(
+    orders = models.OneToOneField(
         'Orders', 
         on_delete=models.CASCADE, 
-        verbose_name=_('Order'),
-        related_name='payment', 
-        related_query_name='payment'
+        verbose_name=_('Orders'),
+        related_name='Peyment', 
+        related_query_name='Peyment'
         )
-    total_price = models.IntegerField(_('Total price'))
     pey_date = models.DateTimeField(_("Created at"), auto_now_add=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     class Meta:
         verbose_name = _('Payment')

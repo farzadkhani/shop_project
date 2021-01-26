@@ -116,8 +116,8 @@ class Address(models.Model):
         'User', 
         verbose_name=_('User'), 
         on_delete=models.CASCADE, 
-        related_name='address', 
-        related_query_name='address'
+        related_name='Address', 
+        related_query_name='Address'
         )
                             ##in related_name you give a name to the attribute that you can 
                             # use for the relation (named reverse realationship) from the 
@@ -138,7 +138,8 @@ class Address(models.Model):
 #        unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
 
     def __str__(self):
-        return self.user #return str(self.user)
+        return str(self.user)
+        #return self.user
 
 #    def get_absolute_url(self):
 #        return reverse("Address_detail", kwargs={"pk": self.pk})
