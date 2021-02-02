@@ -1,0 +1,244 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<DOCTYPE html>
+
+{% block title %}
+    {% for i in curent_slug_object %}
+        {{ i.name }}
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% for i in curent_slug_object %}
+                        <h2>{{ i.name }}</h2>
+                    {% endfor %}
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href='{% url "home" %}'>خانه 
+                                {% for i in current_category %}
+                                    <a>/</a>
+                                    <a  href='{% url 'search_product' slug=i.slug %}'>{{ i.name }}</a><!-- ??????? -->
+                                {% endfor %}
+                            </a>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End All Title Box -->
+
+    <!-- start search -->
+    </div>
+    <div class='col-8'>
+        <form method='get'>
+            <div class="row">
+                {{ form.as_p}}
+                <button type='submit'>search</button>
+            </div>
+        </form>
+    </div>
+    <!-- end of search  -->
+
+    <!-- Start Shop Page  -->
+    <div class="shop-box-inner">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
+                    <div class="product-categori">
+                        <div class="search-product">
+                            <form action="#">
+                                <input class="form-control" placeholder="Search here..." type="text">
+                                <button type="submit"> <i class="fa fa-search"></i> </button>
+                            </form>
+                        </div>
+                        <div class="filter-sidebar-left">
+                            <div class="title-left">
+                                <h3>دسته بندی ها</h3>
+                            </div>
+                            <div>
+                                {% for i in curent_slug_object %}    
+                                    {% if i.parent %}
+                                        <h2>Go up to 
+                                            <a href="{% url 'search_product' slug=i.parent.slug %}">
+                                                {{ i.parent }}
+                                            </a>
+                                        </h2>
+                                    {% else %}
+                                        <h2>Go up to 
+                                            <a>
+                                                {{ i.name }}
+                                            </a>
+                                        </h2>
+                                    {% endif %}
+                                    {% if i.children.count %}
+                                        <h2>Subcategories</h2>
+                                        <ul>
+                                            {% for child in i.children.all %}
+                                            <li><a href="{% url 'search_product' slug=child.slug %}">{{ child.name }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+
+                                    {% endif %}
+                                    <h2>Entries</h2>
+                                    {% if category.entries_set.all %}
+                                        {% for entry in category.entries_set.all %}
+                                            <p><a href="#">{{ entry.headline }}</a></p>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p><em>No entries for {{ i }}</em></p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="filter-price-left">
+                            <div class="title-left">
+                                <h3>Price</h3>
+                            </div>
+                            <div class="price-box-slider">
+                                <div id="slider-range"></div>
+                                <p>
+                                    <input type="text" id="amount" readonly style="border:0; color:#fbb714; font-weight:bold;">
+                                    <button class="btn hvr-hover" type="submit">Filter</button>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="filter-brand-left">
+                            <div class="title-left">
+                                <h3>برند ها</h3>
+                            </div>
+                            <div>
+                                <ul>
+                                    <form method='get'>
+                                        {% for brand in clean_brand%}
+                                            <li>
+                                                <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>
+                                                {{ brand.name }}
+                                                </button>
+                                            </li>
+                                        {% endfor %}
+                                    </form>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
+                    <div class="right-product-box">
+                        <div class="product-item-filter row">
+                            <div class="col-12 col-sm-8 text-center text-sm-left">
+                                <div class="toolbar-sorter-right">
+                                    <form action='' method='get'>
+                                        <span>دسته بندی</span>
+                                        
+                                        <select class="selectpicker show-tick form-control" name='order_by' onchange='this.form.submit();'>
+									    <option value='-publish_time'>جدید ترین</option>
+									    <option value="publish_time">قدیمی ترین</option>
+								        </select>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4 text-center text-sm-right">
+                                <ul class="nav nav-tabs ml-auto">
+                                    <li>
+                                        <a class="nav-link active" href="#grid-view" data-toggle="tab"> <i class="fa fa-th"></i> </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" href="#list-view" data-toggle="tab"> <i class="fa fa-list-ul"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- start products -->
+                        <div class="row product-categorie-box">
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
+                                    <div class="row">
+                                        <!-- start products items -->
+                                        {% for product in object_list %}
+                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                    <div class="products-single fix">
+                                                        <div class="box-img-hover">
+                                                            <div class="type-lb">
+                                                                <p class="sale">{{ product.ShopProduct.all.first.shop }}</p>
+                                                            </div>
+                                                                {% if product.image %}
+                                                                    <img src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                                {% endif %}
+                                                            <div class="mask-icon">
+                                                                <ul>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                                </ul>
+                                                                <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="why-text">
+                                                            <h4>{{ product.name }}</h4>
+                                                            <h5> {{ product.ShopProduct.all.first.price|intcomma }}</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        {% endfor %}
+                                        <!-- end products items -->
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="list-view">
+                                    <div class="list-view-box">
+                                        <div class="row">
+                                            {% for product in object_list %}
+                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                    <div class="products-single fix">
+                                                        <div class="box-img-hover">
+                                                            <div class="type-lb">
+                                                                <p class="sale">{{ product.brand }}</p>
+                                                            </div>
+                                                            {% if product.image %}
+                                                                <img src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                            {% endif %}
+                                                            <div class="mask-icon">
+                                                                <ul>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                                </ul>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
+                                                    <div class="why-text full-width">
+                                                        <h4>{{ product.name }}</h4>
+                                                        <h5> <del>{{ product.ShopProduct.all.first.price|intcomma}}</del> {{ product.ShopProduct.all.first.price|intcomma}} </h5>
+                                                        {% if product.detail %}
+                                                            <p>{{ product.detail }}</p>
+                                                        {% endif %}
+                                                        <a class="btn hvr-hover" href="#">Add to Cart</a>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Shop Page -->
+
+
+{% endblock %}

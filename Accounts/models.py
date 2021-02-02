@@ -111,7 +111,7 @@ class Profile(models.Model):
     pass
 
 
-class Address(models.Model):
+class Address(models.Model):    #for address of users
     user = models.ForeignKey(
         'User', 
         verbose_name=_('User'), 
@@ -135,7 +135,7 @@ class Address(models.Model):
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
-#        unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
+        #unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
 
     def __str__(self):
         return str(self.user)
@@ -145,7 +145,7 @@ class Address(models.Model):
 #        return reverse("Address_detail", kwargs={"pk": self.pk})
 
 
-class Shop(models.Model):
+class Shop(models.Model):   #the saler hear is registrate
     user = models.ForeignKey(
         'User', 
         verbose_name=_('User'), 
@@ -153,12 +153,12 @@ class Shop(models.Model):
         related_name="Shop", 
         related_query_name='Shop'
         )
-#    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
-#        "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
+    #    "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
     slug = models.SlugField(_('slug'), unique=True)
     name = models.CharField(_('name'), max_length=1000)
-    discription = models.CharField(_('discription'), max_length=2000)
-    image = models.ImageField(_('image'), upload_to='accounts/shop/images', blank=True)
+    discription = models.CharField(_('discription'), max_length=2000, null=True, blank=True)
+    image = models.ImageField(_('image'), upload_to='accounts/shop/images', null=True, blank=True)
                                  #height_field=None, width_field=None, max_length=None)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
@@ -172,7 +172,7 @@ class Shop(models.Model):
         return self.name
 
 
-class Email(models.Model):
+class Email(models.Model):  #for email of users
     user = models.ForeignKey(
         'User', 
         verbose_name=_('user'), 

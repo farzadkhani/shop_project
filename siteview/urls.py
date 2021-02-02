@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views as siteview_views
+from Products import views as products_views
 from django.conf import settings
 from django.conf.urls.static import static
 #from . import api
@@ -11,11 +12,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', siteview_views.HomeView.as_view(), name='home'),
-    #path('like_comment/<slug:post_pk>/', blog_views.like_comment, name='like_comment'),
-    #path('post/<slug:slug>/', blog_views.PostDetail.as_view(), name='post_detail'),
-    #path('json/comments/',api.comment_list, name='comment_list_api'),
-    #path('json/posts/<int:pk>',api.PostdetailGeneric.as_view(), name='post_detail_api'),
-    #path('json/posts/<int:pk>/',api.PostViewSet.as_view({
+    path('search/<slug:slug>', products_views.ProductList.as_view(), name='search_product'),
+
+    #path('post/<slug:the_slug>/', blog_views.PostDetail.as_view(), name='post_detail'),
+    #path('json/comments/', api.comment_list, name='comment_list_api'),
+    #path('json/posts/<int:pk>', api.PostdetailGeneric.as_view(), name='post_detail_api'),
+    #path('json/posts/<int:pk>/', api.PostViewSet.as_view({
     #    'get':'retrieve',
     #    'put':'update',
     #    'delete':'destroy'

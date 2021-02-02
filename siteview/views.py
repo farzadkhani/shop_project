@@ -10,8 +10,6 @@ class HomeView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["category_list"] = products_models.Category.objects.all()
         context['baner_slide'] = siteview_models.FirstSlideIndex.objects.filter(draft=False)
+        context["category_list"] = products_models.Category.objects.all()
         return context
-    
-

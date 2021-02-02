@@ -20,7 +20,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'image', 'details')    # 'parent', 'create', 'update'
+    list_display = ('name', 'slug' ,'parent_id', 'parent', 'detail')    # 'parent', 'create', 'update'
     search_fields = ('name', 'slug')    #'parent'
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
@@ -42,7 +42,7 @@ class BrandAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
 
-@admin.register(models.Images)
+@admin.register(models.Image)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'image') #, 'created', 'updated'
     search_fields = ('product',)
@@ -56,7 +56,7 @@ class OffAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
 
-@admin.register(models.Comments)
+@admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'text', 'rate')  #, 'created', 'updated'
     search_fields = ('product', 'user', 'text', 'rate') #, 'created', 'updated'
@@ -66,6 +66,6 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(models.Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'products', 'like')  #, 'created', 'updated'
-    search_fields = ('user', 'products', 'like') #, 'created', 'updated'
+    list_display = ('user', 'product', 'like')  #, 'created', 'updated'
+    search_fields = ('user', 'product', 'like') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')

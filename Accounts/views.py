@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from Products import models as products_models
+
 # Create your views here.
 
 
@@ -31,5 +33,13 @@ class Profile(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile/profile.html'
     
-    def get_object(self):#now we did not use pk for address the profile page of logined user and did not use pk for url
+    def get_object(self):
+        #now we did not use pk for address the profile page of logined user and did not use pk for url
         return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_list"] = products_models.Category.objects.all()
+        return context
+
+        

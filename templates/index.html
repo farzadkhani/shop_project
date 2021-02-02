@@ -38,15 +38,17 @@
     <div class="categories-shop" style='background-color:white;'>
         <div class="container">
             <div class="title-all text-center">">
-                <h1>Categories</h1>
+                <h1>دسته بندی ها</h1>
                 <div class="row">
                     {% for cat in category_list%}
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="shop-cat-box">
-                            <img class="img-fluid" src="{{ cat.image.url }}" alt="" />
-                                <a class="btn hvr-hover" href="#">{{ cat.name }}</a>
+                        {% if cat.parent is None %}
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="shop-cat-box">
+                                <img class="img-fluid" src="{{ cat.image.url }}" alt="" />
+                                    <a class="btn hvr-hover" href="#">{{ cat.name }}</a>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor%}
                 </div>
             </div>
