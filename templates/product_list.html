@@ -48,6 +48,21 @@
     </div>
     <!-- end of search  -->
 
+    <!-- start sub categoy with pic -->
+    <div class='row'>
+        {% for i in curent_slug_object %}
+            {% if i.children.count %}
+                {% for child in i.children.all %}
+                    {% if child.image %}
+                        <img href="{% url 'search_product' slug=child.slug %}" src="{{ child.image.url }}" width='100'>
+                    {% endif %}
+                    <a href="{% url 'search_product' slug=child.slug %}">{{ child.name }}</a>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <!-- end sub categoy with pic -->
+
     <!-- Start Shop Page  -->
     <div class="shop-box-inner">
         <div class="container">
@@ -79,6 +94,7 @@
                                             </a>
                                         </h2>
                                     {% endif %}
+
                                     {% if i.children.count %}
                                         <h2>Subcategories</h2>
                                         <ul>
@@ -86,8 +102,8 @@
                                             <li><a href="{% url 'search_product' slug=child.slug %}">{{ child.name }}</a></li>
                                             {% endfor %}
                                         </ul>
-
                                     {% endif %}
+
                                     <h2>Entries</h2>
                                     {% if category.entries_set.all %}
                                         {% for entry in category.entries_set.all %}
@@ -143,6 +159,8 @@
                                         <select class="selectpicker show-tick form-control" name='order_by' onchange='this.form.submit();'>
 									    <option value='-publish_time'>جدید ترین</option>
 									    <option value="publish_time">قدیمی ترین</option>
+									    <option value="ShopProduct">بیشترین قمت</option>
+									    <option value="-ShopProduct">کم ترین قیمت</option>
 								        </select>
                                     </form>
                                 </div>
@@ -158,6 +176,8 @@
                                 </ul>
                             </div>
                         </div>
+
+
                         <!-- start products -->
                         <div class="row product-categorie-box">
                             <div class="tab-content">
@@ -169,10 +189,10 @@
                                                     <div class="products-single fix">
                                                         <div class="box-img-hover">
                                                             <div class="type-lb">
-                                                                <p class="sale">{{ product.ShopProduct.all.first.shop }}</p>
+                                                                <p class="sale">{{ product.ShopProduct.all.first.shop.name }}</p>
                                                             </div>
                                                                 {% if product.image %}
-                                                                    <img src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                                    <img href="{% url 'detail_product' slug=product.slug %}" src="{{ product.image.url }}" class="img-fluid" alt="Image">
                                                                 {% endif %}
                                                             <div class="mask-icon">
                                                                 <ul>
@@ -184,8 +204,18 @@
                                                             </div>
                                                         </div>
                                                         <div class="why-text">
-                                                            <h4>{{ product.name }}</h4>
-                                                            <h5> {{ product.ShopProduct.all.first.price|intcomma }}</h5>
+                                                            <a href="{% url 'detail_product' slug=product.slug %}">{{ product.name }}</a>
+                                                            {% if product.Off.all.first.price %}
+                                                                {% for key, value in off_percent_list.items %}
+                                                                    {% if product.id == key %}
+                                                                        <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
+                                                                    {% endif%}
+                                                                {% endfor %}
+                                                                <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
+                                                                <h6><del>{{ product.ShopProduct.all.first.price|intcomma}}</del></h6>
+                                                            {% else %}
+                                                                <h5>تومان {{ product.ShopProduct.all.first.price|intcomma }}</h5>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>

@@ -13,6 +13,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', siteview_views.HomeView.as_view(), name='home'),
     path('search/<slug:slug>', products_views.ProductList.as_view(), name='search_product'),
+    path('product/<slug:slug>', products_views.ProductDetail.as_view(), name='detail_product'),
 
     #path('post/<slug:the_slug>/', blog_views.PostDetail.as_view(), name='post_detail'),
     #path('json/comments/', api.comment_list, name='comment_list_api'),

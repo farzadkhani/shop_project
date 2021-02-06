@@ -48,6 +48,7 @@ class ProductMeta(models.Model):    #product size and coloar
         related_name='ProductMeta', 
         related_query_name='ProductMeta'
         )
+    
 
     class Meta:
         verbose_name = _('ProductMeta')
@@ -177,14 +178,14 @@ class Image(models.Model):  #for more images
 
 class Off(models.Model):    #add off on product
     name = models.CharField(_('off name'), max_length=150)
-    number = models.IntegerField(_('number of price off'))
+    price = models.IntegerField(_('number of price off'))
     product = models.ForeignKey(
         'Product',
         on_delete=models.CASCADE,
         verbose_name=_('Product'),
         related_name='Off', 
         related_query_name='Off'
-        )    
+        )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)

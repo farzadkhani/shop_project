@@ -27,6 +27,7 @@ class ProductList(ListView, FormView):
         if name:
             query1 = Product.objects.filter(name__icontains=name)
             query2 = Product.objects.filter(brand__name__icontains=name)
+            #query3 = Product.objects.filter(name__icontains=name)
             queryset = (query1 | query2).distinct()     #union two queryset
         
         if self.kwargs.get('slug', None):       #for get sub category prouduct
@@ -63,6 +64,7 @@ class ProductList(ListView, FormView):
         order_by = self.request.GET.get('order_by')     #for sort by date
         if order_by:
             queryset = queryset.order_by(order_by)
+        #print(queryset[0].Off)
         
         #order_by_ = self.request.GET.get('order_by')     #for sort by price
         #print('order_by', order_by)
@@ -79,14 +81,17 @@ class ProductList(ListView, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #print(self.kwargs['slug'])  #print curent page slug 
-        
-        for_clean_list = context['object_list']     #for clean the duplicate brand list
+
+        #<find the brand list>
+        for_clean_list = context['object_list']
         clean_list = []
         for i in for_clean_list:
             if i.brand not in clean_list:
                 clean_list.append(i.brand)
-        context['clean_brand'] = clean_list         # cleaned brand list
-        
+        context['clean_brand'] = clean_list
+        #<end find brand list>
+
+        #<find the all parent categoty>
         current_category = Category.objects.filter(slug=self.kwargs['slug'])
         current_category_parent_list = []
         current_category_parent_list.append(current_category[0])
@@ -94,23 +99,70 @@ class ProductList(ListView, FormView):
             current_category_parent_list.insert(0, current_category[0].get_all_parents()[0])
             current_category = current_category[0].get_all_parents()
         context['current_category'] = current_category_parent_list
-        
+        #<end find the all parent categoty>
+
         context['curent_slug_object'] = Category.objects.filter(slug=self.kwargs['slug'])
         context["category_list"] = Category.objects.all()
         context["product_meta_list"] = ProductMeta.objects.filter(product=context['object_list'])
-        context["shop_product_list"] = ShopProduct.objects.filter(product=context['object_list'])   #is_public=True
-        context["product_off_list"] = Off.objects.filter(product=context['object_list'])
+        #context["shop_product_list"] = ShopProduct.objects.filter(product=context['object_list'])  #is_public=True
+        #context["product_off_list"] = Off.objects.filter(product=context['object_list'])
         context["product_meta_list"] = ProductMeta.objects.filter(product=context['object_list'])
+
+        #<calculate off percent>
+        context['off_percent_list'] = {}
+        for current_product in context['object_list']:
+            if Off.objects.filter(product_id=current_product.id):
+                product_prcie = ShopProduct.objects.filter(product_id=current_product.id)[0].price
+                off_price = Off.objects.filter(product_id=current_product.id)[0].price
+                off_percent = int((product_prcie - off_price)*100/product_prcie)
+                context['off_percent_list'][current_product.id] = off_percent
+        
+        #<end calculate off percent>
+
         #context["product_images_list"] = Image.objects.filter(product=context['object_list'])
         #context['filter_form'] = forms.FilterListView(self.request.GET)
         #get_copy = self.request.GET.copy()
         #if get_copy.get('page'):
         #    get_copy.pop('page')
         #context['get_copy'] = get_copy
-        print('one', context['current_category'][0])
+        #print(context['object_list'])
         return context
     
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #<find the all parent categoty>
+        current_product = Product.objects.filter(slug=self.kwargs['slug'])
+        current_product_category_name = current_product[0].category
+        current_category = Category.objects.filter(name=current_product_category_name)
+        current_category_parent_list = []
+        current_category_parent_list.append(current_category[0])
+        while current_category[0].get_all_parents() :
+            current_category_parent_list.insert(0, current_category[0].get_all_parents()[0])
+            current_category = current_category[0].get_all_parents()
+        context['current_category'] = current_category_parent_list
+        #<end find the all parent category>
+        context["category_list"] = Category.objects.all()
+        #<product image from Image class>
+        product_image = Image.objects.filter(product_id=current_product[0].id)
+        context['product_image'] = product_image
+        #<end product image from Image class>
+        #<calculate off percent>
+        if Off.objects.filter(product_id=current_product[0].id):
+            product_price = ShopProduct.objects.filter(product_id=current_product[0].id)
+            off_price = Off.objects.filter(product_id=current_product[0].id)
+            off_percent = int((product_price[0].price - off_price[0].price)*100/product_price[0].price)
+            context['off_percent'] = off_percent
+        #<end calculate off percent>
+        #print('---')
+        #print(self.kwargs['slug'])
+        #print('---')
+        #print('context', context)
+        return context
+    
 
     
 

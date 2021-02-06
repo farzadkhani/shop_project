@@ -46,7 +46,6 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, first_name, last_name, password, **extra_fields)
 
-    
 
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
@@ -67,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-#        abstract = True
+        #abstract = True
 
 
     ###   All this for creating the user ###
@@ -96,9 +95,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
-#    def get_short_name(self):
-#        """Return the short name for the user."""
-#        return self.first_name
+    #def get_short_name(self):
+    #    """Return the short name for the user."""
+    #    return self.first_name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
@@ -106,6 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     #return the full_name to show in admin list
     def __str__(self):
         return self.get_full_name()   
+
 
 class Profile(models.Model):
     pass
@@ -141,8 +141,8 @@ class Address(models.Model):    #for address of users
         return str(self.user)
         #return self.user
 
-#    def get_absolute_url(self):
-#        return reverse("Address_detail", kwargs={"pk": self.pk})
+    #def get_absolute_url(self):
+    #    return reverse("Address_detail", kwargs={"pk": self.pk})
 
 
 class Shop(models.Model):   #the saler hear is registrate
@@ -157,6 +157,11 @@ class Shop(models.Model):   #the saler hear is registrate
     #    "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
     slug = models.SlugField(_('slug'), unique=True)
     name = models.CharField(_('name'), max_length=1000)
+    facebook = models.CharField(_('facebook'), max_length=1000,null=True, blank=True)
+    instagram = models.CharField(_('instagram'), max_length=1000,null=True, blank=True)
+    telegram = models.CharField(_('telegram'), max_length=1000,null=True, blank=True)
+    whatsapp = models.CharField(_('whatsapp'), max_length=1000,null=True, blank=True)
+
     discription = models.CharField(_('discription'), max_length=2000, null=True, blank=True)
     image = models.ImageField(_('image'), upload_to='accounts/shop/images', null=True, blank=True)
                                  #height_field=None, width_field=None, max_length=None)

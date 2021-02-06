@@ -51,8 +51,8 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Off)
 class OffAdmin(admin.ModelAdmin):
-    list_display = ('name', 'number', 'product')  #, 'created', 'updated'
-    search_fields = ('name', 'number', 'product') #, 'created', 'updated'
+    list_display = ('name', 'price', 'product')  #, 'created', 'updated'
+    search_fields = ('name', 'price', 'product') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
 

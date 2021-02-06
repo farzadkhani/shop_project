@@ -59,6 +59,12 @@ class ShopAdmin(admin.ModelAdmin):
     list_display = ('user','slug','name')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('user',)
+
+    #def get_fields(self, request, obj=None):
+    #    fields = super().get_fields(request, obj)
+    #    if request.user.is_superuser or request.user:
+    #        fields += ('user',)
+    #    return fields
     #list_editable
     #list_display_links
     #list_max_show_all
