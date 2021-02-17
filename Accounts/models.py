@@ -95,16 +95,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
+    #@property  #return like parameter instead function like 'name = person.full_name' instead of 'name = person.full_name()'
+    #def full_name(self):
+    #    return '%s %s' % (self.first_name, self.last_name)
+
     #def get_short_name(self):
     #    """Return the short name for the user."""
     #    return self.first_name
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+    #def email_user(self, subject, message, from_email=None, **kwargs):
+    #    send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    #return the full_name to show in admin list
+    
     def __str__(self):
-        return self.get_full_name()   
+        return self.email   
 
 
 class Profile(models.Model):
@@ -155,8 +159,8 @@ class Shop(models.Model):   #the saler hear is registrate
         )
     #user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
     #    "User"),related_name="user_shop", on_delete=models.SET_NULL, null=True, blank=True)    
+    name = models.CharField(_('name'), max_length=1000, unique=True)
     slug = models.SlugField(_('slug'), unique=True)
-    name = models.CharField(_('name'), max_length=1000)
     facebook = models.CharField(_('facebook'), max_length=1000,null=True, blank=True)
     instagram = models.CharField(_('instagram'), max_length=1000,null=True, blank=True)
     telegram = models.CharField(_('telegram'), max_length=1000,null=True, blank=True)
@@ -167,8 +171,10 @@ class Shop(models.Model):   #the saler hear is registrate
                                  #height_field=None, width_field=None, max_length=None)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
-    
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+    )   
     class Meta:
         verbose_name = _('Shop')
         verbose_name_plural = _('Shops')

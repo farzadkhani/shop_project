@@ -29,9 +29,10 @@ class LogOut(LogoutView):
 
 
 class Profile(LoginRequiredMixin, DetailView):
-    #loginRequiredMixin is for login required
+    # loginRequiredMixin is for login required
     model = User
     template_name = 'profile/profile.html'
+    # form_class = UserForm
     
     def get_object(self):
         #now we did not use pk for address the profile page of logined user and did not use pk for url
@@ -41,5 +42,10 @@ class Profile(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["category_list"] = products_models.Category.objects.all()
         return context
+
+    # def form_valid(self, from):   # for check the form for edit profile
+    #     form.save()
+    #     retrun 
+
 
         

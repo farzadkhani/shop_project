@@ -5,6 +5,7 @@
 
 {% block title %}
     مشخصات و قیمت {{ product.name }}
+    | فروشگاه اینترنتی ما
 {% endblock %}
 
 {% block content %}
@@ -20,7 +21,7 @@
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href='{% url "home" %}'>خانه 
-                                {% for i in current_category %}
+                                {% for i in product.category.category_road %}
                                     <a>/</a>
                                     <a  href='{% url 'search_product' slug=i.slug %}'>{{ i.name }}</a><!-- ??????? -->
                                 {% endfor %}
@@ -34,6 +35,11 @@
     <!-- End All Title Box -->
 
     <!-- Start Shop Detail  -->
+
+    <!-- test -->
+
+    <!-- end test -->
+
     <div class="shop-detail-box-main">
         <div class="container">
             <div class="row">
@@ -78,52 +84,45 @@
                 <div class="col-xl-7 col-lg-7 col-md-6">
                     <div class="single-product-details">
                         <h2>{{ product.name }}</h2>
-                        {% if product.Off.all.first.price %}
+                        <h3>برند: {{ product.brand }}</h3>
+                        {% comment %} {% if product.Off.all.first.price %}
                             <h4 style='color:red;'>تخفیف برای شما%{{ off_percent }}</h4>
-                            <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
-                            <h6><del>{{ product.ShopProduct.all.first.price|intcomma}}</del></h6>
+                            <h5>تومان {{ product.min_price.min_off.price|intcomma}}</h5>
+                            <h6><del>{{ product.min_price.last.price}}</del></h6>
                         {% else %}
-                            <h5>تومان {{ product.ShopProduct.all.first.price|intcomma }}</h5>
-                        {% endif %}
-                        <p class="available-stock"><span> عدد باقی مانده {{ product.ShopProduct.all.first.quantity|intcomma}}</span></p>
+                        {% endif %} {% endcomment %}
+                        <ul>
+                            {% for i,j in product.find_all_size_and_color %}
+                                <li>
+                                    <a>سایز: {{ i }}</a>
+                                    <ul>
+                                        {% for a in j%}
+                                        <li>
+                                            {% for b in a %}
+                                                <li>
+                                                    <a href="{% url 'detail_product' slug=b.product.slug id=b.id %}">رنگ : {{ b.color }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% for i in current_shop_product %}
+                            <h2>فروشگاه: {{ i.shop.name }}</h2>
+                            <h5>تومان {{ i.price|intcomma }}</h5>
+                            <h7>سایز:  {{ i.size }} رنگ:  {{ i.color }}</h7>
+                            <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
+                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                        {% endfor %}
                             <div>   
                                 <h4>توضیحات:</h4>
                                 <p>{{ product.detail}}</p>
-                                <ul>
-                                    <li>
-                                        <div class="form-group size-st">
-                                            <label class="size-label">اندازه</label>
-                                            <select id="basic">
-								            	<option value="0">Size</option>
-								            	<option value="0">S</option>
-								            	<option value="1">M</option>
-								            	<option value="1">L</option>
-								            	<option value="1">XL</option>
-								            	<option value="1">XXL</option>
-								            	<option value="1">3XL</option>
-								            	<option value="1">4XL</option>
-								            </select>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="form-group quantity-box">
-                                            <label class="control-label">تعداد</label>
-                                            <input class="form-control" value="0" min="0" max="20" type="number">
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <div class="price-box-bar">
-                                    <div class="cart-and-bay-btn">
-                                        <a class="btn hvr-hover" data-fancybox-close="" href="#">Buy New</a>
-                                        <a class="btn hvr-hover" data-fancybox-close="" href="#">Add to cart</a>
-                                    </div>
-                                </div>
 
                                 <div class="add-to-btn">
                                     <div class="add-comp">
-                                        <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
-                                        <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
+                                        
                                     </div>
                                     <div class="share-bar">
                                         {% if product.ShopProduct.all.first.shop.facebook %}
@@ -149,8 +148,31 @@
         </div>
     </div>
     <!-- End Cart -->
-
-
+    {% for b in current_shop_product %}
+        {% for i in current_shop_product %}
+            <h3>برای سایز  و رنگ  {{i.size}} {{i.color}} فروشگاه های زیر موجود است</h3>
+        {% endfor %}
+    {% endfor %}
+    <div style='border:2px solid red; text-align: right;'>
+        <ul>
+            {% for b in current_shop_product %}        
+                {% for i in b.find_all_same_size_and_color%}
+                    <li>
+                        <div>    
+                            {% comment %} <a class="btn hvr-hover" href="{% url 'remove_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i class="fas fa-sync-alt"></i>حذف از سبد خرید</a>
+                            <a class="btn hvr-hover" href="{% url 'decrease_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i class="fas fa-sync-alt"></i>کم کردن از سبد خرید</a> {% endcomment %}
+                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                            <a href="{% url 'search_product_seller' slug=i.shop.slug %}">فروشگاه:{{ i.shop.name }}</a>
+                            <span style="display:inline-block; width: 30px;"></span>
+                            <a>{{ i.price }}تومان</a>
+                            <span style="display:inline-block; width: 30px;"></span>
+                            <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
+                        </div
+                    </li>
+                {% endfor%}
+            {% endfor %}
+        </ul>
+    </div>
 
 
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>

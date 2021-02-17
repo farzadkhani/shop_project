@@ -1,6 +1,5 @@
 from django.urls import path
-from . import views as siteview_views
-from Products import views as products_views
+from .views import HomeView
 from django.conf import settings
 from django.conf.urls.static import static
 #from . import api
@@ -11,9 +10,10 @@ from django.conf.urls.static import static
 #router.register(r'posts', api.PostViewSet)
 
 urlpatterns = [
-    path('', siteview_views.HomeView.as_view(), name='home'),
-    path('search/<slug:slug>', products_views.ProductList.as_view(), name='search_product'),
-    path('product/<slug:slug>', products_views.ProductDetail.as_view(), name='detail_product'),
+    path('', HomeView.as_view(), name='home'),
+
+
+
 
     #path('post/<slug:the_slug>/', blog_views.PostDetail.as_view(), name='post_detail'),
     #path('json/comments/', api.comment_list, name='comment_list_api'),

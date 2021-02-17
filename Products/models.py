@@ -2,8 +2,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.urls import reverse
+from django.apps import apps
+from django.db.models import Min, Max
 
 #for call user from call "settings.AUTH_USER_MODEL"
 
@@ -14,7 +17,7 @@ class Product(models.Model):    #make product data
         'Brand', 
         verbose_name=_('Brand'), 
         on_delete=models.CASCADE,
-        related_name='Product', 
+        related_name='Product',     #similar as 'product_set' in  Branditem.product_set.all() or similar as Branditem.Product.all()
         related_query_name='Product'
         )
     slug = models.SlugField(_('slug'))
@@ -33,11 +36,48 @@ class Product(models.Model):    #make product data
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     class Meta:
-        verbose_name = _('Product')
+        verbose_name = _('Product') 
         verbose_name_plural = _('Products')
-        
+
+    @property
+    def find_all_size_and_color(self):
+        refrence = ShopProduct.objects.filter(product=self).order_by('size')
+        final_list = []
+        size_list = []
+        for i in refrence:
+            if not i.size.name in size_list:
+                size_list.append(i.size.name) 
+                refrence2 = ShopProduct.objects.filter(product=self, size__name=i.size.name).order_by('price')
+                check_list = []
+                refrence3 = []
+                for b in refrence2:
+                    if not b.color in check_list:
+                        check_list.append(b.color)
+                        refrence3.append(b)
+                # print('refrence2', refrence3)
+                temp = [refrence3]
+                # print('temp', temp)
+                temprory = [i.size.name, temp]
+                final_list.append(temprory)
+        #print('final', final_list[1][1][0][0].color)
+        return final_list
+
+    @property
+    def min_price(self):
+        # ShopProduct = apps.get_model(app_label='Products', model_name='ShopProduct' )
+        shop_product = self.ShopProduct.order_by('price')
+        # print('shop_product', shop_product)
+        return shop_product  
+
     def __str__(self):
         return self.name
+
+    def image_tag(self):
+        image = self.image
+        if image:
+            return mark_safe('<img src="{}" height="50"/>'.format(image.url))
+        else:
+            return ""
 
 
 class ProductMeta(models.Model):    #product size and coloar
@@ -87,20 +127,22 @@ class Category(models.Model):   #make cagories
         #return all children 'full objects' of the curent category
         children = self.children.all()
         return children
-
+    @property
     def get_parent(self):
         parent = self.parent
         return parent
 
-
-    def get_all_parents(self):
+    @property
+    def category_road(self):
         #show the all parents of curent category
+        check = Category.objects.filter(name=self.name)
         parents = []
-        if self.parent is not None:
-            parent = self.parent
-            parents.append(parent)
+        parents.append(check[0])
+        while check[0].get_parent:
+            parents.insert(0, check[0].get_parent)
+            check = Category.objects.filter(name=check[0].get_parent)
         return parents
-    
+
     #def get_absolute_url(self):
     #    return reverse("search_product", kwargs={"slug": self.slug})
 
@@ -120,7 +162,22 @@ class ShopProduct(models.Model):    #for price and quantity relate with product 
         related_name='ShopProduct', 
         related_query_name='ShopProduct'
         )
-    price = models.IntegerField(_('product price'))
+    size = models.ForeignKey(
+        'Size', 
+        verbose_name=_('Size'), 
+        on_delete=models.CASCADE,
+        related_name='ShopProduct', 
+        related_query_name='ShopProduct',
+        )
+    color = models.ForeignKey(
+        'Color', 
+        verbose_name=_('Color'), 
+        on_delete=models.CASCADE,
+        related_name='ShopProduct', 
+        related_query_name='ShopProduct',
+        )
+    parent_self = models.ForeignKey('ShopProduct', on_delete=models.CASCADE, null=True , blank=True)
+    price = models.PositiveIntegerField(_('product price'))
     quantity = models.IntegerField(_('number of product'))
     created_at = models.DateTimeField(_("Created"), auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated"), auto_now=True, auto_now_add=False)
@@ -131,10 +188,64 @@ class ShopProduct(models.Model):    #for price and quantity relate with product 
     class Meta:
         verbose_name = _('ShopProduct')
         verbose_name_plural = _('ShopProducts')
-        unique_together = ['shop', 'product']
+        #unique_together = ['shop', 'product', 'color', 'size']
+
+    @property
+    def min_off(self):
+        Off = apps.get_model(app_label='Products', model_name='Off')
+        off = self.Off
+        #print('off', off)
+        return off
+
+    def __str__(self):
+        return "فروشگاه:"+str(self.shop)+'---'+",محصول:"+str(self.product)
+
+    def image_tag(self):
+        image = self.product.image
+        if image:
+            return mark_safe('<img src="{}" height="50"/>'.format(image.url))
+        else:
+            return ""
+
+    @property
+    def find_all_same_size_and_color(self):
+        self_size = self.size.name
+        self_color = self.color.name
+        self_product = self.product.id
+        all_shopProducts = ShopProduct.objects.filter(product__id= self_product, size__name=self_size, color__name=self_color).order_by('price')
+        return all_shopProducts
+
+
+class Off(models.Model):    #add off on product
+    shop_product = models.OneToOneField(
+        'ShopProduct', 
+        verbose_name=_('Shop_product'), 
+        on_delete=models.PROTECT,
+        related_name='Off', 
+        related_query_name='Off',
+        null=True,
+        blank=True
+        )
+    
+    name = models.CharField(_('off name'), max_length=150)
+    price = models.IntegerField(_('number of price off'))
+    #product = models.ForeignKey(
+    #    'Product',
+    #    on_delete=models.CASCADE,
+    #    verbose_name=_('Product'),
+    #    related_name='Off', 
+    #    related_query_name='Off'
+    #    )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+
+    class Meta:
+        verbose_name = _('Off')
+        verbose_name_plural = _('Offes')
         
     def __str__(self):
-        return "shop:"+str(self.shop)+",product"+str(self.product)
+        return self.name
 
 
 class Brand(models.Model):  #make brand of product
@@ -176,24 +287,32 @@ class Image(models.Model):  #for more images
         return str(self.product)
 
 
-class Off(models.Model):    #add off on product
-    name = models.CharField(_('off name'), max_length=150)
-    price = models.IntegerField(_('number of price off'))
-    product = models.ForeignKey(
-        'Product',
-        on_delete=models.CASCADE,
-        verbose_name=_('Product'),
-        related_name='Off', 
-        related_query_name='Off'
-        )
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-    publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+class Color(models.Model):
+    name = models.CharField(_('color name'), max_length=500)
+    code = models.CharField(_("color code"), max_length=50)
+    
+    def __str__(self):
+        return self.name
 
-    class Meta:
-        verbose_name = _('Off')
-        verbose_name_plural = _('Offes')
-        
+    def color_tag(self):
+        code = self.code
+        if self.code:
+            return mark_safe('<p style="background-color:{}">Color</p>'.format(self.code))
+        else:
+            pass
+    
+
+class Size(models.Model):
+    name = models.CharField(_('product name'), max_length=500)
+    code = models.CharField(_('size code'), max_length=50)
+    #category = models.ForeignKey(
+    #    'Category', 
+    #    verbose_name=_('Category'), 
+    #    on_delete=models.CASCADE,
+    #    related_name='Size', 
+    #    related_query_name='Size'
+    #    )
+
     def __str__(self):
         return self.name
 
@@ -254,3 +373,5 @@ class Like(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+

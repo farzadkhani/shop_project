@@ -56,7 +56,7 @@ class AddressAdmin(admin.ModelAdmin):
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('user','slug','name')
+    list_display = ('user','slug','name', 'is_active')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('user',)
 

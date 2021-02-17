@@ -25,6 +25,8 @@ urlpatterns = [
     #path('', include('####.urls')),    #Order
     path('', include('siteview.urls')),    #
     path('', include('Accounts.urls')),    #
+    path('', include('Products.urls')),    #
+    path('', include('Orders.urls')),    #
 
 ] + static(
     settings.STATIC_URL, document_root=settings.STATIC_ROOT

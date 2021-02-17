@@ -5,7 +5,7 @@ from .models import Basket, Orders, Peyment, BasketItems
 
 @admin.register(Basket)
 class BasketAdmin(admin.ModelAdmin):
-    list_display = ('user', 'updated_at') #'created', 'updated'
+    list_display = ('user', 'basket_items','updated_at') #'created', 'updated'
     search_fields = ('user', 'updated_at') #'created', 'updated'
     list_filter = ('user','updated_at')
 
@@ -15,9 +15,9 @@ class BasketAdmin(admin.ModelAdmin):
 
 @admin.register(BasketItems)
 class BasketItemsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'basket', 'shopproduct', 'updated_at') #'created', 'updated'
-    search_fields = ('user', 'basket', 'shopproduct', 'updated_at') #'created', 'updated'
-    list_filter = ('user', 'basket', 'shopproduct', 'updated_at')
+    list_display = ('basket', 'quantity', 'shopproduct', 'updated_at') #'created', 'updated'
+    search_fields = ('basket', 'shopproduct', 'updated_at') #'created', 'updated'
+    list_filter = ('basket', 'shopproduct', 'updated_at')
 
 
 @admin.register(Orders)

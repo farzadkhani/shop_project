@@ -37,8 +37,20 @@
 
 </head>
 
+
+
 <body>
+
+    <dev class='mt-5 pt-4'> 
+        {% if messages %}
+            {% for message in messages %}
+            <div class='alert alert-{{ message.tags }}' role='alert'>{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
     {% include 'base/header.html' %}
+
+
     {% block content %}
     {% endblock %}
     {% include 'base/footer.html' %}

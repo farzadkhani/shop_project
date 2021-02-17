@@ -61,10 +61,8 @@
                             <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">حساب من</a>
                             <ul class="dropdown-menu">
                                 <li><a href='{% url "profile" %}'>حساب کاربری</a></li>
-                                <li><a href='#'>سفارشات من</a></li>
-                                <li><a href="my-account.html">My Account</a></li>
+                                <li><a href='{% url 'basket' %}'>سفارشات من</a></li>
                                 <li><a href="wishlist.html">Wishlist</a></li>
-                                <li><a href="shop-detail.html">Shop Detail</a></li>
                                 <li><a href='{% url "logout" %}'>خروج از حساب</a></li>
                             </ul>
                         {% endif %}

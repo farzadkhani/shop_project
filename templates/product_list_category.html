@@ -7,6 +7,7 @@
     {% for i in curent_slug_object %}
         {{ i.name }}
     {% endfor %}
+    | فروشگاه اینترنتی ما
 {% endblock %}
 
 {% block content %}
@@ -18,16 +19,15 @@
                 <div class="col-lg-12">
                     {% for i in curent_slug_object %}
                         <h2>{{ i.name }}</h2>
-                    {% endfor %}
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href='{% url "home" %}'>خانه 
-                                {% for i in current_category %}
+                                {% for b in i.category_road %}
                                     <a>/</a>
-                                    <a  href='{% url 'search_product' slug=i.slug %}'>{{ i.name }}</a><!-- ??????? -->
+                                    <a  href='{% url 'search_product' slug=b.slug %}'>{{ b.name }}</a><!-- ??????? -->
                                 {% endfor %}
-                            </a>
-
+                            </a></li>
+                    {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -39,7 +39,7 @@
     <!-- start search -->
     </div>
     <div class='col-8'>
-        <form method='get'>
+        <form method='get' action=''>
             <div class="row">
                 {{ form.as_p}}
                 <button type='submit'>search</button>
@@ -192,29 +192,33 @@
                                                                 <p class="sale">{{ product.ShopProduct.all.first.shop.name }}</p>
                                                             </div>
                                                                 {% if product.image %}
-                                                                    <img href="{% url 'detail_product' slug=product.slug %}" src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                                    {% if product.min_price %}
+                                                                        <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}" ><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
+                                                                    {% else %}
+                                                                        <a href="{% url 'detail_product_not_seller' slug=product.slug %}" ><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
+                                                                    {% endif %}
                                                                 {% endif %}
-                                                            <div class="mask-icon">
-                                                                <ul>
-                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                                                </ul>
-                                                                <a class="cart" href="#">افزودن به سبد خرید</a>
-                                                            </div>
                                                         </div>
                                                         <div class="why-text">
-                                                            <a href="{% url 'detail_product' slug=product.slug %}">{{ product.name }}</a>
-                                                            {% if product.Off.all.first.price %}
+                                                            {% if product.min_price %}
+                                                                <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}">{{ product.name }}</a>
+                                                            {% else %}
+                                                                <a href="{% url 'detail_product_not_seller' slug=product.slug %}">{{ product.name }}</a>
+                                                            {% endif %}
+                                                            {% comment %} {% if product.Off.all.first.price %}
                                                                 {% for key, value in off_percent_list.items %}
                                                                     {% if product.id == key %}
                                                                         <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
                                                                     {% endif%}
                                                                 {% endfor %}
                                                                 <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
-                                                                <h6><del>{{ product.ShopProduct.all.first.price|intcomma}}</del></h6>
+                                                                <h6><del>{{ product.min_price.last.price}}</del></h6>
                                                             {% else %}
-                                                                <h5>تومان {{ product.ShopProduct.all.first.price|intcomma }}</h5>
+                                                            {% endif %} {% endcomment %}
+                                                            {% if product.min_price %}
+                                                                <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
+                                                            {% else %}
+                                                                <h5><a>--نا موجود--</a></h5>
                                                             {% endif %}
                                                         </div>
                                                     </div>

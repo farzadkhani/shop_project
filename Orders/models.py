@@ -7,6 +7,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.conf import settings
 from Products.models import ShopProduct
+from django.shortcuts import reverse
 #for call user from call "settings.AUTH_USER_MODEL"
 #import Brand ####
 
@@ -21,7 +22,7 @@ class Basket(models.Model):
     #slug = models.SlugField(_('slug'), unique=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
-    
+    ordered = models.BooleanField(_("Ordered"), default=False)
 
     class Meta:
         verbose_name = _('Basket')
@@ -29,16 +30,22 @@ class Basket(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    @property
+    def basket_items(self):
+        basket_items = BasketItems.objects.filter(basket=self)
+        return basket_items
+
+    @property
+    def basket_price(self):
+        basket_items = self.BasketItems.all()
+        total_price = 0
+        for i in basket_items:
+            total_price += (i.ShopProduct.total_price)
+        return total_price
 
 
 class BasketItems(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, 
-        verbose_name=_('User'), 
-        on_delete=models.CASCADE,
-        related_name='BasketItems', 
-        related_query_name='BasketItems'
-        )
     basket = models.ForeignKey(
         'Basket', 
         verbose_name=_("Basket"), 
@@ -46,6 +53,7 @@ class BasketItems(models.Model):
         related_name='BasketItems', 
         related_query_name='BasketItems'
         )
+    quantity = models.IntegerField(default=1)
     shopproduct = models.ForeignKey(
         ShopProduct, 
         verbose_name=_("ShopProduct"), 
@@ -53,11 +61,20 @@ class BasketItems(models.Model):
         related_name='BasketItems', 
         related_query_name='BasketItems'
         )
+    @property
+    def total_price(self):
+        quantity = self.quantity 
+        price = self.shopproduct.price
+        total = quantity * price
+        return total
+
+    ordered = models.BooleanField(_("Ordered"), default=False)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.shopproduct)
+        #return f'{self.shopproduct.quantity} of {self.shopproduct.title}'
 
 
 class Orders(models.Model):

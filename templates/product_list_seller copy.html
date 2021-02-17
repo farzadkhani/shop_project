@@ -1,0 +1,148 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<DOCTYPE html>
+
+{% block title %}
+    فروشگاه: 
+        {% for i in curent_slug_object %}
+            {{ i.name }}
+        {% endfor %}
+    | فروشگاه اینترنتی ما
+{% endblock %}
+
+{% block content %}
+
+    <!-- Start All Title Box -->
+    <div>
+        {% for i in curent_slug_object %}
+        <div style="float: right; background-color: rgb(217, 230, 235); width: 20%; border: 2px solid brown; padding: 1%; margin: 10px;">
+            <ul style="text-align: right;">
+                {% if i.image %}
+                <li><img src="{{ i.image.url }}" width="150" height="150"></li>
+                {% endif %}
+                <li>{{ i.name }}</li>
+                <li>{{ i.created_at }}</li>
+            </ul>
+        </div>
+        <div style="float:left ;background-color: rgb(217, 230, 235); width: 79%; border: 2px solid brown;padding: 1%;margin: 5px;">
+            {% if i.discription %}
+            <li>{{ i.discription }}</li>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <!-- End All Title Box -->
+
+
+    <!-- start search -->
+
+    <!-- end of search  -->
+
+
+    <!-- start sub categoy with pic -->
+
+    <!-- end sub categoy with pic -->
+
+    <!-- Start Shop Page  -->
+    <div style="margin-right: auto; background-color: burlywood;width: 79%;border: 2px solid rebeccapurple;padding: 1%;margin: 5px;">
+        <div class="shop-box-inner">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
+                    <div class="right-product-box">
+                        <!-- start products -->
+                        <div class="row product-categorie-box">
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
+                                    <div class="row">
+                                        <!-- start products items -->
+                                        {% for product in object_list %}
+                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                    <div class="products-single fix">
+                                                        <div class="box-img-hover">
+                                                            <div class="type-lb">
+                                                                {% comment %} <p class="sale">{{ product.ShopProduct.all.first.shop.name }}</p> {% endcomment %}
+                                                            </div>
+                                                                {% if product.image %}
+                                                                    <img href="{% url 'detail_product' slug=product.slug %}" src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                                {% endif %}
+                                                            <div class="mask-icon">
+                                                                <ul>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                                </ul>
+                                                                <a class="cart" href="#">افزودن به سبد خرید</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="why-text">
+                                                            <a href="{% url 'detail_product' slug=product.slug %}">{{ product.name }}</a>
+                                                            {% comment %} {% if product.Off.all.first.price %}
+                                                                {% for key, value in off_percent_list.items %}
+                                                                    {% if product.id == key %}
+                                                                        <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
+                                                                    {% endif%}
+                                                                {% endfor %}
+                                                                <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
+                                                                <h6><del>{{ product.min_price.last.price}}</del></h6>
+                                                            {% else %}
+                                                            {% endif %} {% endcomment %}
+                                                            <h5>تومان {{ product.min_price.first.price|intcomma }}</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        {% endfor %}
+                                        <!-- end products items -->
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="list-view">
+                                    <div class="list-view-box">
+                                        <div class="row">
+                                            {% for product in object_list %}
+                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                    <div class="products-single fix">
+                                                        <div class="box-img-hover">
+                                                            <div class="type-lb">
+                                                                <p class="sale">{{ product.brand }}</p>
+                                                            </div>
+                                                            {% if product.image %}
+                                                                <img src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                            {% endif %}
+                                                            <div class="mask-icon">
+                                                                <ul>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                                </ul>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
+                                                    <div class="why-text full-width">
+                                                        <h4>{{ product.name }}</h4>
+                                                        <h5> <del>{{ product.ShopProduct.all.first.price|intcomma}}</del> {{ product.ShopProduct.all.first.price|intcomma}} </h5>
+                                                        {% if product.detail %}
+                                                            <p>{{ product.detail }}</p>
+                                                        {% endif %}
+                                                        <a class="btn hvr-hover" href="#">Add to Cart</a>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- End Shop Page -->
+
+
+{% endblock %}
