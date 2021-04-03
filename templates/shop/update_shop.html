@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<DOCTYPE html>
+
+{% block title %}
+    {% for i in curent_slug_object %}
+        {{ i.name }}
+    {% endfor %}
+    | فروشگاه اینترنتی ما
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>My Account</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active">حساب کاربری</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+
+    <h2>تعییر اطلاعات فروشگاه</h2>
+    <div>
+        <form method='post' enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class='col-6'>
+                <p>{{ form.name }}{{ form.city.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>نام مستعار : {{ form.slug }}{{ form.street.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>فیسبوک : {{ form.facebook }}{{ form.number.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>اینستاگرام : {{ form.instagram }}{{ form.zip_code.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>تلگرام : {{ form.telegram }}{{ form.zip_code.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>واتساپ : {{ form.whatsapp }}{{ form.zip_code.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>توضیحات فروشگاه : {{ form.discription }}{{ form.zip_code.help_text }}</p>
+            </div>            
+            <div class='col-6'>
+                <p>عکس فروشگاه : {{ form.image }}{{ form.zip_code.help_text }}</p>
+            <hr/>
+            <button class='btn btn-success'>تایید اصلاعات</button>
+        </form>
+    </div>
+
+
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+{% endblock %}

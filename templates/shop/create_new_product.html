@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<DOCTYPE html>
+
+{% block title %}
+    {% comment %} {% for i in curent_slug_object %}
+        {{ i.name }}
+    {% endfor %}
+    | فروشگاه اینترنتی ما {% endcomment %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>My Account</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active">حساب کاربری</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+
+    <h2>ایجاد فروشگاه</h2>
+    <div>
+        <form method='post' enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class='col-6'>
+                <p>نام محصول : {{ form.product }}{{ form.city.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>سایز محصول : {{ form.size }}{{ form.street.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>رنگ محصول : {{ form.color }}{{ form.number.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>قیمت محصول : {{ form.price }}{{ form.zip_code.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>تعداد موجودی : {{ form.quantity }}{{ form.zip_code.help_text }}</p>
+            </div>
+            <div class='col-6'>
+                <p>زمان انتشار : </p>{{ form.publish_time }}
+            </div>
+
+            <button class='btn btn-success'>تایید اصلاعات</button>
+        </form>
+    </div>
+
+
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+{% endblock %}

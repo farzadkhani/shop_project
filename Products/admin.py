@@ -43,18 +43,18 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
 
-class InLineShopProduct(admin.TabularInline):
-    model = models.ShopProduct
-    extra = 1
-    #max_num = 3    #max number of extra
+# class InLineShopProduct(admin.TabularInline):
+#     model = models.ShopProduct
+#     extra = 1
+#     #max_num = 3    #max number of extra
 
 @admin.register(models.ShopProduct)
 class ShopProductAdmin(admin.ModelAdmin):
-    inlines = [InLineShopProduct]
-    list_display = ('parent_self', 'id', 'product', 'shop', 'price', 'size', 'color', 'image_tag') # 'quantity', 'create', 'update'
+    # inlines = [InLineShopProduct]
+    list_display = ('id', 'product', 'shop', 'price', 'size', 'color', 'image_tag') # 'quantity', 'create', 'update'
     search_fields = ('product', 'price', 'shop', 'quantity')
     list_filter = ('created_at', 'updated_at', 'publish_time')
-    list_display_links = ('parent_self', 'shop')
+    list_display_links = ('shop', )# 'parent_self', 
 
     class Meta:
         ordering = ['-quantity', 'price']

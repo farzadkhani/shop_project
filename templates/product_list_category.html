@@ -17,36 +17,27 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
+                    {% if search_name%}
+                        <h2 style='color:red;'><span><h4 style='color:#ffffff;'>جستجو برای :</h4></span>{{ search_name }}
+                        </h2>
+                    {% endif %}
                     {% for i in curent_slug_object %}
                         <h2>{{ i.name }}</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href='{% url "home" %}'>خانه 
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href='{% url "home" %}'>خانه
                                 {% for b in i.category_road %}
                                     <a>/</a>
-                                    <a  href='{% url 'search_product' slug=b.slug %}'>{{ b.name }}</a><!-- ??????? -->
+                                    <a href="{% url 'search_product' slug=b.slug %}">{{ b.name }}</a><!-- ??????? -->
                                 {% endfor %}
-                            </a></li>
+                                </a></li>
                     {% endfor %}
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- End All Title Box -->
-
-    <!-- start search -->
-    </div>
-    <div class='col-8'>
-        <form method='get' action=''>
-            <div class="row">
-                {{ form.as_p}}
-                <button type='submit'>search</button>
-            </div>
-        </form>
-    </div>
-    <!-- end of search  -->
 
     <!-- start sub categoy with pic -->
     <div class='row'>
@@ -69,77 +60,92 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
                     <div class="product-categori">
-                        <div class="search-product">
-                            <form action="#">
-                                <input class="form-control" placeholder="Search here..." type="text">
-                                <button type="submit"> <i class="fa fa-search"></i> </button>
-                            </form>
-                        </div>
                         <div class="filter-sidebar-left">
-                            <div class="title-left">
-                                <h3>دسته بندی ها</h3>
-                            </div>
-                            <div>
-                                {% for i in curent_slug_object %}    
-                                    {% if i.parent %}
-                                        <h2>Go up to 
+                            {% if curent_slug_object %}
+                                <div class="title-left">
+                                    <h3>دسته بندی ها</h3>
+                                </div>
+                                <div>
+                                    {% for i in curent_slug_object %}
+                                        {% comment %} {% if i.parent %}
+                                        <h2>Go up to
                                             <a href="{% url 'search_product' slug=i.parent.slug %}">
                                                 {{ i.parent }}
                                             </a>
                                         </h2>
-                                    {% else %}
-                                        <h2>Go up to 
+                                        {% else %}
+                                        <h2>Go up to
                                             <a>
                                                 {{ i.name }}
                                             </a>
                                         </h2>
-                                    {% endif %}
+                                        {% endif %}
 
-                                    {% if i.children.count %}
+                                        {% if i.children.count %}
                                         <h2>Subcategories</h2>
                                         <ul>
                                             {% for child in i.children.all %}
                                             <li><a href="{% url 'search_product' slug=child.slug %}">{{ child.name }}</a></li>
                                             {% endfor %}
                                         </ul>
-                                    {% endif %}
+                                        {% endif %}
 
-                                    <h2>Entries</h2>
-                                    {% if category.entries_set.all %}
+                                        <h2>Entries</h2>
+                                        {% if category.entries_set.all %}
                                         {% for entry in category.entries_set.all %}
-                                            <p><a href="#">{{ entry.headline }}</a></p>
+                                        <p><a href="#">{{ entry.headline }}</a></p>
                                         {% endfor %}
-                                    {% else %}
+                                        {% else %}
                                         <p><em>No entries for {{ i }}</em></p>
-                                    {% endif %}
-                                {% endfor %}
+                                        {% endif %} {% endcomment %}
+                                        {% for j in i.category_road %}
+                                            <h3>{{ j }}</h3>
+                                        {% endfor %}
+                                        <hr>
+                                        {% for j in i.get_all_sub_childrens_ %}
+                                            <h3>{{ j }}</h3>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                        </div>
+
+                        <!-- price filter -->
+                        {% if first_price_range %}
+                        <div class='card mb-4'>
+                            <h6 class='card-header'>قیمت</h6>
+                            <div class='list-group list-group-flush'>
+                                <li class='list-group-item'>
+                                    {{ first_price_range.first_min_price|intcomma }}
+                                    <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value'/>
+                                    {{ last_price_range.first_min_price|intcomma }}
+                                </li>
+                                <li class='list-group-item'>
+                                    بیشترین:
+                                    <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}'/>
+                                    {{ last_price_range.first_min_price|intcomma }}
+                                </li>
                             </div>
                         </div>
-                        <div class="filter-price-left">
-                            <div class="title-left">
-                                <h3>Price</h3>
-                            </div>
-                            <div class="price-box-slider">
-                                <div id="slider-range"></div>
-                                <p>
-                                    <input type="text" id="amount" readonly style="border:0; color:#fbb714; font-weight:bold;">
-                                    <button class="btn hvr-hover" type="submit">Filter</button>
-                                </p>
-                            </div>
-                        </div>
+                        {% endif %}
+                        <!-- end price filter -->
+
                         <div class="filter-brand-left">
                             <div class="title-left">
                                 <h3>برند ها</h3>
                             </div>
                             <div>
                                 <ul>
-                                    <form method='get'>
+                                    <form method='GET'>
                                         {% for brand in clean_brand%}
-                                            <li>
-                                                <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>
+                                        <li>
+                                            <button type='submit' class='button' name='brand_filter' value='{{ brand.name }}'>
                                                 {{ brand.name }}
-                                                </button>
-                                            </li>
+                                            </button>
+                                        </li>
                                         {% endfor %}
                                     </form>
                                 </ul>
@@ -148,20 +154,34 @@
 
                     </div>
                 </div>
+
+                {% comment %} <div>
+                    <div>
+                        <form action="" method="get" id="search-form">
+                            {{ formattrs.as_p }}
+                        </form>
+                    </div>
+
+                    <div>
+                        <button type="submit" form="search-form" class="btn btn-light" value="For sale">For rent</button>
+                        <button form="rent" type="submit" class="btn btn-light" value="For sale">For Sale</button>
+
+                    </div>
+                </div> {% endcomment %}
+
                 <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
                     <div class="right-product-box">
                         <div class="product-item-filter row">
                             <div class="col-12 col-sm-8 text-center text-sm-left">
                                 <div class="toolbar-sorter-right">
-                                    <form action='' method='get'>
+                                    <form action='' method='GET'>
                                         <span>دسته بندی</span>
-                                        
                                         <select class="selectpicker show-tick form-control" name='order_by' onchange='this.form.submit();'>
-									    <option value='-publish_time'>جدید ترین</option>
-									    <option value="publish_time">قدیمی ترین</option>
-									    <option value="ShopProduct">بیشترین قمت</option>
-									    <option value="-ShopProduct">کم ترین قیمت</option>
-								        </select>
+                                            <option value='-publish_time'>جدید ترین</option>
+                                            <option value="publish_time">قدیمی ترین</option>
+                                            <option value="-ShopProduct__price">بیشترین قمت</option>
+                                            <option value="ShopProduct__price">کم ترین قیمت</option>
+                                        </select>
                                     </form>
                                 </div>
                             </div>
@@ -185,44 +205,46 @@
                                     <div class="row">
                                         <!-- start products items -->
                                         {% for product in object_list %}
-                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-                                                    <div class="products-single fix">
-                                                        <div class="box-img-hover">
-                                                            <div class="type-lb">
-                                                                <p class="sale">{{ product.ShopProduct.all.first.shop.name }}</p>
-                                                            </div>
-                                                                {% if product.image %}
-                                                                    {% if product.min_price %}
-                                                                        <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}" ><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
-                                                                    {% else %}
-                                                                        <a href="{% url 'detail_product_not_seller' slug=product.slug %}" ><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
-                                                                    {% endif %}
-                                                                {% endif %}
+                                            <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                <div class="products-single fix">
+                                                    <div class="box-img-hover">
+                                                        <div class="type-lb">
+                                                            <p class="sale">{{ product.ShopProduct.all.first.shop.name}}</p>
                                                         </div>
-                                                        <div class="why-text">
+                                                        {% if product.image %}
                                                             {% if product.min_price %}
-                                                                <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}">{{ product.name }}</a>
+                                                                <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
                                                             {% else %}
-                                                                <a href="{% url 'detail_product_not_seller' slug=product.slug %}">{{ product.name }}</a>
+                                                                <a href="{% url 'detail_product_not_seller' slug=product.slug %}"><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
                                                             {% endif %}
-                                                            {% comment %} {% if product.Off.all.first.price %}
-                                                                {% for key, value in off_percent_list.items %}
-                                                                    {% if product.id == key %}
-                                                                        <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
-                                                                    {% endif%}
-                                                                {% endfor %}
-                                                                <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
-                                                                <h6><del>{{ product.min_price.last.price}}</del></h6>
-                                                            {% else %}
-                                                            {% endif %} {% endcomment %}
-                                                            {% if product.min_price %}
-                                                                <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
-                                                            {% else %}
-                                                                <h5><a>--نا موجود--</a></h5>
-                                                            {% endif %}
-                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="why-text">
+                                                        {% if product.min_price %}
+                                                            <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}">{{product.name }}</a>
+                                                        {% else %}
+                                                            <a href="{% url 'detail_product_not_seller' slug=product.slug %}">{{product.name }}</a>
+                                                        {% endif %}
+                                                        {% comment %} {% if product.Off.all.first.price %}
+                                                        {% for key, value in off_percent_list.items %}
+                                                        {% if product.id == key %}
+                                                        <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
+                                                        {% endif%}
+                                                        {% endfor %}
+                                                        <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
+                                                        <h6>
+                                                            <del>{{ product.min_price.last.price}}</del>
+                                                        </h6>
+                                                        {% else %}
+                                                        {% endif %} {% endcomment %}
+                                                        {% if product.min_price %}
+                                                            <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
+                                                        {% else %}
+                                                            <h5><a>--نا موجود--</a></h5>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
+                                            </div>
                                         {% endfor %}
                                         <!-- end products items -->
                                     </div>
@@ -238,7 +260,8 @@
                                                                 <p class="sale">{{ product.brand }}</p>
                                                             </div>
                                                             {% if product.image %}
-                                                                <img src="{{ product.image.url }}" class="img-fluid" alt="Image">
+                                                            <img src="{{ product.image.url }}" class="img-fluid"
+                                                                 alt="Image">
                                                             {% endif %}
                                                             <div class="mask-icon">
                                                                 <ul>
@@ -246,7 +269,7 @@
                                                                     <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                                                     <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                                                 </ul>
-
+    
                                                             </div>
                                                         </div>
                                                     </div>
@@ -254,7 +277,10 @@
                                                 <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
                                                     <div class="why-text full-width">
                                                         <h4>{{ product.name }}</h4>
-                                                        <h5> <del>{{ product.ShopProduct.all.first.price|intcomma}}</del> {{ product.ShopProduct.all.first.price|intcomma}} </h5>
+                                                        <h5>
+                                                            <del>{{ product.ShopProduct.all.first.price|intcomma}}</del>
+                                                            {{ product.ShopProduct.all.first.price|intcomma}}
+                                                        </h5>
                                                         {% if product.detail %}
                                                             <p>{{ product.detail }}</p>
                                                         {% endif %}
@@ -274,5 +300,6 @@
     </div>
     <!-- End Shop Page -->
 
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
 {% endblock %}

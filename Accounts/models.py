@@ -106,16 +106,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     #def email_user(self, subject, message, from_email=None, **kwargs):
     #    send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    @property
+    def get_address(self):
+        address = Address.objects.filter(user=self)
+        return address
     
     def __str__(self):
         return self.email   
-
+    
+    @property
+    def get_shop(self):
+        shop = Shop.objects.get(user=self)
+        return shop
 
 class Profile(models.Model):
     pass
 
 
 class Address(models.Model):    #for address of users
+    name = models.CharField(_('place name'), max_length=500)
     user = models.ForeignKey(
         'User', 
         verbose_name=_('User'), 
@@ -123,12 +132,6 @@ class Address(models.Model):    #for address of users
         related_name='Address', 
         related_query_name='Address'
         )
-                            ##in related_name you give a name to the attribute that you can 
-                            # use for the relation (named reverse realationship) from the 
-                            # related object http://127.0.0.1:8000/http://127.0.0.1:8000/back to this one (from Author to Article). 
-                            # After defining this you can retrieve the articles of an user like 
-                            # so:author.articles.all()
-                            ##in related_query_name 
     city = models.CharField(_('city name'), max_length=300)
     street = models.CharField(_('streets name'), max_length=1000)
     number = models.IntegerField(_('house number'))
@@ -173,7 +176,7 @@ class Shop(models.Model):   #the saler hear is registrate
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     is_active = models.BooleanField(
         _('active'),
-        default=True,
+        default=False,
     )   
     class Meta:
         verbose_name = _('Shop')

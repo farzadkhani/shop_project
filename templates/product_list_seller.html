@@ -16,20 +16,26 @@
     <!-- Start All Title Box -->
     
     {% for i in curent_slug_object %}
-    <div style="background-color: rgb(217, 230, 235); width: 20%; border: 2px solid brown; padding: 1%; margin: 10px;">
-        <ul style="text-align: right;">
-            {% if i.image %}
-            <li><img src="{{ i.image.url }}" width="150" height="150"></li>
-            {% endif %}
-            <li>{{ i.name }}</li>
-            <li>{{ i.created_at }}</li>
-        </ul>
-    </div>
-    <div style="background-color: rgb(217, 230, 235); width: 79%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
-        {% if i.discription %}
-        <li>{{ i.discription }}</li>
+        {% if request.user == i.user %}
+            <a class="btn hvr-hover" href="{% url 'update_shop' %}"><i class="fas fa-sync-alt"></i>
+                ویرایش اطلاعات فروشگاه
+            </a> 
         {% endif %}
-    </div>
+        <div style="background-color: rgb(217, 230, 235); width: 20%; border: 2px solid brown; padding: 1%; margin: 10px;">
+            <ul style="text-align: right;">
+                {% if i.image %}
+                <li><img src="{{ i.image.url }}" width="150" height="150"></li>
+                {% endif %}
+                <li>{{ i.name }}</li>
+                <li>{{ i.created_at }}</li>
+            </ul>
+        </div>
+        {% if i.discription %}
+            <div style="background-color: rgb(217, 230, 235); width: 79%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
+                <li>{{ i.discription }}</li>
+            </div>
+        {% endif %}
+
     {% endfor %}
     <div style="background-color: rgb(217, 230, 235); width: 10%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
         <a>لیست برند ها:</a>
@@ -91,9 +97,15 @@
     <!-- end sub categoy with pic -->
 
     <!-- Start Shop Page  -->
+    {% for i in curent_slug_object %}{% if request.user == i.user %}
+        <a class="btn hvr-hover" href="{% url 'create_new_product' %}"><i class="fas fa-sync-alt"></i>
+        افزودن محصول جدید
+        </a> 
+    {% endif %}{% endfor %}
     <div style="margin-right: auto; background-color: burlywood;width: 79%;border: 2px solid rebeccapurple;padding: 1%;margin: 5px;">
         <div class="row">
             <!-- start products items -->
+
             {% for product in object_list %}
                     <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
                         <div class="products-single fix">
@@ -119,6 +131,16 @@
                                 {% endif %} {% endcomment %}
                                 <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
                             </div>
+                            {% for i in curent_slug_object %}{% if request.user == i.user %}
+                                <a class="btn hvr-hover" href="">
+                                    <i class="fas fa-sync-alt"></i>
+                                    ویرایش اطلاعات محصول
+                                </a>
+                                <a class="btn hvr-hover" href="">
+                                    <i class="fas fa-sync-alt"></i>
+                                    حذف این محصول از فروشگاه
+                                </a>
+                            {% endif %}{% endfor %}
                         </div>
                     </div>
             {% endfor %}
@@ -127,5 +149,6 @@
     </div>
     <!-- End Shop Page -->
 
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
 {% endblock %}

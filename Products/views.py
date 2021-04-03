@@ -1,149 +1,188 @@
-from django.shortcuts import render
-from django.views.generic import DetailView , ListView, FormView
-from .models import Category, Product, ProductMeta, ShopProduct, Image, ProductMeta, Off, Brand
+from pprint import pprint
+from django.contrib.auth.mixins import LoginRequiredMixin
 from Accounts.models import Shop
-from siteview.forms import ProductForm
-from django.shortcuts import get_object_or_404
+from django.db.models import Avg, Max, Min, Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView
+from django.views.generic.edit import FormMixin
+from siteview.forms import ProductAttrsForm, ProductForm
+from .models import (Brand, Category, Image, Off, Product, ProductMeta,ShopProduct)
+from .forms import SellerShopProductForm
+from django.urls import reverse_lazy
+from django.contrib import messages
+
 
 # Create your views here.
 
-class ProductListCategory(ListView, FormView):
+class SearchInProducts(FormMixin, ListView):
     model = Product
-    queryset = Product.objects.all()    #base queryset
-    form_class = ProductForm    #search form
+    form_class = ProductForm
     template_name = 'product_list_category.html'
-    #paginate_by = 9        #for paginating
-    #slug_url_kwarg = 'slug'
-    #slug = self.kwargs.get(self.slug_url_kwargs)
-        #def get_queryset(self):
-        #category = get_object_or_404(Category, slug=slug)
-        #self.kwargs['category'] = category
-        #return category.get_products
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
-        name = self.request.GET.get('name', None)       #for search
+        url_addres = self.request.path_info.format
+        print('url is:', url_addres)
+        name = self.request.GET.get('q', None)  # for search
         if name:
-            query1 = Product.objects.filter(name__icontains=name)
-            query2 = Product.objects.filter(brand__name__icontains=name)
-            #query3 = Product.objects.filter(name__icontains=name)
-            queryset = (query1 | query2).distinct()     #union two queryset
-        
-        if self.kwargs.get('slug', None):       #for get sub category prouduct
-            category = Category.objects.filter(slug = self.kwargs['slug'])  #get curent page object with slug
-            temprory_list = category[0].get_all_childrens()
-            final_category_list = [category[0]]
-            category_chil_list = []
-            counter_for_temprory_list = len(temprory_list)
+            queryset = queryset.filter(Q(name__icontains=name)|Q(brand__name__icontains=name))
 
-            while counter_for_temprory_list > 0:
-                len_of_temprory_list = len(temprory_list)
-                i_list = range(len_of_temprory_list)
-                delet_list = []
-                list_0 = []
-                
-                for i in i_list:                    
-                    list_0 = [temprory_list[i], *list(list_0)]    #append curent page object to end of childrens object list
-                    list_0 = [*list(list_0), *list(temprory_list[i].get_all_childrens())]    #get curent page list of childrens object with curent page object
-                    delet_list = [*list(delet_list), temprory_list[i]]
-
-                temprory_list = [*list(list_0)]
-                temprory_list = list(set(temprory_list) - set(delet_list))
-                category_chil_list = [*list(category_chil_list), *list(list_0)]
-                list_0 = []
-                counter_for_temprory_list = len(temprory_list)
-            
-            final_category_list = [*list(final_category_list) ,*list(category_chil_list)]
-            queryset = queryset.filter(category__in = final_category_list).order_by('-publish_time')    #use category list  to filter get products with slug of curent page 
-      
-        brand_filter = self.request.GET.get('brand_filter')    #for filter
+        brand_filter = self.request.GET.get('brand_filter')  # for filter
+        # print('brand', brand_filter)
         if brand_filter:
             queryset = queryset.filter(brand__name=brand_filter)
 
-        order_by = self.request.GET.get('order_by')     #for sort by date
+        order_by = self.request.GET.get('order_by')  # for sort by date
         if order_by:
             queryset = queryset.order_by(order_by)
-        #print(queryset[0].Off)
-        
-        #order_by_ = self.request.GET.get('order_by')     #for sort by price
-        #print('order_by', order_by)
-        #if order_by:
-        #    queryset = queryset.order_by(order_by)
-        
-        #print(queryset)
-        return queryset
 
-    #def get_ordering(self):
-    #    ordering = self.request.Get.get('publish_time', '-publish_time')
-    #    return ordering
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #print(self.kwargs['slug'])  #print curent page slug 
+        # context[""] = 
+        context["category_list"] = Category.objects.all()
 
-        #<find the brand list>
+        # <find the brand list>
         for_clean_list = context['object_list']
         clean_list = []
         for i in for_clean_list:
             if i.brand not in clean_list:
                 clean_list.append(i.brand)
         context['clean_brand'] = clean_list
-        #<end find brand list>
+        # <end find brand list>
+
+        # <the search name>
+        context['search_name'] = self.request.GET.get('q')
+        # <end the search name>
+
+        # <the price range>
+        name = self.request.GET.get('q')  # for search
+        qs = Product.objects.filter(Q(name__icontains=name)|Q(brand__name__icontains=name))
+        # print('qs: ', len(qs))
+        qs_list = []
+        for i in qs:
+            if i.find_all_size_and_color:
+                # print('i: ', i.id)
+                qs_list.append(i)
+                # print('qs list: ', qs_list)
+        qsd = sorted(qs_list, key=lambda t: t.first_min_price)
+        # print('price', qsd[0].first_min_price)
+        if len(qsd) > 0:
+            context['first_price_range'] = qsd[0]
+            context['last_price_range'] = qsd[-1]
+        # < end the price range>
+        return context
+
+
+class ProductListCategory(ListView):    # , FormView, FormMixin, 
+    model = Product
+    queryset = Product.objects.all()  # base queryset
+    
+    template_name = 'product_list_category.html'
+    # paginate_by = 9        # for paginating
+
+    def get_queryset(self):
+        print(self.request.get_full_path())
+        queryset = super().get_queryset()
+
+        if self.kwargs.get('slug', None):  # for get sub category prouduct
+            category_object = Category.objects.get(slug=self.kwargs['slug'])
+            final_category_list = category_object.get_all_sub_childrens_
+            final_category_list = [*list(final_category_list), category_object]
+            queryset = queryset.filter(category__in=final_category_list).order_by(
+                '-publish_time')  # use category list  to filter get products with slug of curent page
+
+        brand_filter = self.request.GET.get('brand_filter')  # for filter
+        # print('brand', brand_filter)
+        if brand_filter:
+            queryset = queryset.filter(brand__name=brand_filter)
+
+        order_by = self.request.GET.get('order_by')  # for sort by date
+        if order_by:
+            queryset = queryset.order_by(order_by)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # print(self.kwargs['slug'])  #print curent page slug 
+
+        # <find the brand list>
+        for_clean_list = context['object_list']
+        clean_list = []
+        for i in for_clean_list:
+            if i.brand not in clean_list:
+                clean_list.append(i.brand)
+        context['clean_brand'] = clean_list
+        # <end find brand list>
 
         context['curent_slug_object'] = Category.objects.filter(slug=self.kwargs['slug'])
         context["category_list"] = Category.objects.all()
-        context["product_meta_list"] = ProductMeta.objects.filter(product=context['object_list'])
-        #context["shop_product_list"] = ShopProduct.objects.filter(product=context['object_list'])  #is_public=True
-        #context["product_off_list"] = Off.objects.filter(product=context['object_list'])
-        context["product_meta_list"] = ProductMeta.objects.filter(product=context['object_list'])
+        # context["shop_product_list"] = ShopProduct.objects.filter(product=context['object_list'])  #is_public=True
+        # context["product_off_list"] = Off.objects.filter(product=context['object_list'])
+        # context["product_meta_list"] = ProductMeta.objects.filter(product=context['object_list'])
 
-        #<calculate off percent>
-        # context['off_percent_list'] = {}
-        # for current_product in context['object_list']:
-        #     if Off.objects.filter(product_id=current_product.id):
-        #         product_prcie = ShopProduct.objects.filter(product_id=current_product.id)[0].price
-        #         off_price = Off.objects.filter(product_id=current_product.id)[0].price
-        #         off_percent = int((product_prcie - off_price)*100/product_prcie)
-        #         context['off_percent_list'][current_product.id] = off_percent
+        # <the price range>
+        if self.kwargs.get('slug', None):  # for get sub category prouduct
+            category_object = Category.objects.get(slug=self.kwargs['slug'])
+            final_category_list = category_object.get_all_sub_childrens_
+            final_category_list = [*list(final_category_list), category_object]
+            qs = Product.objects.filter(category__in=final_category_list).order_by('-publish_time')
+            qs_list = []
+            for i in qs:
+                if i.find_all_size_and_color:
+                    qs_list.append(i)
+            qsd = sorted(qs_list, key=lambda t: t.first_min_price)
+            # print('price', qsd[0].first_min_price)
+            if len(qsd) > 0:
+                context['first_price_range'] = qsd[0]
+                context['last_price_range'] = qsd[-1]
+        # < end the price range>
         
-        #<end calculate off percent>
+        # context['formattrs'] = ProductAttrsForm()
 
-        #context["product_images_list"] = Image.objects.filter(product=context['object_list'])
-        #context['filter_form'] = forms.FilterListView(self.request.GET)
-        #get_copy = self.request.GET.copy()
-        #if get_copy.get('page'):
-        #    get_copy.pop('page')
-        #context['get_copy'] = get_copy
-        #print(context['object_list'])
-        print(self.kwargs)
+
+        # <calculate off percent>
+        #  context['off_percent_list'] = {}
+        #  for current_product in context['object_list']:
+        #      if Off.objects.filter(product_id=current_product.id):
+        #          product_prcie = ShopProduct.objects.filter(product_id=current_product.id)[0].price
+        #          off_price = Off.objects.filter(product_id=current_product.id)[0].price
+        #          off_percent = int((product_prcie - off_price)*100/product_prcie)
+        #          context['off_percent_list'][current_product.id] = off_percent
+
+        # <end calculate off percent>
+
+        # context["product_images_list"] = Image.objects.filter(product=context['object_list'])
+        # context['filter_form'] = forms.FilterListView(self.request.GET)
+        # get_copy = self.request.GET.copy()
+        # if get_copy.get('page'):
+        #     get_copy.pop('page')
+        # context['get_copy'] = get_copy
+        # print(context['object_list'])
+
         return context
-    
+
 
 class ProductDetail(DetailView):
     model = Product
     template_name = 'product_detail.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # print('id of shop product', self.kwargs['id'])
-        # print('name of product', self.kwargs['slug'])
-        
+
         context["category_list"] = Category.objects.all()
-        
+
         # < product image from Image class >
         context['product_image'] = Image.objects.filter(product__slug=self.kwargs['slug'])
         # < end product image from Image class >
 
         # < current shopProduct >
-        # print(len, len(self.kwargs))
-        if len(self.kwargs)>1:  # check product does have a shopproduct or not
+        if len(self.kwargs) > 1:  # check product does have a shopproduct or not
             context['current_shop_product'] = ShopProduct.objects.filter(id=self.kwargs['id'])
         # < end current shopProduct >
 
-        # print('find all same', context['current_shop_product'][0].find_all_same_size_and_color)        
-
-        
         # < calculate off percent >
         # if Off.objects.filter(product_id=current_product[0].id):
         #     product_price = ShopProduct.objects.filter(product_id=current_product[0].id)
@@ -151,14 +190,9 @@ class ProductDetail(DetailView):
         #     off_percent = int((product_price[0].price - off_price[0].price)*100/product_price[0].price)
         #     context['off_percent'] = off_percent
         # <end calculate off percent>
-
-        # print('---')
-        # print(self.kwargs['slug'])
-        # print('---')
-        # print('context', context)
-        print(self.kwargs)
+        # pprint(ShopProduct.__dict__)
         return context
-    
+
 
 class ProductListSeller(ListView):
     model = Product
@@ -167,22 +201,36 @@ class ProductListSeller(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(ShopProduct__shop__slug=self.kwargs['slug'], ShopProduct__parent_self=None)  # use category list  to filter get products with slug of curent page 
+        queryset = queryset.filter(ShopProduct__shop__slug=self.kwargs[
+            'slug'])  # use category list  to filter get products with slug of curent page
+        # print('queryset', queryset)
+        product_check_list = []
+        for i in queryset:
+            if not i.name in product_check_list:
+                product_check_list.append(i.name)
+        # print('category_check_list', product_check_list)
 
-        brand_filter = self.request.GET.get('brand_filter')    # for filter
+        # for i in product_check_list:
+        #     queryset = queryset.filter(name=i)[1:].delete()
+        # print('queryset', queryset)
+
+        brand_filter = self.request.GET.get('brand_filter')  # for filter
         if brand_filter:
             queryset = queryset.filter(brand__name=brand_filter)
 
-        order_by = self.request.GET.get('order_by')     # for sort by date
+        order_by = self.request.GET.get('order_by')  # for sort by date
         if order_by:
             queryset = queryset.order_by(order_by)
 
-        category_filter = self.request.GET.get('category_filter')    # for filter
+        category_filter = self.request.GET.get('category_filter')  # for filter
         if category_filter:
             queryset = queryset.filter(category__slug=category_filter)
-        
-        return queryset
-    
+        # print('queryset: ', queryset)
+        # print('len queryset: ', len(queryset))
+        # print("set queryset: ", set(queryset))
+        # print("len set queryset: ", len(set(queryset)))
+        return set(queryset)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # print('object_list', context['object_list'])
@@ -207,20 +255,46 @@ class ProductListSeller(ListView):
 
         context["category_list"] = Category.objects.all()
         return context
-    
-
-# this is a bad way we need the on product list not one product_list with category_detail
-# class CategoryDetail(DetailView):
-#     model = Category
-#     template_name = 'category_detail.html'
-#     
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["category_list"] = Category.objects.all()
-#         print(kwargs)#for us to see the kwargs<category slug> in terminal
-#         context["product_list"] = Product.objects.filter(category=kwargs['object'])
-#         context["shop_product_list"] = Product.objects.filter()
-#         context["shop_list"] = Shop.objects.all()
-#         return context
 
 
+class SellerShopProduct(LoginRequiredMixin, CreateView):
+    form_class = SellerShopProductForm
+    success_url = reverse_lazy('profile')
+    template_name = 'shop/create_new_product.html'
+    # success_message = 'your profile was created successfully'
+
+    # for auto add the shop field
+    def form_valid(self, form):
+        form.instance.shop = self.request.user.get_shop
+        return super(SellerShopProduct, self).form_valid(form)
+
+
+class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
+    form_class = SellerShopProductForm
+    success_url = reverse_lazy('profile')
+    template_name = 'shop/create_new_product.html'
+    # success_message = 'your profile was created successfully'
+
+    #for limited user to access another users profile we can do this or use 'LoginRequiredMixin'
+    #now we did not use pk for address the profile page of logined user and did not use pk for url
+    def get_object(self):
+        return get_object_or_404(
+            ShopProduct, 
+            shop=self.request.user.get_shop, 
+            product=self.kwargs.get('product'), 
+            size=self.kwargs.get('size'),
+            color=self.kwargs.get('color'),
+            )
+
+    # for auto add the shop field
+    def form_valid(self, form):
+        form.instance.shop = self.request.user.get_shop
+        return super(SellerShopProduct, self).form_valid(form)
+
+
+def remove_prodcut_from_store(request, id):
+    shopproduct = ShopProduct.objects.get(shopproduct__id = id)
+    shopproduct.delete()
+    #print(basket_item[0].quantity)
+    messages.info(request, 'این محصول از فروشگاه شما حذف شد')
+    return redirect('search_product_seller')

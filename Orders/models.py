@@ -41,7 +41,7 @@ class Basket(models.Model):
         basket_items = self.BasketItems.all()
         total_price = 0
         for i in basket_items:
-            total_price += (i.ShopProduct.total_price)
+            total_price += (i.quantity * i.shopproduct.price)
         return total_price
 
 

@@ -7,4 +7,11 @@ from django.contrib.admin import widgets
 
 class ProductForm(forms.Form):
     name = forms.CharField(required=False)
+
+class ProductAttrsForm(forms.ModelForm):
+    
+    class Meta:
+        model = Product
+        fields = ("brand", "category")
+
     

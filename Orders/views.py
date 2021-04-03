@@ -17,7 +17,7 @@ class BasketItemList(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        # queryset = queryset.filter(user=self.request.user)
+        queryset = queryset.filter(user=self.request.user)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -27,6 +27,7 @@ class BasketItemList(ListView):
         # context['curent_slug_object'] = Category.objects.filter(slug=self.kwargs['slug'])
         # print('kwargs', self.kwargs)
         # print('context', context['object_list'][0].basket_items[0])
+        print('object list', context['object_list'])
         return context
     
 
@@ -74,7 +75,6 @@ def decrease_from_basket(request, id):
         messages.info(request, 'این محصول از سبد شما حذف شد')
         return redirect('basket')
 
-    
 
 def increase_from_basket(request, id):
     basket_item = BasketItems.objects.get(shopproduct__id = id, basket__user=request.user)

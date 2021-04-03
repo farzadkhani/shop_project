@@ -3,14 +3,13 @@
 {% load humanize %}
 <DOCTYPE html>
 
-{% block title %}
+    {% block title %}
     مشخصات و قیمت {{ product.name }}
     | فروشگاه اینترنتی ما
-{% endblock %}
+    {% endblock %}
 
-{% block content %}
+    {% block content %}
 
-    
 
     <!-- Start All Title Box -->
     <div class="all-title-box">
@@ -20,13 +19,13 @@
                     <h2>{{ product.category }}</h2>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href='{% url "home" %}'>خانه 
+                            <a href='{% url "home" %}'>خانه
                                 {% for i in product.category.category_road %}
-                                    <a>/</a>
-                                    <a  href='{% url 'search_product' slug=i.slug %}'>{{ i.name }}</a><!-- ??????? -->
+                                <a>/</a>
+                                <a href='{% url 'search_product' slug=i.slug %}'>{{ i.name }}</a><!-- ??????? -->
                                 {% endfor %}
                             </a>
-
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -47,23 +46,25 @@
                     <div id="carousel-example-1" class="single-product-slider carousel slide" data-ride="carousel">
                         <div class="carousel-inner" role="listbox">
                             {% if product.image %}
-                                <div class="carousel-item active"> <img class="d-block w-100" src="{{ product.image.url }}" alt="First slide"> </div>
+                            <div class="carousel-item active"><img class="d-block w-100" src="{{ product.image.url }}"
+                                    alt="First slide"></div>
                             {% endif %}
                             {% if product_image %}
-                                {% for i in product_image%}
-                                    <div class="carousel-item"> <img class="d-block w-100" src="{{ i.image.url }}" alt="Second slide"> </div>
-                                {% endfor %}
+                            {% for i in product_image%}
+                            <div class="carousel-item"><img class="d-block w-100" src="{{ i.image.url }}"
+                                    alt="Second slide"></div>
+                            {% endfor %}
                             {% endif %}
 
                         </div>
-                        <a class="carousel-control-prev" href="#carousel-example-1" role="button" data-slide="prev"> 
-						<i class="fa fa-angle-left" aria-hidden="true"></i>
-						<span class="sr-only">قبلی</span> 
-					</a>
-                        <a class="carousel-control-next" href="#carousel-example-1" role="button" data-slide="next"> 
-						<i class="fa fa-angle-right" aria-hidden="true"></i> 
-						<span class="sr-only">بعدی</span> 
-					</a>
+                        <a class="carousel-control-prev" href="#carousel-example-1" role="button" data-slide="prev">
+                            <i class="fa fa-angle-left" aria-hidden="true"></i>
+                            <span class="sr-only">قبلی</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-example-1" role="button" data-slide="next">
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            <span class="sr-only">بعدی</span>
+                        </a>
                         <ol class="carousel-indicators">
                             {% if product.image %}
                             <li data-target="#carousel-example-1" data-slide-to="0" class="active">
@@ -72,11 +73,11 @@
                             {% endif %}
 
                             {% if product_image %}
-                                {% for i in product_image%}
-                                    <li data-target="#carousel-example-1" data-slide-to="1">
-                                        <img class="d-block w-100 img-fluid" src="{{ i.image.url }}" alt="" />
-                                    </li>
-                                {% endfor %}
+                            {% for i in product_image%}
+                            <li data-target="#carousel-example-1" data-slide-to="1">
+                                <img class="d-block w-100 img-fluid" src="{{ i.image.url }}" alt="" />
+                            </li>
+                            {% endfor %}
                             {% endif %}
                         </ol>
                     </div>
@@ -86,60 +87,70 @@
                         <h2>{{ product.name }}</h2>
                         <h3>برند: {{ product.brand }}</h3>
                         {% comment %} {% if product.Off.all.first.price %}
-                            <h4 style='color:red;'>تخفیف برای شما%{{ off_percent }}</h4>
-                            <h5>تومان {{ product.min_price.min_off.price|intcomma}}</h5>
-                            <h6><del>{{ product.min_price.last.price}}</del></h6>
+                        <h4 style='color:red;'>تخفیف برای شما%{{ off_percent }}</h4>
+                        <h5>تومان {{ product.min_price.min_off.price|intcomma}}</h5>
+                        <h6>
+                            <del>{{ product.min_price.last.price}}</del>
+                        </h6>
                         {% else %}
                         {% endif %} {% endcomment %}
                         <ul>
                             {% for i,j in product.find_all_size_and_color %}
-                                <li>
-                                    <a>سایز: {{ i }}</a>
-                                    <ul>
-                                        {% for a in j%}
-                                        <li>
-                                            {% for b in a %}
-                                                <li>
-                                                    <a href="{% url 'detail_product' slug=b.product.slug id=b.id %}">رنگ : {{ b.color }}</a>
-                                                </li>
-                                            {% endfor %}
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
+                            <li>
+                                <a>سایز: {{ i }}</a>
+                                <ul>
+                                    {% for a in j%}
+                                    <li>
+                                        {% for b in a %}
+                                    <li>
+                                        <a href="{% url 'detail_product' slug=b.product.slug id=b.id %}">رنگ : 
+                                            {{b.color }}</a>
+                                    </li>
+                                    {% endfor %}
+                            </li>
                             {% endfor %}
                         </ul>
-                        {% for i in current_shop_product %}
-                            <h2>فروشگاه: {{ i.shop.name }}</h2>
-                            <h5>تومان {{ i.price|intcomma }}</h5>
-                            <h7>سایز:  {{ i.size }} رنگ:  {{ i.color }}</h7>
-                            <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
-                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                        </li>
                         {% endfor %}
-                            <div>   
-                                <h4>توضیحات:</h4>
-                                <p>{{ product.detail}}</p>
+                        </ul>
+                        {% for i in current_shop_product %}
+                        <h2>فروشگاه: <a href="{% url 'search_product_seller' slug=i.shop.slug %}"
+                                style='color:red;'>{{i.shop.name }}</a></h2>
+                        <h5>تومان {{ i.price|intcomma }}</h5>
+                        <h7>سایز: {{ i.size }} رنگ: {{ i.color }}</h7>
+                        <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
+                        <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i
+                                class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                        {% endfor %}
+                        <div>
+                            <h4>توضیحات:</h4>
+                            <p>{{ product.detail}}</p>
 
-                                <div class="add-to-btn">
-                                    <div class="add-comp">
-                                        
-                                    </div>
-                                    <div class="share-bar">
-                                        {% if product.ShopProduct.all.first.shop.facebook %}
-                                            <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.facebook }}"><i class="fab fa-facebook" aria-hidden="true"></i></a>
-                                        {% endif %}
-                                        {% if product.ShopProduct.all.first.shop.instagram %}
-                                            <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.instagram }}"><i class="fab fa-google-plus" aria-hidden="true"></i></a>
-                                        {% endif %}
-                                        {% if product.ShopProduct.all.first.shop.telegram %}
-                                            <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.telegram }}"><i class="fab fa-twitter" aria-hidden="true"></i></a>
-                                        {% endif %}
-                                        {% if product.ShopProduct.all.first.shop.whatsapp %}
-                                            <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.whatsapp }}"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-                                        {% endif %}
-                                    </div>
+                            <div class="add-to-btn">
+                                <div class="add-comp">
+
+                                </div>
+                                <div class="share-bar">
+                                    {% if product.ShopProduct.all.first.shop.facebook %}
+                                    <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.facebook }}"><i
+                                            class="fab fa-facebook" aria-hidden="true"></i></a>
+                                    {% endif %}
+                                    {% if product.ShopProduct.all.first.shop.instagram %}
+                                    <a class="btn hvr-hover"
+                                        href="{{ product.ShopProduct.all.first.shop.instagram }}"><i
+                                            class="fab fa-google-plus" aria-hidden="true"></i></a>
+                                    {% endif %}
+                                    {% if product.ShopProduct.all.first.shop.telegram %}
+                                    <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.telegram }}"><i
+                                            class="fab fa-twitter" aria-hidden="true"></i></a>
+                                    {% endif %}
+                                    {% if product.ShopProduct.all.first.shop.whatsapp %}
+                                    <a class="btn hvr-hover" href="{{ product.ShopProduct.all.first.shop.whatsapp }}"><i
+                                            class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                                    {% endif %}
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -149,28 +160,32 @@
     </div>
     <!-- End Cart -->
     {% for b in current_shop_product %}
-        {% for i in current_shop_product %}
-            <h3>برای سایز  و رنگ  {{i.size}} {{i.color}} فروشگاه های زیر موجود است</h3>
-        {% endfor %}
+    {% for i in current_shop_product %}
+    <h3>برای سایز و رنگ {{i.size}} {{i.color}} فروشگاه های زیر موجود است</h3>
+    {% endfor %}
     {% endfor %}
     <div style='border:2px solid red; text-align: right;'>
         <ul>
-            {% for b in current_shop_product %}        
-                {% for i in b.find_all_same_size_and_color%}
-                    <li>
-                        <div>    
-                            {% comment %} <a class="btn hvr-hover" href="{% url 'remove_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i class="fas fa-sync-alt"></i>حذف از سبد خرید</a>
-                            <a class="btn hvr-hover" href="{% url 'decrease_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i class="fas fa-sync-alt"></i>کم کردن از سبد خرید</a> {% endcomment %}
-                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
-                            <a href="{% url 'search_product_seller' slug=i.shop.slug %}">فروشگاه:{{ i.shop.name }}</a>
-                            <span style="display:inline-block; width: 30px;"></span>
-                            <a>{{ i.price }}تومان</a>
-                            <span style="display:inline-block; width: 30px;"></span>
-                            <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
-                        </div
-                    </li>
+            {% for b in current_shop_product %}
+            {% for i in b.find_all_same_size_and_color%}
+            <li>
+                <div>
+                    {% comment %} <a class="btn hvr-hover"
+                        href="{% url 'remove_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i
+                            class="fas fa-sync-alt"></i>حذف از سبد خرید</a>
+                    <a class="btn hvr-hover"
+                        href="{% url 'decrease_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i
+                            class="fas fa-sync-alt"></i>کم کردن از سبد خرید</a> {% endcomment %}
+                    <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i
+                            class="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                    <a href="{% url 'search_product_seller' slug=i.shop.slug %}">فروشگاه:{{ i.shop.name }}</a>
+                    <span style="display:inline-block; width: 30px;"></span>
+                    <a>{{ i.price }}تومان</a>
+                    <span style="display:inline-block; width: 30px;"></span>
+                    <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
+                </div </li>
                 {% endfor%}
-            {% endfor %}
+                {% endfor %}
         </ul>
     </div>
 
@@ -178,4 +193,4 @@
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
 
-{% endblock %}
+    {% endblock %}
