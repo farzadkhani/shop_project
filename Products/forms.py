@@ -14,7 +14,7 @@ class SellerShopProductForm(forms.ModelForm):
     class Meta:
         model = ShopProduct
         fields = [
-            'product', 'size', 'color', 
+            'size', 'color', 
             'price', 'quantity', 'publish_time', 
         ]
         # widgets = {

@@ -17,9 +17,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>My Account</h2>
+                    <h2>فروشگاه شما</h2>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">حساب کاربری</li>
+                        <li class="breadcrumb-item active">بروز رسانی محصول</li>
                     </ul>
                 </div>
             </div>
@@ -28,34 +28,29 @@
     <!-- End All Title Box -->
 
 
-    <h2>ایجاد فروشگاه</h2>
     <div>
-        <form method='post' enctype='multipart/form-data'>
+        <form method='post' enctype='multipart/form-data'> 
+        <!---->
             {% csrf_token %}
             <div class='col-6'>
-                <p>نام فروشگاه : {{ form.name }}{{ form.city.help_text }}</p>
+                <p>{{ object.product }} : نام محصول </p>
             </div>
             <div class='col-6'>
-                <p>نام مستعار : {{ form.slug }}{{ form.street.help_text }}</p>
+                <p>{{ object.size }} : سایز محصول </p>
             </div>
             <div class='col-6'>
-                <p>فیسبوک : {{ form.facebook }}{{ form.number.help_text }}</p>
+                <p>{{ object.color }} : رنک محصول </p>
             </div>
             <div class='col-6'>
-                <p>اینستاگرام : {{ form.instagram }}{{ form.zip_code.help_text }}</p>
+                <p>قیمت محصول : {{ form.price }}{{ form.zip_code.help_text }}</p>
             </div>
             <div class='col-6'>
-                <p>تلگرام : {{ form.telegram }}{{ form.zip_code.help_text }}</p>
+                <p>تعداد موجودی : {{ form.quantity }}{{ form.zip_code.help_text }}</p>
             </div>
             <div class='col-6'>
-                <p>واتساپ : {{ form.whatsapp }}{{ form.zip_code.help_text }}</p>
+                <p>زمان انتشار : </p>{{ form.publish_time }}
             </div>
-            <div class='col-6'>
-                <p>توضیحات فروشگاه : {{ form.discription }}{{ form.zip_code.help_text }}</p>
-            </div>            
-            <div class='col-6'>
-                <p>عکس فروشگاه : {{ form.image }}{{ form.zip_code.help_text }}</p>
-            <hr/>
+
             <button class='btn btn-success'>تایید اصلاعات</button>
         </form>
     </div>

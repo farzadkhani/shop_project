@@ -17,9 +17,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>My Account</h2>
+                    <h2>فروشگاه شما</h2>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">حساب کاربری</li>
+                        <li class="breadcrumb-item active">ایجاد محصول جدید</li>
                     </ul>
                 </div>
             </div>
@@ -28,12 +28,12 @@
     <!-- End All Title Box -->
 
 
-    <h2>ایجاد فروشگاه</h2>
     <div>
         <form method='post' enctype='multipart/form-data'>
             {% csrf_token %}
             <div class='col-6'>
-                <p>نام محصول : {{ form.product }}{{ form.city.help_text }}</p>
+                <p>{{ product_name.name }} : نام محصول </p>
+                {% comment %} <p>نام محصول : {{ form.product }}{{ form.city.help_text }}</p> {% endcomment %}
             </div>
             <div class='col-6'>
                 <p>سایز محصول : {{ form.size }}{{ form.street.help_text }}</p>

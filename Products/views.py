@@ -3,11 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from Accounts.models import Shop
 from django.db.models import Avg, Max, Min, Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView
 from django.views.generic.edit import FormMixin
 from siteview.forms import ProductAttrsForm, ProductForm
-from .models import (Brand, Category, Image, Off, Product, ProductMeta,ShopProduct)
+from .models import (Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, Color)
 from .forms import SellerShopProductForm
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -183,6 +183,17 @@ class ProductDetail(DetailView):
             context['current_shop_product'] = ShopProduct.objects.filter(id=self.kwargs['id'])
         # < end current shopProduct >
 
+        # < find the shop products for shop >
+        if self.request.user.is_authenticated and Shop.objects.filter(user=self.request.user):
+            shopproducts = ShopProduct.objects.filter(
+                shop=self.request.user.get_shop, 
+                product__slug=self.kwargs['slug']
+                ).order_by('size','color')
+            # print('shopproducts: ', shopproducts)
+            context['shopproducts'] = shopproducts
+        # < end >
+
+
         # < calculate off percent >
         # if Off.objects.filter(product_id=current_product[0].id):
         #     product_price = ShopProduct.objects.filter(product_id=current_product[0].id)
@@ -259,42 +270,73 @@ class ProductListSeller(ListView):
 
 class SellerShopProduct(LoginRequiredMixin, CreateView):
     form_class = SellerShopProductForm
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy(
+        'profile'
+        # 'edit_product',
+        # pk=self.kwargs['product'] , 
+        # size=Product.objects.get(pk=self.kwargs['product']), 
+        # color= 
+    )
     template_name = 'shop/create_new_product.html'
     # success_message = 'your profile was created successfully'
 
     # for auto add the shop field
     def form_valid(self, form):
         form.instance.shop = self.request.user.get_shop
+        # print('get kwargs: ', self.kwargs['product'])
+        form.instance.product = Product.objects.get(pk=self.kwargs['product'])
+        # print('form', form)
         return super(SellerShopProduct, self).form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # print('get kwargs: ', self.kwargs['product'])
+        context["product_name"] = Product.objects.get(pk=self.kwargs['product'])
+        # print('product_name: ', context['product_name'])
+        return context
+    
 
 class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
     form_class = SellerShopProductForm
     success_url = reverse_lazy('profile')
-    template_name = 'shop/create_new_product.html'
+    template_name = 'shop/edit_product.html'
     # success_message = 'your profile was created successfully'
 
     #for limited user to access another users profile we can do this or use 'LoginRequiredMixin'
     #now we did not use pk for address the profile page of logined user and did not use pk for url
-    def get_object(self):
+    def get_object(self, queryset=None):
         return get_object_or_404(
             ShopProduct, 
-            shop=self.request.user.get_shop, 
-            product=self.kwargs.get('product'), 
-            size=self.kwargs.get('size'),
-            color=self.kwargs.get('color'),
+            shop = Shop.objects.get(user=self.request.user), 
+            product = Product.objects.get(id = self.kwargs.get('id')),
+            size = Size.objects.get(name = self.kwargs.get('size')),
+            color = Color.objects.get(name = self.kwargs.get('color')),
             )
 
-    # for auto add the shop field
-    def form_valid(self, form):
-        form.instance.shop = self.request.user.get_shop
-        return super(SellerShopProduct, self).form_valid(form)
+    # # for auto add the shop field
+    # def form_valid(self, form):
+    #     form.instance.shop = self.request.user.get_shop
+    #     form.instance.product = Product.objects.get(id=self.kwargs['id'])
+    #     form.instance.size = Size.objects.get(name=self.kwargs['size'])
+    #     form.instance.color = Color.objects.get(name=self.kwargs['color'])
+    #     return super(SellerEditShopProduct, self).form_valid(form)
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(SellerEditShopProduct, self).get_context_data(**kwargs)
+    #     # print('get kwargs: ', self.kwargs['product'])
+    #     context["product_name"] = Product.objects.get(id=self.kwargs['id'])
+    #     context["product_size"] = Size.objects.get(name =self.kwargs['size'])
+    #     context["product_color"] = Color.objects.get(name=self.kwargs['color'])
+    #     # print('product_name: ', context['product_name'])
+    #     return context
+
 
 
 def remove_prodcut_from_store(request, id):
-    shopproduct = ShopProduct.objects.get(shopproduct__id = id)
+    shopproduct = ShopProduct.objects.get(id = id)
     shopproduct.delete()
     #print(basket_item[0].quantity)
     messages.info(request, 'این محصول از فروشگاه شما حذف شد')
-    return redirect('search_product_seller')
+    # return redirect('search_product_seller')
+    return redirect('detail_product', slug= shopproduct.product.slug,id=id)
+

@@ -259,7 +259,7 @@ class Off(models.Model):  # add off on product
     shop_product = models.OneToOneField(
         'ShopProduct',
         verbose_name=_('Shop_product'),
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='Off',
         related_query_name='Off',
         null=True,

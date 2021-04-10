@@ -8,7 +8,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.urls import reverse
-
+from Products.models import ShopProduct
 
 
 class UserManager(BaseUserManager):
@@ -185,6 +185,11 @@ class Shop(models.Model):   #the saler hear is registrate
     def __str__(self):
         return self.name
 
+
+    # @property
+    # def get_shopproducts(self):
+    #     shopproducts = ShopProduct.objects.filter(shop=self)
+    #     return shopproducts
 
 class Email(models.Model):  #for email of users
     user = models.ForeignKey(
