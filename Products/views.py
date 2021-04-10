@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView
 from django.views.generic.edit import FormMixin
 from siteview.forms import ProductAttrsForm, ProductForm
-from .models import (Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, Color)
+from .models import (Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, Color, WishList)
 from .forms import SellerShopProductForm
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -340,3 +340,13 @@ def remove_prodcut_from_store(request, id):
     # return redirect('search_product_seller')
     return redirect('detail_product', slug= shopproduct.product.slug,id=id)
 
+
+def add_to_wish_list(request,slug, id):
+    if WishList.objects.filter(user=request.user, product__id=id).exists():
+        messages.info(request, 'این محصول در لیست علاقه مندی شما وجود دارد!')
+    else:
+        product = Product.objects.get(id = id)
+        user = request.user
+        wishlist = WishList.objects.create(user=user, product=product)
+        messages.info(request, 'این محصول به لیست علاقه مندی شما اضافه شد')
+    return redirect('detail_product', slug=slug ,id=id)

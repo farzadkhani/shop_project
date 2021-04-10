@@ -5,9 +5,15 @@ from . import models
 
 # Register your models here.
 
+class ProductMetaTabularInline(admin.TabularInline):
+    model = models.ProductMeta
+    extra = 1
+    # exclude = ('text_name', )
+
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductMetaTabularInline]
     fieldsets = (
         (None, {
             "fields": ('brand', 'slug'),
@@ -117,3 +123,10 @@ class LikeAdmin(admin.ModelAdmin):
     # )
     # inlines = []
     #add_form = 
+
+
+@admin.register(models.WishList)
+class WishListAdmin(admin.ModelAdmin):
+    list_display = ('user','product')
+    search_fields = ('user','product')
+    list_filter = ('user','product')

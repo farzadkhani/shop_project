@@ -3,7 +3,8 @@ from .views import (
     ProductListCategory, ProductListSeller, 
     ProductDetail, SearchInProducts, 
     SellerShopProduct, remove_prodcut_from_store, 
-    SellerEditShopProduct
+    SellerEditShopProduct,
+    add_to_wish_list,
     )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -20,6 +21,8 @@ urlpatterns = [
     path('remove_product_from_store/<int:id>/', remove_prodcut_from_store, name='remove_prodcut_from_store'),
     path('product/<slug:slug>/<int:id>/', ProductDetail.as_view(), name='detail_product'),
     path('product/<slug:slug>/', ProductDetail.as_view(), name='detail_product_not_seller'),
+    path('add_to_wish_list/<int:id>/<slug:slug>/', add_to_wish_list, name='add_to_wish_list'),
+    
 
     #Basket Urls
     #path('increase_from_basket/<int:id>/', increase_from_basket, name='increase_from_basket'),

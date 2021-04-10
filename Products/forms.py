@@ -25,3 +25,7 @@ class SellerShopProductForm(forms.ModelForm):
         #     'publish_time': widgets.AdminDateWidget()
         # }
     # publish_time = DateTimeField(widget=MinimalSplitDateTimeMultiWidget())
+
+
+class AddToWihsListForm(forms.ModelForm):
+    pass

@@ -8,7 +8,7 @@
     | فروشگاه اینترنتی ما
     {% endblock %}
 
-    {% block content %}
+{% block content %}
 
 
     <!-- Start All Title Box -->
@@ -120,9 +120,11 @@
                         <h7>سایز: {{ i.size }} رنگ: {{ i.color }}</h7>
                         <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
                         {% if user.is_authenticated %}
-                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><iclass="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
+                            <a class="btn hvr-hover" href="{% url 'add_to_wish_list' slug=i.product.slug id=product.id %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
                         {% else %}
-                            <a class="btn hvr-hover" href="{% url 'login' %}"><iclass="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                            <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
+                            <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
                         {% endif %}
                         {% endfor %}
                         <div>
@@ -165,15 +167,15 @@
 
 
     <!-- start my shop -->
-    <div>
-        {% if request.user.get_shop %}
+    {% if request.user.get_shop %}
+        <div style='margin:2%; border:2px solid blue; text-align:right; padding:2%;'>
             <h2>از این محصول با مشخصات زیر در فروشگاه شما موجود است</h2> 
             {% for i in shopproducts %}
                 <p>سایز : {{ i.size }} رنگ : {{ i.color }} قیمت : {{ i.price }} تعداد : {{ i.quantity }}</p>
-                <a class="btn hvr-hover" href="{% url 'edit_product' id=i.product.id color=i.color size=i.size %}"><i class="fas fa-sync-alt"></i>
+                <a class="btn hvr-hover" href="{% url 'edit_product' id=i.product.id color=i.color size=i.size %}"><i class="fas fa-shopping-basket"></i>
                 ویرایش اطلاعات محصول در فروشگاه شما
             </a>
-            <a class="btn hvr-hover" href="{% url 'remove_prodcut_from_store' i.id %}?next={{ request.path|urlencode }}"><i class="fas fa-sync-alt"></i>
+            <a class="btn hvr-hover" href="{% url 'remove_prodcut_from_store' i.id %}?next={{ request.path|urlencode }}"><i class="fas fa-shopping-basket"></i>
                 حذف این محصول از فروشگاه شما
                 {% comment %} ?next={{ request.path|urlencode }}' {% endcomment %}
             </a>
@@ -181,24 +183,24 @@
             <br/>
             {% endfor %}
             <br/>
-            <a class="btn hvr-hover" href="{% url 'create_new_product' product.pk %}"><i class="fas fa-sync-alt"></i>
+            <a class="btn hvr-hover" href="{% url 'create_new_product' product.pk %}"><i class="fas fa-shopping-basket"></i>
                 اضافه کردن این محصول با مشخصات جدید در فروشگاه شما</a>
             <br/>
             <br/>
             <br/>
             <br/>
-        {% endif %}
-    </dic>
+        </div>
+    {% endif %}
     <!-- end my shop -->
 
 
     <!-- start sellers -->
-    {% for b in current_shop_product %}
-    {% for i in current_shop_product %}
-    <h3>برای سایز و رنگ {{i.size}} {{i.color}} فروشگاه های زیر موجود است</h3>
-    {% endfor %}
-    {% endfor %}
-    <div style='border:2px solid red; text-align: right;'>
+    <div style='margin:2%; border:5px solid red; text-align: right; padding:2%;'>
+        {% for b in current_shop_product %}
+        {% for i in current_shop_product %}
+        <h3>فروشگاه های زیر موجود است {{i.color}}و رنگ {{i.size}}  برای سایز</h3>
+        {% endfor %}
+        {% endfor %}
         <ul>
             {% for b in current_shop_product %}
             {% for i in b.find_all_same_size_and_color%}
@@ -206,20 +208,21 @@
                 <div>
                     {% comment %} <a class="btn hvr-hover"
                         href="{% url 'remove_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i
-                            class="fas fa-sync-alt"></i>حذف از سبد خرید</a>
+                            class="fas fa-shopping-basket"></i>حذف از سبد خرید</a>
                     <a class="btn hvr-hover"
                         href="{% url 'decrease_from_basket' slug=shop_product.product.slug id=shop_product.id %}"><i
-                            class="fas fa-sync-alt"></i>کم کردن از سبد خرید</a> {% endcomment %}
+                            class="fas fa-shopping-basket"></i>کم کردن از سبد خرید</a> {% endcomment %}
                     {% if user.is_authenticated %}
-                        <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><iclass="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                        <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
                     {% else %}
-                        <a class="btn hvr-hover" href="{% url 'login' %}"><iclass="fas fa-sync-alt"></i>افزودن به سبد خرید</a>
+                        <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
                     {% endif %}
                     <a href="{% url 'search_product_seller' slug=i.shop.slug %}">فروشگاه:{{ i.shop.name }}</a>
                     <span style="display:inline-block; width: 30px;"></span>
                     <a>{{ i.price }}تومان</a>
                     <span style="display:inline-block; width: 30px;"></span>
-                    <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
+
+                
                 </div </li>
                 {% endfor%}
                 {% endfor %}
@@ -228,7 +231,17 @@
     <!-- end sellers -->
 
 
-    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+<!-- product meta -->
+<div style="margin:2%; border:5px solid black; text-align:right; padding:2%;">
+    <h2 style="color:blue;">مشخصات کالا</h2>
+    {% for meta in product.get_product_meta%}
+        <p style="margin-right:2%; margin-button:1%;">{{ meta.text_title }}<tab style='display:inline-block; margin-right:10%;'></tab>{{ meta.text_value }}</p>
+    {% endfor %}
+</div>
+<!-- end product meta-->
 
 
-    {% endblock %}
+<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+
+{% endblock %}

@@ -78,7 +78,6 @@ class Product(models.Model):  # make product data
         if self.find_all_size_and_color:
             return shop_product[0].price
 
-
     def first_min_price_(self):
         # ShopProduct = apps.get_model(app_label='Products', model_name='ShopProduct' )
         shop_product = self.ShopProduct.order_by('price')
@@ -87,6 +86,10 @@ class Product(models.Model):  # make product data
         if self.find_all_size_and_color:
             return shop_product[0].price
 
+    @property
+    def get_product_meta(self):
+        product_meta = ProductMeta.objects.filter(product=self)
+        return product_meta
 
     def __str__(self):
         return self.name
@@ -107,10 +110,14 @@ class ProductMeta(models.Model):  # product size and coloar
         related_name='ProductMeta',
         related_query_name='ProductMeta'
     )
+    text_title = models.CharField(_('field_title'), max_length=1000)
+    text_value = models.CharField(_('field_value'), max_length=5000)
+
 
     class Meta:
         verbose_name = _('ProductMeta')
         verbose_name_plural = _('ProductMetas')
+        unique_together = ['text_title', 'text_value', 'product']
 
     def __str__(self):
         return str(self.product)
@@ -222,7 +229,7 @@ class ShopProduct(models.Model):  # for price and quantity relate with product a
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
 
     # shop and product should be uniq to gether
-    # unique_toghether
+    # unique_together
     class Meta:
         verbose_name = _('ShopProduct')
         verbose_name_plural = _('ShopProducts')
@@ -413,3 +420,28 @@ class Like(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class WishList(models.Model):
+    user = models.ForeignKey(
+        'Accounts.User',
+        verbose_name=_('User'),
+        on_delete=models.CASCADE,
+        related_name='WishList',
+        related_query_name='WishList'
+    )
+    product = models.ForeignKey(
+        'Product',
+        verbose_name=_('Product'),
+        on_delete=models.CASCADE,
+        related_name='WishList',
+        related_query_name='WishList'
+    )
+
+    class Meta:
+        verbose_name = _('WishList')
+        verbose_name_plural = _('WishLists')
+        unique_together = ['user', 'product']
+
+    def __str__(self):
+        return str(self.user) +" " +str(self.product)
