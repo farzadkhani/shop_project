@@ -95,6 +95,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
+    @property
+    def get_full_name_(self):
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
+
     #@property  #return like parameter instead function like 'name = person.full_name' instead of 'name = person.full_name()'
     #def full_name(self):
     #    return '%s %s' % (self.first_name, self.last_name)
@@ -118,6 +123,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_shop(self):
         shop = Shop.objects.get(user=self)
         return shop
+
 
 class Profile(models.Model):
     pass
@@ -191,6 +197,7 @@ class Shop(models.Model):   #the saler hear is registrate
     #     shopproducts = ShopProduct.objects.filter(shop=self)
     #     return shopproducts
 
+
 class Email(models.Model):  #for email of users
     user = models.ForeignKey(
         'User', 
@@ -217,3 +224,4 @@ class Email(models.Model):  #for email of users
 
     def get_email(self):
         return str(self.to)
+

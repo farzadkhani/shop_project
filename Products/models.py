@@ -7,6 +7,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
 from django.db.models import Min, Max
+# from django.contrib.auth.models import User
 
 
 # for call user from call "settings.AUTH_USER_MODEL"
@@ -90,6 +91,11 @@ class Product(models.Model):  # make product data
     def get_product_meta(self):
         product_meta = ProductMeta.objects.filter(product=self)
         return product_meta
+
+    @property
+    def get_comment(self):
+        comment = Comment.objects.filter(product=self, is_active=True)
+        return comment
 
     def __str__(self):
         return self.name
@@ -380,43 +386,100 @@ class Comment(models.Model):
         related_query_name='Comments'
     )
     text = models.TextField(_('Text'))
-    rate = models.IntegerField(
-        # max_length=1,
-        blank=True,
-        null=True
+    is_active = models.BooleanField(
+        _('is_active'),
+        default=True,
     )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
+    @property
+    def count_comment_like(self):
+        count = CommentLike.objects.filter(comment=self).count()
+        return count
+
+    @property
+    def count_comment_dislike(self):
+        count = CommentDisLike.objects.filter(comment=self).count()
+        return count
+
+    def get_users_like_comment_list(self):
+        comment_likes = CommentLike.objects.filter(comment=self)
+        list1 = []
+        for like in comment_likes:
+            list1.append(like.user)
+        print('list1: ', list1)
+        return list1
+
+    def get_users_dislike_comment_list(self):
+        comment_dislikes = CommentDisLike.objects.filter(comment=self)
+        list2 = []
+        for dislike in comment_dislikes:
+            list2.append(dislike.user)
+        print('list2: ', list2)
+        return list2
+
     class Meta:
         verbose_name = _('Comment')
         verbose_name_plural = _('Comments')
+        unique_together = ['user', 'product']
+
+
+    def __str__(self):
+        return str(self.user)+' '+str(self.product)
+
+
+class CommentLike(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_('User'),
+        related_name='CommentLike',
+        related_query_name='CommentLikes'
+    )
+    comment = models.ForeignKey(
+        'Comment',
+        on_delete=models.CASCADE,
+        verbose_name=_('Comment'),
+        related_name='CommentLike',
+        related_query_name='CommentLikes'
+    )
+    like = models.BooleanField(_('like'), default=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+
+    class Meta:
+        verbose_name = _('CommentLike')
+        unique_together = ['user', 'comment']
+
 
     def __str__(self):
         return str(self.user)
 
 
-class Like(models.Model):
+class CommentDisLike(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name=_('User'),
-        related_name='Like',
-        related_query_name='Likes'
+        related_name='CommentDisLike',
+        related_query_name='CommentDisLikes'
     )
-    product = models.ForeignKey(
-        'Product',
+    comment = models.ForeignKey(
+        'Comment',
         on_delete=models.CASCADE,
-        verbose_name=_('Product'),
-        related_name='Like',
-        related_query_name='Likes'
+        verbose_name=_('Comment'),
+        related_name='CommentDisLike',
+        related_query_name='CommentDisLikes'
     )
-    like = models.BooleanField(_('like'), default=False)
+    dislike = models.BooleanField(_('dislike'), default=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     class Meta:
-        verbose_name = _('Like')
+        verbose_name = _('CommentDisLike')
+        unique_together = ['user', 'comment']
+
 
     def __str__(self):
         return str(self.user)
@@ -437,7 +500,7 @@ class WishList(models.Model):
         related_name='WishList',
         related_query_name='WishList'
     )
-
+    # objects = models.Manager()
     class Meta:
         verbose_name = _('WishList')
         verbose_name_plural = _('WishLists')

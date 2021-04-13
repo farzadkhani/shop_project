@@ -29,7 +29,7 @@
 
 
     <div>
-        <form method='post' enctype='multipart/form-data'> 
+        <form method='POST' enctype='multipart/form-data'> 
         <!---->
             {% csrf_token %}
             <div class='col-6'>
@@ -51,7 +51,7 @@
                 <p>زمان انتشار : </p>{{ form.publish_time }}
             </div>
 
-            <button class='btn btn-success'>تایید اصلاعات</button>
+            <button type='submit' class='btn btn-success'>تایید اصلاعات</button>
         </form>
     </div>
 

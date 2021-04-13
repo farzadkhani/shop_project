@@ -103,26 +103,33 @@ class OffAdmin(admin.ModelAdmin):
 
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('product', 'user', 'text', 'rate')  #, 'created', 'updated'
-    search_fields = ('product', 'user', 'text', 'rate') #, 'created', 'updated'
+    list_display = ('product', 'user', 'text', 'is_active')  #, 'created', 'updated'
+    search_fields = ('product', 'user', 'text', 'is_active') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')
 
 
-@admin.register(models.Like)
-class LikeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'like')  #, 'created', 'updated'
-    search_fields = ('user', 'product', 'like') #, 'created', 'updated'
+@admin.register(models.CommentLike)
+class CommentLikeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'comment', 'like')  #, 'created', 'updated'
+    search_fields = ('user', 'comment', 'like') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')
-    #fields = '__all__'
-    # fieldsets = (
-    #     (None, {
-    #         "fields": (
+#     #fields = '__all__'
+#     # fieldsets = (
+#     #     (None, {
+#     #         "fields": (
                 
-    #         ),
-    #     }),
-    # )
-    # inlines = []
-    #add_form = 
+#     #         ),
+#     #     }),
+#     # )
+#     # inlines = []
+#     #add_form = 
+
+
+@admin.register(models.CommentDisLike)
+class CommentDisLikeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'comment', 'dislike')  #, 'created', 'updated'
+    search_fields = ('user', 'comment', 'dislike') #, 'created', 'updated'
+    list_filter = ('created_at', 'updated_at')
 
 
 @admin.register(models.WishList)

@@ -1,4 +1,4 @@
-from .models import ShopProduct
+from .models import ShopProduct, Comment
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
@@ -27,5 +27,9 @@ class SellerShopProductForm(forms.ModelForm):
     # publish_time = DateTimeField(widget=MinimalSplitDateTimeMultiWidget())
 
 
-class AddToWihsListForm(forms.ModelForm):
-    pass
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = [
+            'text',
+        ]

@@ -4,11 +4,14 @@ from Accounts.models import Shop
 from django.db.models import Avg, Max, Min, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
-from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView, View
 from django.views.generic.edit import FormMixin
 from siteview.forms import ProductAttrsForm, ProductForm
-from .models import (Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, Color, WishList)
-from .forms import SellerShopProductForm
+from .models import (
+    Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, 
+    Color, WishList, Comment, CommentLike, CommentDisLike
+    )
+from .forms import SellerShopProductForm, CommentForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 
@@ -84,7 +87,7 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
     # paginate_by = 9        # for paginating
 
     def get_queryset(self):
-        print(self.request.get_full_path())
+        # print(self.request.get_full_path())
         queryset = super().get_queryset()
 
         if self.kwargs.get('slug', None):  # for get sub category prouduct
@@ -165,12 +168,19 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
         return context
 
 
-class ProductDetail(DetailView):
+class ProductDetail(FormMixin, DetailView):
     model = Product
     template_name = 'product_detail.html'
+    form_class = CommentForm
+    # success_url = reverse_lazy('detail_product', slug= kwargs['slug'],id= kwargs['id'])
+
+    def get_success_url(self):
+        return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # context['form'] = CommentForm()#initial={'product':self.object}
 
         context["category_list"] = Category.objects.all()
 
@@ -193,6 +203,10 @@ class ProductDetail(DetailView):
             context['shopproducts'] = shopproducts
         # < end >
 
+        # < comment >
+
+        # < end comment >
+
 
         # < calculate off percent >
         # if Off.objects.filter(product_id=current_product[0].id):
@@ -203,6 +217,29 @@ class ProductDetail(DetailView):
         # <end calculate off percent>
         # pprint(ShopProduct.__dict__)
         return context
+
+    # for posting the comment
+    def post(self, request, *args, **kwargs):
+        # self.oject = self.get_object()
+        form = self.get_form()
+        if Comment.objects.filter(product__slug=self.kwargs['slug'], user=self.request.user).exists():
+            messages.info(request, 'شما قبلا نظر خود را ثبت کرده اید')
+            return redirect('detail_product', slug= self.kwargs['slug'],id=self.kwargs['id'])
+        else:
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_valid(form)
+        
+    
+    def form_valid(self, form):
+        print('id', self.kwargs['id'])
+        form.instance.product = Product.objects.get(slug=self.kwargs['slug'])
+        form.instance.user = self.request.user
+        # if request.user.is_superuser:
+        #     form.instance.is_active = True
+        form.save()
+        return super(ProductDetail, self).form_valid(form)
 
 
 class ProductListSeller(ListView):
@@ -271,7 +308,7 @@ class ProductListSeller(ListView):
 class SellerShopProduct(LoginRequiredMixin, CreateView):
     form_class = SellerShopProductForm
     success_url = reverse_lazy(
-        'profile'
+        'profile',
         # 'edit_product',
         # pk=self.kwargs['product'] , 
         # size=Product.objects.get(pk=self.kwargs['product']), 
@@ -290,6 +327,8 @@ class SellerShopProduct(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["category_list"] = Category.objects.all()
+
         # print('get kwargs: ', self.kwargs['product'])
         context["product_name"] = Product.objects.get(pk=self.kwargs['product'])
         # print('product_name: ', context['product_name'])
@@ -316,20 +355,22 @@ class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
     # # for auto add the shop field
     # def form_valid(self, form):
     #     form.instance.shop = self.request.user.get_shop
-    #     form.instance.product = Product.objects.get(id=self.kwargs['id'])
-    #     form.instance.size = Size.objects.get(name=self.kwargs['size'])
-    #     form.instance.color = Color.objects.get(name=self.kwargs['color'])
-    #     return super(SellerEditShopProduct, self).form_valid(form)
+    #     # form.instance.product = Product.objects.get(id=self.kwargs['id'])
+    #     # form.instance.size = Size.objects.get(name=self.kwargs['size'])
+    #     # form.instance.color = Color.objects.get(name=self.kwargs['color'])
+    #     form.save()
+    #     return super().form_valid(form)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(SellerEditShopProduct, self).get_context_data(**kwargs)
-    #     # print('get kwargs: ', self.kwargs['product'])
-    #     context["product_name"] = Product.objects.get(id=self.kwargs['id'])
-    #     context["product_size"] = Size.objects.get(name =self.kwargs['size'])
-    #     context["product_color"] = Color.objects.get(name=self.kwargs['color'])
-    #     # print('product_name: ', context['product_name'])
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(SellerEditShopProduct, self).get_context_data(**kwargs)
+        context["category_list"] = Category.objects.all()
 
+        # print('get kwargs: ', self.kwargs['product'])
+        # context["product_name"] = Product.objects.get(id=self.kwargs['id'])
+        # context["product_size"] = Size.objects.get(name =self.kwargs['size'])
+        # context["product_color"] = Color.objects.get(name=self.kwargs['color'])
+        # print('product_name: ', context['product_name'])
+        return context
 
 
 def remove_prodcut_from_store(request, id):
@@ -350,3 +391,60 @@ def add_to_wish_list(request,slug, id):
         wishlist = WishList.objects.create(user=user, product=product)
         messages.info(request, 'این محصول به لیست علاقه مندی شما اضافه شد')
     return redirect('detail_product', slug=slug ,id=id)
+
+
+class WishListView(LoginRequiredMixin, ListView):
+    model = WishList
+    template_name = 'wish_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # print('type wishlist', type(WishList))
+        queryset = WishList.objects.filter(user=self.request.user)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_list"] = Category.objects.all()
+        context['user_name'] = self.request.user.first_name
+        # context['wish_list_objects'] = WishList.objects.filter(user=self.request.user)
+        return context
+
+
+class CommentLikeView(View):
+
+    def get_success_url(self):
+        print('slug and id:', self.kwargs['slug'], self.kwargs['id'])
+        return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+    
+    def get(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=self.kwargs.get('pk'))
+        user = self.request.user
+        if not CommentDisLike.objects.filter(user=user, comment=comment):
+            like = CommentLike.objects.create(user=user, comment=comment)
+            return redirect(self.get_success_url())
+        else:
+            dislike = CommentDisLike.objects.get(user=user, comment=comment)
+            dislike.delete()
+            like = CommentLike.objects.create(user=user, comment=comment)
+            return redirect(self.get_success_url())
+
+
+class CommentDisLikeView(View):
+
+    def get_success_url(self):
+        print('slug and id:', self.kwargs['slug'], self.kwargs['id'])
+        return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+    
+    def get(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=self.kwargs.get('pk'))
+        user = self.request.user
+        if not CommentLike.objects.filter(user=user, comment=comment):
+            dislike = CommentDisLike.objects.create(user=user, comment=comment)
+            return redirect(self.get_success_url())
+        else:
+            like = CommentLike.objects.get(user=user, comment=comment)
+            like.delete()
+            dislike = CommentDisLike.objects.create(user=user, comment=comment)
+            return redirect(self.get_success_url())
+

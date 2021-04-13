@@ -5,6 +5,9 @@ from .views import (
     SellerShopProduct, remove_prodcut_from_store, 
     SellerEditShopProduct,
     add_to_wish_list,
+    WishListView,
+    CommentLikeView,
+    CommentDisLikeView
     )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -22,6 +25,9 @@ urlpatterns = [
     path('product/<slug:slug>/<int:id>/', ProductDetail.as_view(), name='detail_product'),
     path('product/<slug:slug>/', ProductDetail.as_view(), name='detail_product_not_seller'),
     path('add_to_wish_list/<int:id>/<slug:slug>/', add_to_wish_list, name='add_to_wish_list'),
+    path('wish_list/', WishListView.as_view(), name='wish_list'),
+    path('comment_like/<int:pk>/<slug:slug>/<int:id>/', CommentLikeView.as_view(), name='comment_like'),
+    path('comment_dislike/<int:pk>/<slug:slug>/<int:id>/', CommentDisLikeView.as_view(), name='comment_dislike'),
     
 
     #Basket Urls

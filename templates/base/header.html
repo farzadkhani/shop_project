@@ -76,7 +76,7 @@
                                 <li><a href='{% url "profile" %}'>حساب کاربری</a></li>
                                 {% if request.user.get_shop %}<li><a href='{% url 'search_product_seller' request.user.get_shop.slug %}'>فروشگاه من</a></li>{% endif%}
                                 <li><a href='{% url 'basket' %}'>سفارشات من</a></li>
-                                <li><a href="wishlist.html">Wishlist</a></li>
+                                <li><a href="{% url 'wish_list' %}">لیست علاقه مندی ها</a></li>
                                 {% comment %} <li><a href='{% url "logout" %}'>خروج از حساب</a></li> {% endcomment %}
                                 
                                 <li><a href='{% url "logout" %}?next={{ request.path|urlencode }}'>خروج از حساب</a></li>

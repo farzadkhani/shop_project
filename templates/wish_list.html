@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<DOCTYPE html>
+
+{% block title %}
+    {{ user_name }} لیست علاقه مندی های : 
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>سبد خرید</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">خانه</a></li>
+                        <li class="breadcrumb-item active">لیست علاقه مندی ها</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Cart  -->
+    <div class="cart-box-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-main table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>عکس محصول</th>
+                                    <th>نام محصول</th>
+                                    <th>قیمت محصول</th>
+                                    <th>حذف محصول</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for j in object_list %}
+                                {% for i in j.basket_items %}
+                                
+                                    <tr>
+                                        <td class="thumbnail-img">
+                                            <a href="#">
+								    	        <img class="img-fluid" src="{{ i.shopproduct.product.image.url }}" alt="" />
+								            </a>
+                                        </td>
+                                        <td class="name-pr">
+                                            <a href="#">
+								    	        {{ i.shopproduct.product.name }}سایز {{ i.shopproduct.size }} رنگ {{ i.shopproduct.color }}
+								            </a>
+                                        </td>
+                                        <td class="price-pr">
+                                            <p>{{ i.shopproduct.price|intcomma }}</p>
+                                        </td>
+                                        <td class="remove-pr">
+                                            <a href="{% url 'remove_from_basket' id=i.shopproduct.id %}">
+								    	        <i class="fas fa-times"></i>
+								            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+
+
+
+{% endblock %}

@@ -38,12 +38,14 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Images</th>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th>Remove</th>
+                                    <th>عکس محصول</th>
+                                    <th>نام محصول</th>
+                                    <th>قسمت محصول</th>
+                                    <th>تعداد محصول</th>
+                                    <th>قیمت کل</th>
+                                    <th>افزایش تعداد محصول</th>
+                                    <th>کاهش تعداد محصول</th>
+                                    <th>حذف محصول</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,14 +76,14 @@
 
                                         <td>
 								    	    <a class="btn hvr-hover" href="{% url 'increase_from_basket' id=i.shopproduct.id %}">
-                                            <i class="fas fa-sync-alt"></i>
+                                            <i class="fas fa-arrow-up"></i>
                                             افزایش تعداد
                                             </a>
                                         </td>
 
                                         <td>
 								    	    <a class="btn hvr-hover" href="{% url 'decrease_from_basket' id=i.shopproduct.id %}">
-                                            <i class="fas fa-sync-alt"></i>
+                                            <i class="fas fa-arrow-down"></i>
                                             کاهش تعداد
                                             </a>
                                         </td>
