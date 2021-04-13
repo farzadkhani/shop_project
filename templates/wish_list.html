@@ -37,35 +37,32 @@
                                 <tr>
                                     <th>عکس محصول</th>
                                     <th>نام محصول</th>
-                                    <th>قیمت محصول</th>
                                     <th>حذف محصول</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for j in object_list %}
-                                {% for i in j.basket_items %}
-                                
-                                    <tr>
-                                        <td class="thumbnail-img">
-                                            <a href="#">
-								    	        <img class="img-fluid" src="{{ i.shopproduct.product.image.url }}" alt="" />
-								            </a>
-                                        </td>
-                                        <td class="name-pr">
-                                            <a href="#">
-								    	        {{ i.shopproduct.product.name }}سایز {{ i.shopproduct.size }} رنگ {{ i.shopproduct.color }}
-								            </a>
-                                        </td>
-                                        <td class="price-pr">
-                                            <p>{{ i.shopproduct.price|intcomma }}</p>
-                                        </td>
-                                        <td class="remove-pr">
-                                            <a href="{% url 'remove_from_basket' id=i.shopproduct.id %}">
-								    	        <i class="fas fa-times"></i>
-								            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
+                            {% for i in object_list %}
+                                <tr>
+                                    <td class="thumbnail-img">
+                                        <a href="#">
+									        <img class="img-fluid" src="{{ i.product.image.url }}" height="121" alt="" />
+								        </a>
+                                    </td>
+                                    <td class="name-pr">
+                                        <a href="#">
+									        {{ i.product.name }}سایز
+								        </a>
+                                    </td>
+                                    {% comment %} <td class="price-pr">
+                                        <p>{{ i.shopproduct.price|intcomma }}</p>
+                                    </td> {% endcomment %}
+                                    <td class="remove-pr">
+                                        <a href="#">
+                                        {% comment %} {% url 'remove_from_basket' id=i.shopproduct.id %} {% endcomment %}
+									        <i class="fas fa-times"></i>
+								        </a>
+                                    </td>
+                                </tr>
                             {% endfor %}
                             </tbody>
                         </table>
