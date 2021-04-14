@@ -1,4 +1,4 @@
 Django~=3.1.4
 Pillow~=7.0.0
-Django-filter~=3.1.5
-Django-bootstrap-form~=3.4
+
+
