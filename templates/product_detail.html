@@ -113,20 +113,29 @@
                         </li>
                         {% endfor %}
                         </ul>
-                        {% for i in current_shop_product %}
-                        <h2>فروشگاه: <a href="{% url 'search_product_seller' slug=i.shop.slug %}"
-                                style='color:red;'>{{i.shop.name }}</a></h2>
-                        <h5>تومان {{ i.price|intcomma }}</h5>
-                        <h7>سایز: {{ i.size }} رنگ: {{ i.color }}</h7>
-                        <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
-                        {% if user.is_authenticated %}
-                            <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
-                            <a class="btn hvr-hover" href="{% url 'add_to_wish_list' slug=i.product.slug id=product.id %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
+                        {% if current_shop_product %}
+                            {% for i in current_shop_product %}
+                                <h2>فروشگاه: <a href="{% url 'search_product_seller' slug=i.shop.slug %}"
+                                        style='color:red;'>{{i.shop.name }}</a></h2>
+                                <h5>تومان {{ i.price|intcomma }}</h5>
+                                <h7>سایز: {{ i.size }} رنگ: {{ i.color }}</h7>
+                                <p class="available-stock"><span>عدد باقی مانده: {{ i.quantity|intcomma}}</span></p>
+                                {% if user.is_authenticated %}
+                                    <a class="btn hvr-hover" href="{% url 'add_to_basket' slug=i.product.slug id=i.id %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
+                                    <a class="btn hvr-hover" href="{% url 'add_to_wish_list' slug=i.product.slug id=i.id %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
+                                {% else %}
+                                    <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
+                                    <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
+                                {% endif %}
+                            {% endfor %}
                         {% else %}
-                            <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-shopping-basket"></i>افزودن به سبد خرید</a>
-                            <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
-                        {% endif %}
-                        {% endfor %}
+                            <h2 style='color:red;'>فروشگاهی برای این محصول وجود ندارد</h2>
+                            {% if user.is_authenticated %}
+                                <a class="btn hvr-hover" href="{% url 'add_to_wish_list_without_id' slug=product.slug %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
+                            {% else %}
+                                <a class="btn hvr-hover" href="{% url 'login' %}"><i class="fas fa-heart"></i>افزودن به علاقه مندی ها</a>
+                            {% endif %}
+                        {% endif%}
                         <div>
                             <h4>توضیحات:</h4>
                             <p>{{ product.detail}}</p>
@@ -171,11 +180,11 @@
         <div style='margin:2%; border:2px solid blue; text-align:right; padding:2%;'>
             <h2>از این محصول با مشخصات زیر در فروشگاه شما موجود است</h2> 
             {% for i in shopproducts %}
-                <p>سایز : {{ i.size }} رنگ : {{ i.color }} قیمت : {{ i.price }} تعداد : {{ i.quantity }}</p>
-                <a class="btn hvr-hover" href="{% url 'edit_product' id=i.product.id color=i.color size=i.size %}"><i class="fas fa-shopping-basket"></i>
+                <p>سایز : {{ i.size }} رنگ : {{ i.color }} قیمت : {{ i.price | intcomma }} تعداد : {{ i.quantity }}</p>
+                <a class="btn hvr-hover" href="{% url 'edit_product' slug=product.slug  id=i.id  pk=i.product.pk color=i.color size=i.size%}"><i class="fas fa-shopping-basket"></i>
                 ویرایش اطلاعات محصول در فروشگاه شما
             </a>
-            <a class="btn hvr-hover" href="{% url 'remove_prodcut_from_store' i.id %}?next={{ request.path|urlencode }}"><i class="fas fa-shopping-basket"></i>
+            <a class="btn hvr-hover" href="{% url 'remove_prodcut_from_store' slug=i.product.slug pk=i.pk %}?next={{ request.path|urlencode }}"><i class="fas fa-shopping-basket"></i>
                 حذف این محصول از فروشگاه شما
                 {% comment %} ?next={{ request.path|urlencode }}' {% endcomment %}
             </a>
@@ -219,7 +228,7 @@
                     {% endif %}
                     <a href="{% url 'search_product_seller' slug=i.shop.slug %}">فروشگاه:{{ i.shop.name }}</a>
                     <span style="display:inline-block; width: 30px;"></span>
-                    <a>{{ i.price }}تومان</a>
+                    <a>{{ i.price | intcomma }}تومان</a>
                     <span style="display:inline-block; width: 30px;"></span>
 
                 
@@ -252,62 +261,62 @@
                 <p>{{ comment.text }}</p>
                 <p>{{ comment.updated_at }}</p>
                 {% if comment.user == request.user %}
-                    <a href='#'>ویرایش پیام خود</a>
+                    {% if current_shop_product %}
+                        <a href="{% url 'edit_comment' slug=product.slug id=current_shop_product.first.id %}">ویرایش پیام خود</a>
+                    {% else %}
+                        <a href="{% url 'edit_comment_not_seller' slug=product.slug %}">ویرایش پیام خود</a>
+                    {% endif %}
                 {% endif %}
                 <p> آیا این دیدگاه را می پسندید؟</p>
                 <!-- if shopproduct available for product-->
                 {% if current_shop_product %}
-                    {% comment %} {% for i in current_shop_product%} {% endcomment %}
-                        <!--user did not act to comment-->
-                        {% if request.user not in comment.get_users_like_comment_list and request.user not in  comment.get_users_dislike_comment_list %}
-                            <p>
-                            {{ comment.count_comment_like }}
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            <a href="{% url 'comment_like' comment.pk product.slug current_shop_product.first.id %}">
-                            <i class="fas fa-thumbs-up"></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            </a>
-                            <a href="{% url 'comment_dislike' comment.pk product.slug current_shop_product.first.id %}">
-                            <i class="fas fa-thumbs-down"></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            </a>
-                            </p>
-                        {% endif %}
-                        <!--end user did not act to comment-->
-
-                        <!--user did like comment-->
-                        {% if request.user in comment.get_users_like_comment_list %}
-                            <p>
-                            {{ comment.count_comment_like }}
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            <i class="fas fa-thumbs-up" style='color:red;'></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab></a>
-                            <a href="{% url 'comment_dislike' comment.pk product.slug current_shop_product.first.id %}">
-                            <i class="fas fa-thumbs-down"></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            </a>
-                            {{ comment.count_comment_dislike }}
-                            </p>
-                        {% endif %}
-                        <!--end user did like comment-->
-
-                        <!--user did dislike comment-->
-                        {% if request.user in comment.get_users_dislike_comment_list %}
-                            <p>
-                            {{ comment.count_comment_like }}
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            <a href="{% url 'comment_like' comment.pk product.slug current_shop_product.first.id %}">
-                            <i class="fas fa-thumbs-up"></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            </a>
-                            <i class="fas fa-thumbs-down" style='color:red;'></i>
-                            <tab style='display:inline-block; margin-right:2%;'></tab>
-                            </a>
-                            {{ comment.count_comment_dislike }}
-                            </p>
-                        {% endif %}
-                        <!--end user did dislike comment-->
-                    {% comment %} {% endfor %} {% endcomment %}
+                    <!--user did not act to comment-->
+                    {% if request.user not in comment.get_users_like_comment_list and request.user not in  comment.get_users_dislike_comment_list %}
+                        <p>
+                        {{ comment.count_comment_like }}
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        <a href="{% url 'comment_like' comment.pk product.slug current_shop_product.first.id %}">
+                        <i class="fas fa-thumbs-up"></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        </a>
+                        <a href="{% url 'comment_dislike' comment.pk product.slug current_shop_product.first.id %}">
+                        <i class="fas fa-thumbs-down"></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        </a>
+                        </p>
+                    {% endif %}
+                    <!--end user did not act to comment-->
+                    <!--user did like comment-->
+                    {% if request.user in comment.get_users_like_comment_list %}
+                        <p>
+                        {{ comment.count_comment_like }}
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        <i class="fas fa-thumbs-up" style='color:red;'></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab></a>
+                        <a href="{% url 'comment_dislike' comment.pk product.slug current_shop_product.first.id %}">
+                        <i class="fas fa-thumbs-down"></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        </a>
+                        {{ comment.count_comment_dislike }}
+                        </p>
+                    {% endif %}
+                    <!--end user did like comment-->
+                    <!--user did dislike comment-->
+                    {% if request.user in comment.get_users_dislike_comment_list %}
+                        <p>
+                        {{ comment.count_comment_like }}
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        <a href="{% url 'comment_like' comment.pk product.slug current_shop_product.first.id %}">
+                        <i class="fas fa-thumbs-up"></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        </a>
+                        <i class="fas fa-thumbs-down" style='color:red;'></i>
+                        <tab style='display:inline-block; margin-right:2%;'></tab>
+                        </a>
+                        {{ comment.count_comment_dislike }}
+                        </p>
+                    {% endif %}
+                    <!--end user did dislike comment-->
                 {% else %}
                     <!--user did not act to comment-->
                     {% if request.user not in comment.get_users_like_comment_list and comment.get_users_dislike_comment_list %}
@@ -360,9 +369,6 @@
                         </p>
                     {% endif %}
                     <!--end user did dislike comment-->
-
-
-
                 {% endif %}
             </div>
         </div>

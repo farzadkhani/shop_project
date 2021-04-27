@@ -26,8 +26,8 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
     
-    list_display = ('name', 'category', 'brand', 'slug', 'combine_name_and_brand', 'image_tag')    #, 'created', 'updated'
-    search_fields = ('name', 'slug', 'brand', 'category')
+    list_display = ('id', 'name', 'category', 'brand', 'slug', 'combine_name_and_brand', 'image_tag')    #, 'created', 'updated'
+    search_fields = ('id', 'name', 'slug', 'brand', 'category')
     list_filter = ('created_at', 'updated_at', 'publish_time')
     list_display_links = ('name', 'brand')
     

@@ -1,17 +1,39 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.mail import send_mail
-from django.utils import timezone
+# from django.core.mail import send_mail
+# from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from django.urls import reverse
+# from django.urls import reverse
 from django.apps import apps
-from django.db.models import Min, Max
-# from django.contrib.auth.models import User
+# from django.db.models import Min, Max
+from django.contrib.auth.models import User
 
 
 # for call user from call "settings.AUTH_USER_MODEL"
-
+'''
+ on_delete =>
+    CASCADE: whenever the refrenced object is deleted, the objects refrending it are deleted as well
+    PROTECT: django will prevent a post from deletion if it already has refrenced
+    SET_NULL: when we can use if set the "null=True". delete the refrenced object and leave the refrencing object 
+        in databace with out deleting. 
+        Sometimes this option is what you need. For instance, if you want to delete a user and keep the number of 
+        times he has logged into your app for audit purposes.
+    SET_DEFAULT: requires you to set a default value when definfing the relationship.means when delete the 
+        refrenced object the refrencing object is ralate to defaul object you defin.
+    SET(): same as 'SET_DEFAULT' by have more option
+        from django.conf import settings
+        from django.contrib.auth import get_user_model
+        from django.db import models
+        def get_sentinel_user():
+            return get_user_model().objects.get_or_create(username='deleted')[0]
+        class MyModel(models.Model):
+            user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete=models.SET(get_sentinel_user),
+            )
+    DO_NOTHING: it means do noting. it has integrityerror.
+'''
 
 class Product(models.Model):  # make product data
     brand = models.ForeignKey(
@@ -81,11 +103,20 @@ class Product(models.Model):  # make product data
 
     def first_min_price_(self):
         # ShopProduct = apps.get_model(app_label='Products', model_name='ShopProduct' )
+        shop_products = ShopProduct.objects.filter(product=self).order_by('price')
+        # print('shop_product', shop_product)
+        # print('first min price', type(shop_product), shop_product)
+        if self.find_all_size_and_color:
+            return shop_products.first.price
+    
+    @property
+    def first_min_price_id(self):
+        # ShopProduct = apps.get_model(app_label='Products', model_name='ShopProduct' )
         shop_product = self.ShopProduct.order_by('price')
         # print('shop_product', shop_product)
         # print('first min price', type(shop_product), shop_product)
         if self.find_all_size_and_color:
-            return shop_product[0].price
+            return shop_product[0].id
 
     @property
     def get_product_meta(self):

@@ -8,6 +8,7 @@ from django.contrib.admin import widgets
 class SellerShopProductForm(forms.ModelForm):
     # publish_time =  forms.DateField(widget=forms.DateInput(attrs={'class':'timepicker'}))
     publish_time = forms.DateTimeField(widget=forms.SelectDateWidget())
+    # price = forms.IntegerField(widget=forms.TextInput(attrs={'onclick':'commas(self)'}))
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
         # self.fields['publish_time'].widget = widgets.AdminSplitDateTime()

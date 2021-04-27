@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% load humanize %}
-<DOCTYPE html>
+<!DOCTYPE html>
 
 {% block title %}
     فروشگاه: 
@@ -97,11 +97,11 @@
     <!-- end sub categoy with pic -->
 
     <!-- Start Shop Page  -->
-    {% for i in curent_slug_object %}{% if request.user == i.user %}
+    {% comment %} {% for i in curent_slug_object %}{% if request.user == i.user %}
         <a class="btn hvr-hover" href="{% url 'create_new_product' %}"><i class="fas fa-sync-alt"></i>
         افزودن محصول جدید
         </a> 
-    {% endif %}{% endfor %}
+    {% endif %}{% endfor %} {% endcomment %}
     <div style="margin-right: auto; background-color: burlywood;width: 79%;border: 2px solid rebeccapurple;padding: 1%;margin: 5px;">
         <div class="row">
             <!-- start products items -->
@@ -132,11 +132,11 @@
                                 <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
                             </div>
                             {% for i in curent_slug_object %}{% if request.user == i.user %}
-                                <a class="btn hvr-hover" href="">
+                                <a class="btn hvr-hover" href="#">
                                     <i class="fas fa-sync-alt"></i>
                                     ویرایش اطلاعات محصول
                                 </a>
-                                <a class="btn hvr-hover" href="">
+                                <a class="btn hvr-hover" href="#">
                                     <i class="fas fa-sync-alt"></i>
                                     حذف این محصول از فروشگاه
                                 </a>

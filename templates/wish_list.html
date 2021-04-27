@@ -37,6 +37,7 @@
                                 <tr>
                                     <th>عکس محصول</th>
                                     <th>نام محصول</th>
+                                    <th>وضعیت</th>
                                     <th>حذف محصول</th>
                                 </tr>
                             </thead>
@@ -44,22 +45,38 @@
                             {% for i in object_list %}
                                 <tr>
                                     <td class="thumbnail-img">
-                                        <a href="#">
+                                        {% if i.product.first_min_price %}
+                                        <a href="{% url 'detail_product' slug=i.product.slug id=i.product.first_min_price_id %}">
 									        <img class="img-fluid" src="{{ i.product.image.url }}" height="121" alt="" />
 								        </a>
+                                        {% else %}
+                                        <a href="{% url 'detail_product_not_seller' slug=i.product.slug %}">
+									        <img class="img-fluid" src="{{ i.product.image.url }}" height="121" alt="" />
+								        </a>
+                                        {% endif %}
+
                                     </td>
                                     <td class="name-pr">
-                                        <a href="#">
-									        {{ i.product.name }}سایز
-								        </a>
+                                        {% if i.product.first_min_price %}
+                                           <a class="btn btn-outline-info" href="{% url 'detail_product' slug=i.product.slug id=i.product.first_min_price_id %}">
+    									        {{ i.product.name }}
+    								        </a>
+                                        {% else %}
+                                           <a class="btn btn-outline-info" href="{% url 'detail_product_not_seller' slug=i.product.slug %}">
+    									        {{ i.product.name }}
+    								        </a>
+                                        {% endif %}
                                     </td>
-                                    {% comment %} <td class="price-pr">
-                                        <p>{{ i.shopproduct.price|intcomma }}</p>
-                                    </td> {% endcomment %}
+                                    <td class="price-pr">
+                                        {% if i.product.first_min_price %}
+                                            <p>کم ترین قیمت : <strong>{{ i.product.first_min_price|intcomma }}</strong> تومان</p>
+                                        {% else %}
+                                            <p>نا موجود</p>
+                                        {% endif %}
+                                    </td>
                                     <td class="remove-pr">
-                                        <a href="#">
-                                        {% comment %} {% url 'remove_from_basket' id=i.shopproduct.id %} {% endcomment %}
-									        <i class="fas fa-times"></i>
+                                        <a href="{% url 'remove_from_wish_list' id=i.id %}">
+									        <i class="fas fa-trash-alt"></i>
 								        </a>
                                     </td>
                                 </tr>

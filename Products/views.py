@@ -14,7 +14,7 @@ from .models import (
 from .forms import SellerShopProductForm, CommentForm
 from django.urls import reverse_lazy
 from django.contrib import messages
-
+from Accounts.models import User
 
 # Create your views here.
 
@@ -175,7 +175,10 @@ class ProductDetail(FormMixin, DetailView):
     # success_url = reverse_lazy('detail_product', slug= kwargs['slug'],id= kwargs['id'])
 
     def get_success_url(self):
-        return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+        if self.kwargs.get('id_shopprocut'):
+            return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id_shopprocut']})
+        else:
+            return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -224,7 +227,10 @@ class ProductDetail(FormMixin, DetailView):
         form = self.get_form()
         if Comment.objects.filter(product__slug=self.kwargs['slug'], user=self.request.user).exists():
             messages.info(request, 'شما قبلا نظر خود را ثبت کرده اید')
-            return redirect('detail_product', slug= self.kwargs['slug'],id=self.kwargs['id'])
+            if self.kwargs.get('id'):
+                return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+            else:
+                return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
         else:
             if form.is_valid():
                 return self.form_valid(form)
@@ -233,7 +239,6 @@ class ProductDetail(FormMixin, DetailView):
         
     
     def form_valid(self, form):
-        print('id', self.kwargs['id'])
         form.instance.product = Product.objects.get(slug=self.kwargs['slug'])
         form.instance.user = self.request.user
         # if request.user.is_superuser:
@@ -307,15 +312,7 @@ class ProductListSeller(ListView):
 
 class SellerShopProduct(LoginRequiredMixin, CreateView):
     form_class = SellerShopProductForm
-    success_url = reverse_lazy(
-        'profile',
-        # 'edit_product',
-        # pk=self.kwargs['product'] , 
-        # size=Product.objects.get(pk=self.kwargs['product']), 
-        # color= 
-    )
     template_name = 'shop/create_new_product.html'
-    # success_message = 'your profile was created successfully'
 
     # for auto add the shop field
     def form_valid(self, form):
@@ -334,10 +331,24 @@ class SellerShopProduct(LoginRequiredMixin, CreateView):
         # print('product_name: ', context['product_name'])
         return context
     
+    def get_success_url(self):
+        print('created Slug and Id: ', ShopProduct.objects.get(id=self.object.id).product.slug, self.object.id)# self.object.slug ,  self.kwargs['id']
+        return reverse_lazy('detail_product', kwargs={'slug': ShopProduct.objects.get(id=self.object.id).product.slug, 'id': self.object.id})
+        # if self.kwargs.get('id'):
+            # return reverse_lazy(
+            #     'detail_product',
+            #     kwargs={
+            #         'slug':Product.objects.filter(pk=self.kwargs.get['product']).first.slug,
+            #         'id':Product.objects.filter(pk=self.kwargs['product']).first.first_min_price.id,
+            #     }
+            # )
+        # else:
+        #     return reverse_lazy ('detail_product_not_seller', kwargs={'slug':Product.objects.filter(pk=self.kwargs.get['product']).first.slug})
+
 
 class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
     form_class = SellerShopProductForm
-    success_url = reverse_lazy('profile')
+    # success_url = reverse_lazy('profile')
     template_name = 'shop/edit_product.html'
     # success_message = 'your profile was created successfully'
 
@@ -347,7 +358,7 @@ class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
         return get_object_or_404(
             ShopProduct, 
             shop = Shop.objects.get(user=self.request.user), 
-            product = Product.objects.get(id = self.kwargs.get('id')),
+            product = Product.objects.get(id = self.kwargs.get('pk')),
             size = Size.objects.get(name = self.kwargs.get('size')),
             color = Color.objects.get(name = self.kwargs.get('color')),
             )
@@ -364,33 +375,55 @@ class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SellerEditShopProduct, self).get_context_data(**kwargs)
         context["category_list"] = Category.objects.all()
-
         # print('get kwargs: ', self.kwargs['product'])
         # context["product_name"] = Product.objects.get(id=self.kwargs['id'])
         # context["product_size"] = Size.objects.get(name =self.kwargs['size'])
-        # context["product_color"] = Color.objects.get(name=self.kwargs['color'])
+        # context["product_color"] =  Color.objects.get(name=self.kwargs['color'])
         # print('product_name: ', context['product_name'])
         return context
 
+    def get_success_url(self):
+        # if self.kwargs.get('id'):
+        return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+        # else:
+        #     return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
 
-def remove_prodcut_from_store(request, id):
-    shopproduct = ShopProduct.objects.get(id = id)
+def remove_prodcut_from_store(request, slug,pk):
+    shopproduct = ShopProduct.objects.get(pk = pk)
     shopproduct.delete()
     #print(basket_item[0].quantity)
     messages.info(request, 'این محصول از فروشگاه شما حذف شد')
+    id = Product.objects.get(slug=slug)
+    print('id is: ', id)
     # return redirect('search_product_seller')
-    return redirect('detail_product', slug= shopproduct.product.slug,id=id)
+    print('id is: ', id.first_min_price_)
+    if id.first_min_price_id:
+        return redirect('detail_product', slug= slug, id=id.first_min_price_id)
+    else:
+        return redirect('detail_product_not_seller', slug= slug)
 
 
-def add_to_wish_list(request,slug, id):
-    if WishList.objects.filter(user=request.user, product__id=id).exists():
+
+def add_to_wish_list(request, slug, id):
+    if WishList.objects.filter(user=request.user, product__slug=slug).exists():
         messages.info(request, 'این محصول در لیست علاقه مندی شما وجود دارد!')
     else:
-        product = Product.objects.get(id = id)
+        product = Product.objects.get(slug=slug)
         user = request.user
         wishlist = WishList.objects.create(user=user, product=product)
         messages.info(request, 'این محصول به لیست علاقه مندی شما اضافه شد')
-    return redirect('detail_product', slug=slug ,id=id)
+    return redirect('detail_product', slug=slug)
+
+
+def add_to_wish_list_without_id(request, slug):
+    if WishList.objects.filter(user=request.user, product__slug=slug).exists():
+        messages.info(request, 'این محصول در لیست علاقه مندی شما وجود دارد!')
+    else:
+        product = Product.objects.get(slug=slug)
+        user = request.user
+        wishlist = WishList.objects.create(user=user, product=product)
+        messages.info(request, 'این محصول به لیست علاقه مندی شما اضافه شد')
+    return redirect('detail_product_not_seller', slug=slug)
 
 
 class WishListView(LoginRequiredMixin, ListView):
@@ -409,6 +442,14 @@ class WishListView(LoginRequiredMixin, ListView):
         context['user_name'] = self.request.user.first_name
         # context['wish_list_objects'] = WishList.objects.filter(user=self.request.user)
         return context
+
+
+def remove_from_wish_list(request, id):
+    print(id)
+    wish_item = WishList.objects.get(id=id)
+    wish_item.delete()
+    messages.info(request, 'این محصول از لیست علاقه مندی های شما حذف شد')
+    return redirect("wish_list")
 
 
 class CommentLikeView(View):
@@ -447,4 +488,30 @@ class CommentDisLikeView(View):
             like.delete()
             dislike = CommentDisLike.objects.create(user=user, comment=comment)
             return redirect(self.get_success_url())
+
+
+class EditCommentView(LoginRequiredMixin, UpdateView):
+    form_class = CommentForm
+    template_name = 'edit_comment.html'
+
+    def get_success_url(self):
+        if self.kwargs.get('id'):                    
+            return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+        else:
+            return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
+
+    #for limited user to access another users profile we can do this or use 'LoginRequiredMixin'
+    #now we did not use pk for address the profile page of logined user and did not use pk for url
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Comment, 
+            product = Product.objects.get(slug = self.kwargs.get('slug')),
+            user = self.request.user,
+            )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_list"] = Category.objects.all()
+        return context
+
 

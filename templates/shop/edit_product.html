@@ -4,9 +4,6 @@
 <DOCTYPE html>
 
 {% block title %}
-    {% for i in curent_slug_object %}
-        {{ i.name }}
-    {% endfor %}
     | فروشگاه اینترنتی ما
 {% endblock %}
 
@@ -28,18 +25,18 @@
     <!-- End All Title Box -->
 
 
-    <div>
-        <form method='POST' enctype='multipart/form-data'> 
+    <div class='container' style="background-color: #e7e7e7;">
+        <form method='post' enctype='multipart/form-data'> 
         <!---->
             {% csrf_token %}
             <div class='col-6'>
-                <p>{{ object.product }} : نام محصول </p>
+                <p>{{ form.product.value }} : نام محصول </p>
             </div>
             <div class='col-6'>
-                <p>{{ object.size }} : سایز محصول </p>
+                <p>{{ form.size }} : سایز محصول </p>
             </div>
             <div class='col-6'>
-                <p>{{ object.color }} : رنک محصول </p>
+                <p>{{ form.color }} : رنک محصول </p>
             </div>
             <div class='col-6'>
                 <p>قیمت محصول : {{ form.price }}{{ form.zip_code.help_text }}</p>
