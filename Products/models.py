@@ -281,6 +281,7 @@ class ShopProduct(models.Model):  # for price and quantity relate with product a
 
     def __str__(self):
         return "فروشگاه:" + str(self.shop) + '---' + ",محصول:" + str(self.product)
+        # return str(self.price)
 
     def image_tag(self):
         image = self.product.image

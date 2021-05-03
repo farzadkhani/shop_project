@@ -45,7 +45,7 @@
                                                 <ul class="menu-col">
                                                     {% for sub in cat.get_all_childrens%}
                                                         <li><a href="{% url 'search_product' slug=sub.slug %}">{{ sub.name }}</a></li>
-                                                        <!-- <li><a href="shop.html">Shirts</a></li> -->
+                                                        <!--<li><a href="shop.html">Shirts</a></li>-->
                                                         <div class="content">
                                                             <ul class="menu-col">
                                                                 {% for sub2 in sub.get_all_childrens%}

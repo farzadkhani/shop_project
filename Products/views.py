@@ -12,11 +12,29 @@ from .models import (
     Color, WishList, Comment, CommentLike, CommentDisLike
     )
 from .forms import SellerShopProductForm, CommentForm
+from .filters import ProductListFilter
 from django.urls import reverse_lazy
 from django.contrib import messages
 from Accounts.models import User
 
 # Create your views here.
+
+
+
+# filters = {}
+
+# for key, value in request.post.items():
+#     if key in ['filter1', 'filter2', 'filter3']:
+#         filters[key] = value
+
+# Test.objects.filter(**filters)
+
+# if request.method == 'GET':
+#         filters = {}
+#         for key, value in request.GET.items():
+#             if value != '':
+#                 filters[key] = value
+#         filter_list=Pet.objects.filter(**filters)
 
 class SearchInProducts(FormMixin, ListView):
     model = Product
@@ -81,8 +99,8 @@ class SearchInProducts(FormMixin, ListView):
 
 class ProductListCategory(ListView):    # , FormView, FormMixin, 
     model = Product
+    paginate_by = 9
     queryset = Product.objects.all()  # base queryset
-    
     template_name = 'product_list_category.html'
     # paginate_by = 9        # for paginating
 
@@ -95,21 +113,35 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
             final_category_list = category_object.get_all_sub_childrens_
             final_category_list = [*list(final_category_list), category_object]
             queryset = queryset.filter(category__in=final_category_list).order_by(
-                '-publish_time')  # use category list  to filter get products with slug of curent page
+                '-publish_time')  
+            # use category list  to filter get products with slug of curent page
+        
+        # product_filter_list = ProductListFilter(self.request.GET, queryset=queryset)
+        # return product_filter_list.qs
 
-        brand_filter = self.request.GET.get('brand_filter')  # for filter
-        # print('brand', brand_filter)
-        if brand_filter:
-            queryset = queryset.filter(brand__name=brand_filter)
+        # brand_filter = self.request.GET.get('brand_filter')  # for filter
+        # # print('brand', brand_filter)
+        # if brand_filter:
+        #     queryset = queryset.filter(brand__name=brand_filter)
 
-        order_by = self.request.GET.get('order_by')  # for sort by date
-        if order_by:
-            queryset = queryset.order_by(order_by)
+        # order_by = self.request.GET.get('order_by')  # for sort by date
+        # if order_by:
+        #     queryset = queryset.order_by(order_by)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # print(self.kwargs['slug'])  #print curent page slug 
+        # print(self.kwargs)  #print all in kwargs
+        # print('the request contain: ', self.request)  #print all in kwargs
+        # print('the request.path contain: ', self.request.path)  #print all in kwargs
+
+        # <filter form>
+        # context['filter'] = ProductListFilter(self.request.GET, queryset=self.get_queryset())
+        # print("filter context: ", context['filter'].form["name"])
+        # <end filter form>
+        
+        # print(self.kwargs)
 
         # <find the brand list>
         for_clean_list = context['object_list']
@@ -388,6 +420,7 @@ class SellerEditShopProduct(LoginRequiredMixin, UpdateView):
         # else:
         #     return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
 
+
 def remove_prodcut_from_store(request, slug,pk):
     shopproduct = ShopProduct.objects.get(pk = pk)
     shopproduct.delete()
@@ -401,7 +434,6 @@ def remove_prodcut_from_store(request, slug,pk):
         return redirect('detail_product', slug= slug, id=id.first_min_price_id)
     else:
         return redirect('detail_product_not_seller', slug= slug)
-
 
 
 def add_to_wish_list(request, slug, id):

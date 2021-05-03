@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'Accounts',
     'Products',
     'Orders',
-    # 'django_filters',
+    'django_filters',
     # 'bootstrapform',
 ]
 
