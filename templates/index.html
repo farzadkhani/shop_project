@@ -11,6 +11,7 @@
     <!-- Start Slider -->
     <div id="slides-shop" class="cover-slides">
         <ul class="slides-container">
+            {% if baner_slide %}
             {% for baner in baner_slide %} 
                 <li class="text-left">
                     <img src="{{ baner.image.url }}" alt="">
@@ -25,6 +26,7 @@
                     </div>
                 </li>
             {% endfor %}
+            {% endif %}
         </ul>
         <div class="slides-navigation">
             <a href="#" class="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
@@ -40,6 +42,7 @@
             <div class="title-all text-center">">
                 <h1>دسته بندی ها</h1>
                 <div class="row">
+                    {% if category_list%}
                     {% for cat in category_list%}
                         {% if cat.parent is None %}
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -50,6 +53,7 @@
                             </div>
                         {% endif %}
                     {% endfor%}
+                    {% endif %}
                 </div>
             </div>
         </div>
