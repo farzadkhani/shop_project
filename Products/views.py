@@ -104,6 +104,9 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
     template_name = 'product_list_category.html'
     # paginate_by = 9        # for paginating
 
+    # def is_valid_queryparam(param):
+    #     return param != "" and param is not None
+
     def get_queryset(self):
         # print(self.request.get_full_path())
         queryset = super().get_queryset()
@@ -116,17 +119,40 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
                 '-publish_time')  
             # use category list  to filter get products with slug of curent page
         
+        brand_filter = self.request.GET.get('brand_filter')
+        order_by = self.request.GET.get('order_by')
+
+        if brand_filter!='' and brand_filter is not None:
+            queryset = queryset.filter(brand__name=brand_filter)
+
+        if order_by!='' and order_by is not None:
+            if order_by == '-publish_time' or order_by== 'publish_time':
+                queryset = queryset.order_by(order_by)
+            elif order_by == 'price':
+            #     queryset = queryset.order_by('-ShopProduct__price').values_list('id', flat=True).distinct()
+                items, item_ids = [], []
+                for item in queryset.order_by('-ShopProduct__price'):
+                    print('item is: ', item.id)
+                    if not item in item_ids:
+                        items.append(item)
+                        item_ids.append(item)
+                        queryset = item_ids
+                print('list item_ids', item_ids)
+            else:
+            #     queryset = queryset.order_by('ShopProduct__price').values_list('id', flat=True).distinct()
+                items, item_ids = [], []
+                for item in queryset.order_by('ShopProduct__price'):
+                    print('item is: ', item.id)
+                    if not item in item_ids:
+                        items.append(item)
+                        item_ids.append(item)
+                        queryset = item_ids
+                print('list item_ids', item_ids)
+
+
         # product_filter_list = ProductListFilter(self.request.GET, queryset=queryset)
         # return product_filter_list.qs
 
-        # brand_filter = self.request.GET.get('brand_filter')  # for filter
-        # # print('brand', brand_filter)
-        # if brand_filter:
-        #     queryset = queryset.filter(brand__name=brand_filter)
-
-        # order_by = self.request.GET.get('order_by')  # for sort by date
-        # if order_by:
-        #     queryset = queryset.order_by(order_by)
         return queryset
 
     def get_context_data(self, **kwargs):

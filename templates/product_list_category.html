@@ -67,37 +67,6 @@
                                 </div>
                                 <div>
                                     {% for i in curent_slug_object %}
-                                        {% comment %} {% if i.parent %}
-                                        <h2>Go up to
-                                            <a href="{% url 'search_product' slug=i.parent.slug %}">
-                                                {{ i.parent }}
-                                            </a>
-                                        </h2>
-                                        {% else %}
-                                        <h2>Go up to
-                                            <a>
-                                                {{ i.name }}
-                                            </a>
-                                        </h2>
-                                        {% endif %}
-
-                                        {% if i.children.count %}
-                                        <h2>Subcategories</h2>
-                                        <ul>
-                                            {% for child in i.children.all %}
-                                            <li><a href="{% url 'search_product' slug=child.slug %}">{{ child.name }}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% endif %}
-
-                                        <h2>Entries</h2>
-                                        {% if category.entries_set.all %}
-                                        {% for entry in category.entries_set.all %}
-                                        <p><a href="#">{{ entry.headline }}</a></p>
-                                        {% endfor %}
-                                        {% else %}
-                                        <p><em>No entries for {{ i }}</em></p>
-                                        {% endif %} {% endcomment %}
                                         {% for j in i.category_road %}
                                             <h3>{{ j }}</h3>
                                         {% endfor %}
@@ -110,69 +79,74 @@
                             {% endif %}
                         </div>
 
-                        <div>
-                        </div>
+
 
                     <!--Form filters-->
                         <h2>فیلتر ها</h2>
-                        <hr style="border: 2px solid black;margin-top:0px;">>
-                        <!-- price filter -->
-                        {% if first_price_range %}
-                        <div class='card mb-4'>
-                            <h6 class='card-header'>قیمت</h6>
-                            <div class='list-group list-group-flush'>
-                                <li class='list-group-item'>
-                                    {{ first_price_range.first_min_price|intcomma }}
-                                    <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value'/>
-                                    {{ last_price_range.first_min_price|intcomma }}
-                                </li>
-                                <li class='list-group-item'>
-                                    بیشترین:
-                                    <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}'/>
-                                    {{ last_price_range.first_min_price|intcomma }}
-                                </li>
-                            </div>
-                        </div>
-                        {% endif %}
-                        <!-- end price filter -->
-
-                        <div class="filter-brand-left">
-                            <form method='GET'>
-                                <span>برند ها</span>
-                                <select name='brand_filter' onchange='this.form.submit();'>
-                                {% for brand in clean_brand%}
-                                    <option value='{{ brand.name }}'>{{ brand.name }}</option>
-                                {% endfor %}
-                                </select>
-                            </form>
-                        </div>
-
+                        <hr style="border: 2px solid black;margin-top:0px;">
                         <div>
-                            <form action='' method='GET'>
-                                <span>دسته بندی</span>
-                                <select name='order_by' onchange='this.form.submit();'>
-                                    <option value='-publish_time'>جدید ترین</option>
-                                    <option value="publish_time">قدیمی ترین</option>
-                                    <option value="-ShopProduct__price">بیشترین قمت</option>
-                                    <option value="ShopProduct__price">کم ترین قیمت</option>
-                                </select>
+                            <form method='GET' action=''>
+                                <!-- brand filter -->
+                                <div>
+                                    <span>برند ها</span>
+                                    <select name='brand_filter'>
+                                        <option value=''>-----</option>
+                                    {% for brand in clean_brand%}
+                                        <option value='{{ brand.name }}'>{{ brand.name }}</option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- order filter -->
+                                <div>
+                                    <span>دسته بندی</span>
+                                    <select name='order_by'>
+                                        <option value=''>-----</option>
+                                        <option value='-publish_time'>جدید ترین</option>
+                                        <option value="publish_time">قدیمی ترین</option>
+                                        <option value="price">بیشترین قمت</option>
+                                        <option value="-price">کم ترین قیمت</option>
+                                    </select>
+                                </div>
+
+                                <!-- price filter -->
+                                <div>
+                                    {% if first_price_range %}
+                                    <div class='card mb-4'>
+                                        <h6 class='card-header'>قیمت</h6>
+                                        <div class='list-group list-group-flush'>
+                                            <li class='list-group-item'>
+                                                {{ first_price_range.first_min_price|intcomma }}
+                                                <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value'/>
+                                                {{ last_price_range.first_min_price|intcomma }}
+                                            </li>
+                                            <li class='list-group-item'>
+                                                بیشترین:
+                                                <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}'/>
+                                                {{ last_price_range.first_min_price|intcomma }}
+                                            </li>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg> Search</button>
+
                             </form>
                         </div>
-                        <button type="submit" class="btn btn-outline-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                            </svg> Search</button>
-
                     
-                    <!--end Form filters-->
-
                     <!--filters-->
+
+
                     <hr>
                     <hr>
                     <hr>
-                        <div>
+                        {% comment %} <div>
                             <form method="GET">
-                                {% comment %} {{ filter.form.as_p }} {% endcomment %}
+                                {{ filter.form.as_p }}
                                 {{ filter.form.name }}
                                 {{ filter.form.brand }}
                                 <div class="filter-brand-left">
@@ -183,13 +157,12 @@
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-outline-primary">Search</button>
-                            </form>                   
-                        </div>
+                            </form>
                     <!--end filters-->
-
-
+                        </div>{% endcomment %}
                     </div>
                 </div>
+
 
                 <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
                     <div class="right-product-box">

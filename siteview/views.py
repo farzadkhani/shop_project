@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
-from Products import models as products_models
-from . import models as siteview_models
-
+from Products.models import Category
+from .models import FirstSlideIndex
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -10,6 +9,6 @@ class HomeView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['baner_slide'] = siteview_models.FirstSlideIndex.objects.filter(draft=False)
-        context["category_list"] = products_models.Category.objects.all()
+        context['baner_slide'] = FirstSlideIndex.objects.filter(draft=False)
+        context["category_list"] = Category.objects.all()
         return context

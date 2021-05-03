@@ -12,9 +12,6 @@ class FirstSlideIndex(models.Model):
     detail = models.CharField(_('product detail'), max_length=500)
     draft = models.BooleanField(_('Draft'), default=True, db_index=True)
     
-    
-
-
     class Meta:
         verbose_name = _('FirstSlideIndex')
         verbose_name_plural = _('FirstSlideIndex')
