@@ -24,12 +24,15 @@ class ProductAdmin(admin.ModelAdmin):
         ('second', {
             "fields":('detail', 'category', 'publish_time'),
         }),
+        ('third', {
+            "fields":('is_amazing_offer', ),
+        }),
     )
     
-    list_display = ('id', 'name', 'category', 'brand', 'slug', 'combine_name_and_brand', 'image_tag')    #, 'created', 'updated'
-    search_fields = ('id', 'name', 'slug', 'brand', 'category')
-    list_filter = ('created_at', 'updated_at', 'publish_time')
-    list_display_links = ('name', 'brand')
+    list_display = ('id', 'name', 'category', 'brand', 'slug', 'combine_name_and_brand', 'image_tag', 'is_amazing_offer')    #, 'created', 'updated'
+    search_fields = ('id', 'name', 'slug', 'brand', 'category', 'is_amazing_offer')
+    list_filter = ('created_at', 'updated_at', 'publish_time', 'is_amazing_offer')
+    list_display_links = ('name', 'brand', 'is_amazing_offer')
     
     def combine_name_and_brand(self, obj):
         return "{} برند {}".format(obj.name, obj.brand)
@@ -68,9 +71,9 @@ class ShopProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'details', 'image' ) #,'create', 'update'
-    search_fields = ('name', 'detail')
-    list_filter = ('created_at', 'updated_at', 'publish_time')
+    list_display = ('name', 'details', 'image', 'is_special', ) #,'create', 'update'
+    search_fields = ('name', 'detail', 'is_special')
+    list_filter = ('created_at', 'updated_at', 'publish_time', 'is_special')
 
 
 @admin.register(models.Image)

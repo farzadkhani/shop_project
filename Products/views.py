@@ -1,21 +1,26 @@
-from pprint import pprint
+# from pprint import pprint
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Accounts.models import Shop
-from django.db.models import Avg, Max, Min, Q
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
-from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView, View
+from django.db.models import Q
+# Avg, Max, Min,
+# from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+# render,
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, View
+# FormView,
 from django.views.generic.edit import FormMixin
-from siteview.forms import ProductAttrsForm, ProductForm
+from siteview.forms import ProductForm
+# ProductAttrsForm,
 from .models import (
-    Brand, Category, Image, Off, Product, ProductMeta, ShopProduct, Size, 
+    Category, Image, Product, ShopProduct, Size,
     Color, WishList, Comment, CommentLike, CommentDisLike
     )
+# Brand, Off, ProductMeta,
 from .forms import SellerShopProductForm, CommentForm
-from .filters import ProductListFilter
+# from .filters import ProductListFilter
 from django.urls import reverse_lazy
 from django.contrib import messages
-from Accounts.models import User
+# from Accounts.models import User
 
 # Create your views here.
 
@@ -129,7 +134,7 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
             if order_by == '-publish_time' or order_by== 'publish_time':
                 queryset = queryset.order_by(order_by)
             elif order_by == 'price':
-            #     queryset = queryset.order_by('-ShopProduct__price').values_list('id', flat=True).distinct()
+            # queryset = queryset.order_by('-ShopProduct__price').values_list('id', flat=True).distinct()
                 items, item_ids = [], []
                 for item in queryset.order_by('-ShopProduct__price'):
                     print('item is: ', item.id)
@@ -139,7 +144,7 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
                         queryset = item_ids
                 print('list item_ids', item_ids)
             else:
-            #     queryset = queryset.order_by('ShopProduct__price').values_list('id', flat=True).distinct()
+            # queryset = queryset.order_by('ShopProduct__price').values_list('id', flat=True).distinct()
                 items, item_ids = [], []
                 for item in queryset.order_by('ShopProduct__price'):
                     print('item is: ', item.id)
@@ -303,7 +308,7 @@ class ProductDetail(FormMixin, DetailView):
         #     form.instance.is_active = True
         form.save()
         return super(ProductDetail, self).form_valid(form)
-
+# ==> ===
 
 class ProductListSeller(ListView):
     model = Product

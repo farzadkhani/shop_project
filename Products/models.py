@@ -58,6 +58,7 @@ class Product(models.Model):  # make product data
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    is_amazing_offer = models.BooleanField(_("پیشنهاد شگفت انگیز"), default=False)
 
     class Meta:
         verbose_name = _('Product')
@@ -340,6 +341,10 @@ class Brand(models.Model):  # make brand of product
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
     slug = models.SlugField(_('Slug'))
+    is_special = models.BooleanField(
+        _('برند ویژه'),
+        default=False,
+    )
 
     class Meta:
         verbose_name = _('Brand')
