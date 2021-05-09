@@ -46,8 +46,7 @@ class Product(models.Model):  # make product data
     )
     slug = models.SlugField(_('slug'))
     name = models.CharField(_('product name'), max_length=500)
-    image = models.ImageField(_('image'), upload_to='orders/product/images', blank=True, null=True)
-    detail = models.CharField(_('product detail'), max_length=2000, blank=True, null=True)
+    detail = models.TextField(_('product detail'), blank=True, null=True)
     category = models.ForeignKey(
         'Category',
         verbose_name=_('Category'),
@@ -86,6 +85,11 @@ class Product(models.Model):  # make product data
                 final_list.append(temprory)
         # print('final', final_list[1][1][0][0].color)
         return final_list
+
+    @property
+    def first_image(self):
+        img = Image.objects.filter(product=self)
+        return img[0].image
 
     @property
     def min_price(self):

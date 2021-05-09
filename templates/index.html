@@ -41,9 +41,10 @@
             </div>
         </div>
     </div>
-
-
     <!-- End Slider -->
+
+
+
     <div class="mt-5" style="background-color: #880000; margin-top: 20px; margin-bottom: 20px; padding-top: 20px; padding-bottom: 20px">
         <div class="container">
             <div class="row">
@@ -98,9 +99,9 @@
         <div class="card-deck">
             {% for b in top_category %}
             <div class="card bg-info">
-                <img src="{{b.image.url}}" class="card-img-top" alt="{{b.name}}">
+                <a href="{% url 'search_product' b.slug %}"><img src="{{b.image.url}}" class="card-img-top" alt="{{b.name}}"></a>
                 <div class="card-body">
-                    <h5 class="card-title">{{ b.name }}</h5>
+                    <a class="btn" href="{% url 'search_product' b.slug %}"><h5 class="card-title">{{ b.name }}</h5></a>
 
                 </div>
             </div>
@@ -108,29 +109,7 @@
         </div>
     </div>
 
-    {% comment %}<div class="categories-shop mt-5" style='background-color:white;'>
-        <div class="container">
-            <div class="title-all text-center">
-                <h1>دسته بندی ها</h1>
-                <div class="row">
-                    {% if category_list%}
-                    {% for cat in category_list%}
-                        {% if cat.parent is None %}
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <div class="shop-cat-box">
-                                <img class="img-fluid" src="{{ cat.image.url }}" alt="" />
-                                    <a class="btn hvr-hover" href='{% url 'search_product' slug=cat.slug %}'>{{ cat.name }}</a>
 
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor%}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>{% endcomment %}
-    <!-- End Categories -->
 
     <!-- special brands -->
     <div class="mt-5" style="background-color: #9e9e9e; margin-top: 20px; margin-bottom: 20px; padding-top: 20px; padding-bottom: 20px">

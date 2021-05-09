@@ -175,7 +175,7 @@ class Shop(models.Model):   #the saler hear is registrate
     telegram = models.CharField(_('telegram'), max_length=1000,null=True, blank=True)
     whatsapp = models.CharField(_('whatsapp'), max_length=1000,null=True, blank=True)
 
-    discription = models.CharField(_('discription'), max_length=2000, null=True, blank=True)
+    discription = models.TextField(_('discription'), null=True, blank=True)
     image = models.ImageField(_('image'), upload_to='accounts/shop/images', null=True, blank=True)
                                  #height_field=None, width_field=None, max_length=None)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)

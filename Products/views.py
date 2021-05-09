@@ -308,7 +308,7 @@ class ProductDetail(FormMixin, DetailView):
         #     form.instance.is_active = True
         form.save()
         return super(ProductDetail, self).form_valid(form)
-# ==> ===
+
 
 class ProductListSeller(ListView):
     model = Product
@@ -475,7 +475,7 @@ def add_to_wish_list(request, slug, id):
         user = request.user
         wishlist = WishList.objects.create(user=user, product=product)
         messages.info(request, 'این محصول به لیست علاقه مندی شما اضافه شد')
-    return redirect('detail_product', slug=slug)
+    return redirect('detail_product', slug=slug, id=id)
 
 
 def add_to_wish_list_without_id(request, slug):

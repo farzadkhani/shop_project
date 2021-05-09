@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
@@ -13,138 +13,160 @@
 
 {% block content %}
 
-    <!-- Start All Title Box -->
-    
-    {% for i in curent_slug_object %}
-        {% if request.user == i.user %}
-            <a class="btn hvr-hover" href="{% url 'update_shop' %}"><i class="fas fa-sync-alt"></i>
-                ویرایش اطلاعات فروشگاه
-            </a> 
-        {% endif %}
-        <div style="background-color: rgb(217, 230, 235); width: 20%; border: 2px solid brown; padding: 1%; margin: 10px;">
-            <ul style="text-align: right;">
-                {% if i.image %}
-                <li><img src="{{ i.image.url }}" width="150" height="150"></li>
-                {% endif %}
-                <li>{{ i.name }}</li>
-                <li>{{ i.created_at }}</li>
-            </ul>
-        </div>
-        {% if i.discription %}
-            <div style="background-color: rgb(217, 230, 235); width: 79%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
-                <li>{{ i.discription }}</li>
-            </div>
-        {% endif %}
-
-    {% endfor %}
-    <div style="background-color: rgb(217, 230, 235); width: 10%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
-        <a>لیست برند ها:</a>
-        <ul>
-            <form method='get'>
-                {% for i in brand_list %}
-                    <li>
-                        <button type='submit' class ='button' name='brand_filter' value='{{ i.name }}'>
-                            {{ i.name }}
-                        </button>
-                    </li>
-                {% endfor %}
-            </form>
-        </ul>
-    </div>
-    <div style="background-color: rgb(217, 230, 235); width: 10%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
-        <a>مرتب سازی بر اساسه: </a>
-        <ul>
-            <form method='get'>
-                <li><button type='submit' class ='button' name='order_by' value='publish_time'>جدیدترین</button></li>
-                <li><button type='submit' class ='button' name='order_by' value='-publish_time'>قدیمی ترین</button></li>
-            </form>
-        </ul>
-    </div>
-    <div style="background-color: rgb(217, 230, 235); width: 10%; border: 2px solid brown;padding: 1%;margin: 5px;text-align: right;">
-        <a>لیست دسته بندی ها:</a>
-        <ul>
-            <form method='get'>
-                {% for i in entity_category_list %}
-                    <li>
-                        <button type='submit' class ='button' name='category_filter' value='{{ i.slug }}'>
-                            {{ i }}
-                        </button>
-                    </li>
-                {% endfor %}
-            </form>
-        </ul>
-    </div>
-    
-    <!-- End All Title Box -->
-    <!-- <ul>
-        <form method='get'>
-            {% for brand in clean_brand%}
-                <li>
-                    <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>
-                    {{ brand.name }}
-                    </button>
-                </li>
-            {% endfor %}
-        </form>
-    </ul> -->
-    <!-- start search -->
-
-    <!-- end of search  -->
-
-
-    <!-- start sub categoy with pic -->
-
-    <!-- end sub categoy with pic -->
-
-    <!-- Start Shop Page  -->
-    {% comment %} {% for i in curent_slug_object %}{% if request.user == i.user %}
-        <a class="btn hvr-hover" href="{% url 'create_new_product' %}"><i class="fas fa-sync-alt"></i>
-        افزودن محصول جدید
-        </a> 
-    {% endif %}{% endfor %} {% endcomment %}
-    <div style="margin-right: auto; background-color: burlywood;width: 79%;border: 2px solid rebeccapurple;padding: 1%;margin: 5px;">
+    <!--Shop info -->
+    <div class="container text-right" style="margin-top: 70px;">
         <div class="row">
-            <!-- start products items -->
 
-            {% for product in object_list %}
-                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-                        <div class="products-single fix">
-                            <div class="box-img-hover">
-                                <div class="type-lb">
-                                    {% comment %} <p class="sale">{{ product.ShopProduct.all.first.shop.name }}</p> {% endcomment %}
-                                </div>
-                                    {% if product.image %}
-                                        <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><img src="{{ product.image.url }}" class="img-fluid" alt="Image"></a>
-                                    {% endif %}
+            <!--Shop discription -->
+            <div class="border border-secondary col-9 p-5 mt-3 mr-0 mb-3">
+                {% for i in curent_slug_object %}
+                    {% if i.discription %}
+                            <h3>توضیحات فروشگاه</h3>
+                            <div class="container">
+                                {{ i.discription }}
                             </div>
-                            <div class="why-text">
-                                <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}">{{ product.name }}</a>
-                                {% comment %} {% if product.Off.all.first.price %}
-                                    {% for key, value in off_percent_list.items %}
-                                        {% if product.id == key %}
-                                            <h3 style='color:red;'>تخفیف برای شما%{{ value }}</h3>
-                                        {% endif%}
-                                    {% endfor %}
-                                    <h5>تومان {{ product.Off.all.first.price|intcomma}}</h5>
-                                    <h6><del>{{ product.min_price.last.price}}</del></h6>
-                                {% else %}
-                                {% endif %} {% endcomment %}
-                                <h5><a>تومان {{ product.min_price.first.price|intcomma }}</a></h5>
-                            </div>
-                            {% for i in curent_slug_object %}{% if request.user == i.user %}
-                                <a class="btn hvr-hover" href="#">
-                                    <i class="fas fa-sync-alt"></i>
-                                    ویرایش اطلاعات محصول
-                                </a>
-                                <a class="btn hvr-hover" href="#">
-                                    <i class="fas fa-sync-alt"></i>
-                                    حذف این محصول از فروشگاه
-                                </a>
-                            {% endif %}{% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!--Shop Base info -->
+            <div class="col-3">
+                <div class="card mt-3" style="width: 18rem;">
+                    {% for i in curent_slug_object %}
+                        {% if i.image %}
+                        <img class="card-img-top" src="{{ i.image.url }}" width="100px" alt="Card image cap">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ i.name }}</h5>
+                            <p class="card-text">{{ i.created_at }}</p>
+                            <a href="{% url 'update_shop' %}" class="btn btn-outline-danger">ویرایش اطلاعات فروشگاه</a>
                         </div>
-                    </div>
-            {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    <!-- end Shop info -->
+
+    <!--Shop products -->
+
+        <div class="row">
+
+            <!--Shop products items -->
+            <div class="col-9">
+                <div class="row">
+                    {% for product in object_list %}
+                        <div class="card m-2" style="width: 250px;">
+                            {% if product.first_image %}
+                                <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><img src="{{ product.first_image.url }}" class="card-img-top" style="height: 300px" alt="Image"></a>
+                            {% endif %}
+                            <div class="card-body">
+                                <a style="color: #0b0b0b"  href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><h5 class="card-title">{{ product.name }}</h5></a>
+                                <a style="color: #880000"  href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><h5 class="card-title">{{ product.min_price.first.price|intcomma }}</h5></a>
+                                {% for i in curent_slug_object %}{% if request.user == i.user %}
+                                    <a href="#">
+                                        <i class="fas fa-sync-alt"></i>
+                                        ویرایش اطلاعات محصول
+                                    </a>
+                                    <a href="#">
+                                        <i class="fas fa-sync-alt"></i>
+                                        حذف این محصول از فروشگاه
+                                    </a>
+                                {% endif %}{% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
             <!-- end products items -->
+
+
+
+            <div class="col-3">
+                <div>
+                    <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                        <div class="card-header">
+                            : لیست برند ها
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for i in brand_list %}
+                                <li class="btn btn-outline-info">{{ i.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% comment %}<a>لیست برند ها:</a>
+                    <ul>
+                        <form method='get'>
+                            {% for i in brand_list %}
+                                <li>
+                                    <button type='submit' class ='button' name='brand_filter' value='{{ i.name }}'>
+                                        {{ i.name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </form>
+                    </ul>{% endcomment %}
+                </div>
+                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                    <div class="card-header">
+                        : مرتب سازی بر اساسه
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='publish_time'>جدیدترین</button>
+                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='-publish_time'>قدیمی ترین</button>
+                    </ul>
+                </div>
+                {% comment %}<div class="border border-secondary p-2 mt-3 mb-3 text-right">
+                    <a>مرتب سازی بر اساسه: </a>
+                    <ul>
+                        <form method='get'>
+                            <li><button type='submit' class ='button' name='order_by' value='publish_time'>جدیدترین</button></li>
+                            <li><button type='submit' class ='button' name='order_by' value='-publish_time'>قدیمی ترین</button></li>
+                        </form>
+                    </ul>
+                </div>{% endcomment %}
+                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                    <div class="card-header">
+                        : لیست دسته بندی ها
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for i in entity_category_list %}
+                            <button type='submit' class ='btn btn-outline-info' name='category_filter' value='{{ i.slug }}'>
+                                {{ i }}
+                            </button>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% comment %}<div class="border border-secondary p-2 mt-3 mb-3 text-right">
+                    <a>لیست دسته بندی ها:</a>
+                    <ul>
+                        <form method='get'>
+                            {% for i in entity_category_list %}
+                                <li>
+                                    <button type='submit' class ='button' name='category_filter' value='{{ i.slug }}'>
+                                        {{ i }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </form>
+                    </ul>
+                </div>{% endcomment %}
+
+                <!-- End All Title Box -->
+                <div class="border border-secondary p-2 mt-3 mb-3 text-right">
+                    <form method='get'>
+                        {% for brand in clean_brand%}
+                            <li>
+                                <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>
+                                {{ brand.name }}
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </form>
+                </div>
+
+            </div>
+
+
         </div>
     </div>
     <!-- End Shop Page -->
