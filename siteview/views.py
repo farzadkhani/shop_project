@@ -12,7 +12,7 @@ class HomeView(TemplateView):
         context['baner_slide'] = FirstSlideIndex.objects.filter(draft=False)
         context['baner_slide_counter'] = FirstSlideIndex.objects.filter(draft=False).count()-1
         context['amazing_offer'] = Product.objects.filter(is_amazing_offer=True)
-        context["category_list"] = Category.objects.all()
+        # context["category_list"] = Category.objects.all()
         context["special_brand_list"] = Brand.objects.filter(is_special=True)
         context["top_category"] = Category.objects.filter(parent__isnull=True)
 

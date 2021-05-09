@@ -37,7 +37,7 @@
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">دسته بندی ها</a>
                         <div class="dropdown-menu" style="width:450px !important;" aria-labelledby="dropdown01">
                             <div class="row">
-                                {% for cat in category_list%}
+                                {% for cat in category_list_all%}
                                     {% if cat.parent is None %}
                                         <div class="col-menu col-md-3">
                                             <a class="title" style="color: #0b0b0b" href="{% url 'search_product' slug=cat.slug %}">{{ cat.name }}</a>
