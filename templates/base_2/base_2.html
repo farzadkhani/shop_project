@@ -1,6 +1,6 @@
 {% load static %}
 
-<DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <!-- Basic -->
@@ -57,28 +57,24 @@
 
 <body>
 
-    <dev class='mt-5 pt-4'> 
+    {% include 'base_2/header_2.html' %}
+
+    <div class='mt-5 pt-4'>
         {% if messages %}
             {% for message in messages %}
-            <div class='alert alert-{{ message.tags }}' role='alert'>{{ message }}</div>
+            <div class='alert alert-{{ message.tags }} alert-dismissable' role='alert'>{{ message }}
+            <button type="button" data-dismiss="alert" class="close">&times</button></div>
+                <!--"data-" is jquery method is fully defind by programer and do somthing for use.hear is for delet the alert from page -->
             {% endfor %}
         {% endif %}
     </div>
 
-
-    {% include 'base_2/header_2.html' %}
-
-
     {% block content %}
     {% endblock %}
 
-
-
     {% include 'base_2/footer_2.html' %}
 
-
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
-
     <!-- ALL JS FILES -->
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>

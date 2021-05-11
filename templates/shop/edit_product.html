@@ -1,7 +1,8 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
 {% load humanize %}
-<DOCTYPE html>
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
 
 {% block title %}
     | فروشگاه اینترنتی ما
@@ -10,46 +11,60 @@
 {% block content %}
 
     <!-- Start All Title Box -->
-    <div class="all-title-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2>فروشگاه شما</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">بروز رسانی محصول</li>
-                    </ul>
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>حساب کاربری</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ تغییر اطلاعات محصول</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- End All Title Box -->
-
-
-    <div class='container' style="background-color: #e7e7e7;">
-        <form method='post' enctype='multipart/form-data'> 
-        <!-- -->
-            {% csrf_token %}
-            <div class='col-6'>
-                <p>{{ form.product.value }} : نام محصول </p>
-            </div>
-            <div class='col-6'>
-                <p>{{ form.size }} : سایز محصول </p>
-            </div>
-            <div class='col-6'>
-                <p>{{ form.color }} : رنک محصول </p>
-            </div>
-            <div class='col-6'>
-                <p>قیمت محصول : {{ form.price }}{{ form.zip_code.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>تعداد موجودی : {{ form.quantity }}{{ form.zip_code.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>زمان انتشار : </p>{{ form.publish_time }}
-            </div>
-
-            <button type='submit' class='btn btn-success'>تایید اصلاعات</button>
-        </form>
+    <div class="container text-right border border-secondary mt-5 mb-5 p-5" style="background-color: #D4D4D4; width: 30rem;">
+        <h2>تغییر اطلاعات محصول</h2>
+        <div>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <hr/>
+                <button class='btn btn-success'>تایید اطلاعات</button>
+            </form>
+        </div>
+    </div>
+{##}
+{##}
+{#    <div class='container' style="background-color: #e7e7e7;">#}
+{#        <form method='post' enctype='multipart/form-data'> #}
+{#        <!-- -->#}
+{#            {% csrf_token %}#}
+{#            <div class='col-6'>#}
+{#                <p>{{ form.product.value }} : نام محصول </p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>{{ form.size }} : سایز محصول </p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>{{ form.color }} : رنک محصول </p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>قیمت محصول : {{ form.price }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>تعداد موجودی : {{ form.quantity }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>زمان انتشار : </p>{{ form.publish_time }}#}
+{#            </div>#}
+{##}
+{#            <button type='submit' class='btn btn-success'>تایید اصلاعات</button>#}
+{#        </form>#}
     </div>
 
 

@@ -14,11 +14,11 @@
 {% block content %}
 
     <!--Shop info -->
-    <div class="container text-right" style="margin-top: 70px;">
+    <div class="container text-right mt-2">
         <div class="row">
 
             <!--Shop discription -->
-            <div class="border border-secondary col-9 p-5 mt-3 mr-0 mb-3">
+            <div class="border border-secondary col-9 p-5 mr-0 mb-3" style="background-color: #D4D4D4;">
                 {% for i in curent_slug_object %}
                     {% if i.discription %}
                             <h3>توضیحات فروشگاه</h3>
@@ -31,7 +31,7 @@
 
             <!--Shop Base info -->
             <div class="col-3">
-                <div class="card mt-3" style="width: 18rem;">
+                <div class="card" style="width: 18rem; background-color: #D4D4D4;">
                     {% for i in curent_slug_object %}
                         {% if i.image %}
                         <img class="card-img-top" src="{{ i.image.url }}" width="100px" alt="Card image cap">
@@ -55,7 +55,7 @@
             <div class="col-9">
                 <div class="row">
                     {% for product in object_list %}
-                        <div class="card m-2" style="width: 250px;">
+                        <div class="card m-2" style="width: 250px; background-color: #D4D4D4;">
                             {% if product.first_image %}
                                 <a href="{% url 'detail_product' slug=product.slug id=product.min_price.first.id %}"><img src="{{ product.first_image.url }}" class="card-img-top" style="height: 300px" alt="Image"></a>
                             {% endif %}
@@ -83,7 +83,7 @@
 
             <div class="col-3">
                 <div>
-                    <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                    <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
                         <div class="card-header">
                             : لیست برند ها
                         </div>
@@ -106,7 +106,7 @@
                         </form>
                     </ul>{% endcomment %}
                 </div>
-                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
                     <div class="card-header">
                         : مرتب سازی بر اساسه
                     </div>
@@ -124,7 +124,7 @@
                         </form>
                     </ul>
                 </div>{% endcomment %}
-                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem;">
+                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
                     <div class="card-header">
                         : لیست دسته بندی ها
                     </div>

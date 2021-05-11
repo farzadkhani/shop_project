@@ -26,7 +26,7 @@ SECRET_KEY = 'wb%!4517pdre1b(ys&$08q524dt8s3yg@0o0y!f)8=p=3&9iwy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'pythonanywhere.com']
 AUTH_USER_MODEL ='Accounts.User'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
@@ -48,8 +48,12 @@ INSTALLED_APPS = [
     'Products',
     'Orders',
     'django_filters',
+    'crispy_forms',# django-crispy-forms
     # 'bootstrapform',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4' # adition config for django-crispy-form
+
 
 MIDDLEWARE = [
     'siteview.middleware.ProcessViewNoneMiddleware',
@@ -75,7 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'siteview.contex_processors.shared_context',
+                'siteview.contex_processors.shared_context', # my custom shared context for all pages
             ],
         },
     },

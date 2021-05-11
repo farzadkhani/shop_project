@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark"><!-- fixed-top  -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark"><!-- fixed-top  -->
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.png' %}" width="100" class="logo" alt=""></a>
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
@@ -19,7 +19,7 @@
                             </div>
                         {% endif %}
                         {% if not request.user.is_authenticated %}
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">حساب من</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ورود به حساب</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href='{% url "login" %}'>ورود به حسای کاربری</a>
                                 <a class="dropdown-item" href='{% url "signup" %}'>ساخت حساب جدید</a>

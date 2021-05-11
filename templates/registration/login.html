@@ -1,6 +1,9 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
-<DOCTYPE html>
+{% load humanize %}
+
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
 
 {% block title %}
     login TheWay Shop
@@ -8,12 +11,36 @@
 
 
 {% block content %}
-    <h2>Log in</h2>
-    <form method='POST'>
-    {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Log in</button>
-      <h4><a href='{% url 'signup' %}'>or Sign up</a></h4>
 
-    </form>
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>ورود به حساب</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ ورود به حساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container text-right border border-secondary mt-5 mb-5 p-5" style="background-color: #D4D4D4; width: 30rem">
+        <h2>ورود به حساب کاربری</h2>
+        <div>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <div class="text-center"><button class='btn btn-outline-success text-center text-center'>تایید اطلاعات</button></div>
+            </form>
+        </div>
+        <hr class="mt-5">
+        <h4 class="mt-5"><a class="btn btn-outline-info" href='{% url 'signup' %}'>ثبت نام</a></h4>
+    </div>
+
 {% endblock %}

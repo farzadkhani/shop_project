@@ -30,6 +30,13 @@ class UserRegisterForm(UserCreationForm):
         help_text = {'email':_('a valid email for reser your password'), }
 
 
+class LoginForm(forms.Form):
+    '''
+    the login form for function view
+    '''
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
 class MyProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -59,9 +66,9 @@ class MyAddressProfileForm(forms.ModelForm):
         super(MyAddressProfileForm, self).__init__(*args, **kwargs)
 
         self.fields['city'].help_text = 'نام شهر خود را وارد کنید'
-        # self.fields['street'].help_text = 'خیابان محل سکونت'
-        # self.fields['number'].help_text = 'شماره پلاک'
-        # self.fields['zip_code'].help_text = 'کد پستی ۱۰ رقمی'
+        self.fields['street'].help_text = 'نام خیابان محل سکونتت'
+        self.fields['number'].help_text = 'شماره پلاک'
+        self.fields['zip_code'].help_text = 'کد پستی ۱۰ رقمی'
 
     class Meta:
         model = Address

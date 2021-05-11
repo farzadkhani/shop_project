@@ -1,6 +1,8 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
-<DOCTYPE html>
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
 
 {% block title %}
     signup in TheWay Shop
@@ -8,11 +10,65 @@
 
 
 {% block content %}
-    <h2>Sign up</h2>
-    <form method='POST' action="" enctype="multipart/form-data" class='post-form'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
-    <h4><a href='{% url 'login' %}'>or Log in</a></h4>
-  </form>
+
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>ساخت حساب</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ ساخت حساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container text-right border border-secondary mt-5 mb-5 p-5" style="background-color: #D4D4D4;width: 30rem;">
+        <h2>ورود به حساب کاربری</h2>
+        <div>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form|crispy }}
+{#                <div class="row">#}
+{#                    <div class="col-6">#}
+{#                        {{ form.email|as_crispy_field }}#}
+{#                    </div>#}
+{#                    <div class="col-6">#}
+{#                        {{ form.mobile|as_crispy_field }}#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="row">#}
+{##}
+{#                    <div class="col-6">#}
+{#                        {{ form.first_name|as_crispy_field }}#}
+{#                    </div>#}
+{#                    <div class="col-6">#}
+{#                        {{ form.last_name|as_crispy_field }}#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="row">#}
+{##}
+{#                    <div class="col-6">#}
+{#                        {{ form.image|as_crispy_field }}#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="row">#}
+{#                    <div class="col-6">#}
+{#                        {{ form.password|as_crispy_field }}#}
+{#                    </div>#}
+{#                    <div class="col-6">#}
+{#                        {{ form.password2|as_crispy_field }}#}
+{#                    </div>#}
+{#                </div>#}
+                <div class="text-center"><button class='btn btn-outline-success text-center text-center'>تایید اطلاعات</button></div>
+            </form>
+        </div>
+        <hr class="mt-5">
+        <h4 class="mt-5"><a class="btn btn-outline-info" href='{% url 'login' %}'>ورود به حساب</a></h4>
+    </div>
+
 {% endblock %}

@@ -1,7 +1,8 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
-<DOCTYPE html>
+<!DOCTYPE html>
 
 {% block title %}
         ویرایش اطلاعات :{{ user.get_full_name }}
@@ -11,14 +12,17 @@
 
 
     <!-- Start All Title Box -->
-    <div class="all-title-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2>My Account</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">حساب کاربری</li>
-                    </ul>
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>حساب کاربری</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ ویرایش مشخصات شخصی  </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,44 +30,59 @@
     <!-- End All Title Box -->
 
     <!-- Start My Account  -->
-    <div style='direction:rtl;'>
-        <div style='background-color:#000000;'>
-            <div style='  background-color:lightgrey; background-color:#  DCDCDC; padding:50px; margin:20px; text-align:center;'>
-            <!-- width: 300px; border:1px solid green; text-align:center; -->
-                <div style='text-align:right; padding-right:150px'>
-                    <div>
-                        <h4 style='padding-right:20%;'>--ویرایش اطلاعات شخصی--</h4>
-
-                        <div>
-                            <form method='post' enctype='multipart/form-data'>
-                                {% csrf_token %}
-                                
-                                <div class='col-6'>
-                                    <p>{{ form.first_name }}{{ form.first_name.help_text }}</p>
-                                </div>
-                                <div class='col-6'>
-                                    <p>{{ form.last_name }}{{ form.last_name.help_text }}</p>
-                                </div>
-                                <div class='col-6'>
-                                    <p>{{ form.mobile }}{{ form.mobile.help_text }}</p>
-                                </div>
-                                <div class='col-6'>
-                                    <p>{{ form.email }}{{ form.email.help_text }}</p>
-                                </div>
-                                <br/>
-                                <div class='col-8'>
-                                    <p>{{ form.image }}{{ form.image.help_text }}</p>
-                                </div>
-
-                                <button class='btn btn-success'>ویرایش اطلاعات</button>
-                            </form>
-                        </div> 
-
-                    </div>
-                </div>
-            </div>
+    <div class="container text-right border border-secondary mt-5 mb-5 p-5" style="background-color: #D4D4D4; width: 30rem;">
+        <h2>مشخصات شخصی </h2>
+        <div>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <hr/>
+                <button class='btn btn-success'> ویرایش مشخصات شخصی</button>
+            </form>
         </div>
     </div>
+
+
+
+
+{#    <div style='direction:rtl;'>#}
+{#        <div style='background-color:#000000;'>#}
+{#            <div style='  background-color:lightgrey; background-color:#  DCDCDC; padding:50px; margin:20px; text-align:center;'>#}
+{#            <!-- width: 300px; border:1px solid green; text-align:center; -->#}
+{#                <div style='text-align:right; padding-right:150px'>#}
+{#                    <div>#}
+{#                        <h4 style='padding-right:20%;'>--ویرایش اطلاعات شخصی--</h4>#}
+{##}
+{#                        <div>#}
+{#                            <form method='post' enctype='multipart/form-data'>#}
+{#                                {% csrf_token %}#}
+{#                                #}
+{#                                <div class='col-6'>#}
+{#                                    <p>{{ form.first_name }}{{ form.first_name.help_text }}</p>#}
+{#                                </div>#}
+{#                                <div class='col-6'>#}
+{#                                    <p>{{ form.last_name }}{{ form.last_name.help_text }}</p>#}
+{#                                </div>#}
+{#                                <div class='col-6'>#}
+{#                                    <p>{{ form.mobile }}{{ form.mobile.help_text }}</p>#}
+{#                                </div>#}
+{#                                <div class='col-6'>#}
+{#                                    <p>{{ form.email }}{{ form.email.help_text }}</p>#}
+{#                                </div>#}
+{#                                <br/>#}
+{#                                <div class='col-8'>#}
+{#                                    <p>{{ form.image }}{{ form.image.help_text }}</p>#}
+{#                                </div>#}
+{##}
+{#                                <button class='btn btn-success'>ویرایش اطلاعات</button>#}
+{#                            </form>#}
+{#                        </div> #}
+{##}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
     <!-- End My Account -->
 
 

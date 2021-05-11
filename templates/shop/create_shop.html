@@ -1,7 +1,10 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% load humanize %}
-<DOCTYPE html>
+
+
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
 
 {% block title %}
     {% for i in curent_slug_object %}
@@ -13,53 +16,66 @@
 {% block content %}
 
     <!-- Start All Title Box -->
-    <div class="all-title-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2>My Account</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item active">حساب کاربری</li>
-                    </ul>
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>حساب کاربری</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ ایجاد فروشگاه</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- End All Title Box -->
-
-
-    <h2>ایجاد فروشگاه</h2>
-    <div>
-        <form method='post' enctype='multipart/form-data'>
-            {% csrf_token %}
-            <div class='col-6'>
-                <p>نام فروشگاه : {{ form.name }}{{ form.city.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>نام مستعار : {{ form.slug }}{{ form.street.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>فیسبوک : {{ form.facebook }}{{ form.number.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>اینستاگرام : {{ form.instagram }}{{ form.zip_code.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>تلگرام : {{ form.telegram }}{{ form.zip_code.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>واتساپ : {{ form.whatsapp }}{{ form.zip_code.help_text }}</p>
-            </div>
-            <div class='col-6'>
-                <p>توضیحات فروشگاه : {{ form.discription }}{{ form.zip_code.help_text }}</p>
-            </div>            
-            <div class='col-6'>
-                <p>عکس فروشگاه : {{ form.image }}{{ form.zip_code.help_text }}</p>
-            <hr/>
-            <button class='btn btn-success'>تایید اصلاعات</button>
-        </form>
+    <div class="container text-right border border-secondary mt-5 mb-5 p-5" style="background-color: #D4D4D4; width: 30rem;">
+        <h2>ایجاد فروشگاه</h2>
+        <div>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <hr/>
+                <button class='btn btn-success'>تایید اطلاعات</button>
+            </form>
+        </div>
     </div>
-
+{##}
+{#    <h2>ایجاد فروشگاه</h2>#}
+{#    <div>#}
+{#        <form method='post' enctype='multipart/form-data'>#}
+{#            {% csrf_token %}#}
+{#            <div class='col-6'>#}
+{#                <p>نام فروشگاه : {{ form.name }}{{ form.city.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>نام مستعار : {{ form.slug }}{{ form.street.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>فیسبوک : {{ form.facebook }}{{ form.number.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>اینستاگرام : {{ form.instagram }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>تلگرام : {{ form.telegram }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>واتساپ : {{ form.whatsapp }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>#}
+{#            <div class='col-6'>#}
+{#                <p>توضیحات فروشگاه : {{ form.discription }}{{ form.zip_code.help_text }}</p>#}
+{#            </div>            #}
+{#            <div class='col-6'>#}
+{#                <p>عکس فروشگاه : {{ form.image }}{{ form.zip_code.help_text }}</p>#}
+{#            <hr/>#}
+{#            <button class='btn btn-success'>تایید اصلاعات</button>#}
+{#        </form>#}
+{#    </div>#}
+{##}
 
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 

@@ -27,9 +27,38 @@ class SignUp(CreateView):
 class LogIn(LoginView):
     template_name = 'registration/login.html'
 
+# the basic function base login view
+# def login_view(request):
+#     form_instance = form.LoginForm()
+#     if request.method == 'POST':
+#         forms_instance = forms.LoginForm(data=request.POST)
+#         username = forms_instance.cleaned_data['username']
+#         password = forms_instance.cleaned_data['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request)
+#             return redirect('home')
+#         else:
+#            messages.success()
+#            messages.info()
+#            messages.warning(request, 'شما قبلا نظر خود را ثبت کرده اید')
+#            messages.error()
+#            messages.debug()
+
+#      return render(request, context={'form':form_instance, }, template_name='user/login.html)
+
 
 class LogOut(LogoutView):
     template_name = 'registration/logout.html'
+
+
+# the basic function base logout view
+# def logout_view(request):
+#     logout(request)
+#     return redirect('home')
+
+
+#      return render(request, context={'form':form_instance, }, template_name='user/login.html)
 
 
 class Profile(LoginRequiredMixin, DetailView):

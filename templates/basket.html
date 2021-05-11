@@ -1,7 +1,7 @@
-{% extends 'base/base.html' %}
+{% extends 'base_2/base_2.html' %}
 {% load static %}
 {% load humanize %}
-<DOCTYPE html>
+<!DOCTYPE html>
 
 {% block title %}
     {% for i in curent_slug_object %}
@@ -14,163 +14,152 @@
 
 
     <!-- Start All Title Box -->
-    <div class="all-title-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2>سبد خرید</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'home' %}">خانه</a></li>
-                        <li class="breadcrumb-item active">سبد خرید</li>
-                    </ul>
+    <!-- Start All Title Box -->
+    <div class="container mt-2">
+        <div class="card text-right bg-info">
+            <div class="card-body">
+                <h2>لیست خرید ها</h2>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href='{% url "home" %}'>خانه</a>
+                            <a style="color: #0b0b0b">/ لیست خرید ها</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- End All Title Box -->
+    <!-- End All Title Box -->
 
     <!-- Start Cart  -->
-    <div class="cart-box-main">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="table-main table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>عکس محصول</th>
-                                    <th>نام محصول</th>
-                                    <th>قسمت محصول</th>
-                                    <th>تعداد محصول</th>
-                                    <th>قیمت کل</th>
-                                    <th>افزایش تعداد محصول</th>
-                                    <th>کاهش تعداد محصول</th>
-                                    <th>حذف محصول</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+
+
+    <div class="container text-right mt-5">
+        <table class="table table-striped table-dark">
+            <thead>
+            <tr>
+                <th scope="col">حذف محصول</th>
+                <th scope="col">کاهش تعداد</th>
+                <th scope="col">افزایش تعداد</th>
+                <th scope="col">قیمت در تعداد</th>
+                <th scope="col">تعداد محصول</th>
+                <th scope="col">قیمت تکی محصول</th>
+                <th scope="col">نام محصول</th>
+                <th scope="col">عکس محصول</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for j in object_list %}
+                {% for i in j.basket_items %}
+                    <tr>
+                        <th>
+                            <a class="btn btn-outline-danger" href="{% url 'remove_from_basket' id=i.shopproduct.id %}">
+                                <span>&#10060;</span>
+                            </a>
+                        </th>
+                        <td>
+                            <a class="btn btn-outline-warning" href="{% url 'decrease_from_basket' id=i.shopproduct.id %}">
+                                <span>&#9661;</span>
+                                کاهش تعداد
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-warning" href="{% url 'increase_from_basket' id=i.shopproduct.id %}">
+                                <span>&#9650;</span>
+                                افزایش تعداد
+                            </a>
+                        </td>
+                        <td>
+                            <p>{{ i.total_price|intcomma }}</p>
+                        </td>
+                        <td>
+                            <p>{{ i.quantity }}</p>
+                        </td>
+                        <td>
+                            <p>{{ i.shopproduct.price|intcomma }}</p>
+                        </td>
+                        <td>
+                            <a class="text-white" href="{% url "detail_product" i.shopproduct.product.slug i.shopproduct.id %}">
+                                {{ i.shopproduct.product.name }}سایز {{ i.shopproduct.size }} رنگ {{ i.shopproduct.color }}
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href="{% url "detail_product" i.shopproduct.product.slug i.shopproduct.id %}">
+                                <img class="img-fluid" style="height: 100px" src="{{ i.shopproduct.product.first_image.url }}" alt="" />
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="container text-right">
+        <div class="row">
+            <div class="col-4 border border-secondary mt-5 p-5 mb-5 ">
+                <div class="card" style="background-color: #D4D4D;">
+                    <div class="card-header">
+                        اعمال تخفیف
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><input> :کد</li>
+                        <li class="list-group-item"><p class="bg-danger text-center">کد نا درست است</p></li>
+                        <li class="list-group-item"> مبلغ کد <span class="bg-info"> 20,000 </span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-7 border border-secondary mt-5 p-5 mb-5 ml-5" style="background-color: #D4D4D4;">
+                <h3>حساب درای</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width: 70%" scope="col">میلغ</th>
+                        <th style="width: 30%" scope="col">مورد</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
                             {% for j in object_list %}
-                                {% for i in j.basket_items %}
-                                
-                                    <tr>
-                                        <td class="thumbnail-img">
-                                            <a href="#">
-								    	<img class="img-fluid" src="{{ i.shopproduct.product.image.url }}" alt="" />
-								    </a>
-                                        </td>
-                                        <td class="name-pr">
-                                            <a href="#">
-								    	        {{ i.shopproduct.product.name }}سایز {{ i.shopproduct.size }} رنگ {{ i.shopproduct.color }}
-								            </a>
-                                        </td>
-                                        <td class="price-pr">
-                                            <p>{{ i.shopproduct.price|intcomma }}</p>
-                                        </td>
-                                        <td class="quantity-box">
-                                        {{ i.quantity }}
-                                        {% comment %} <input type="number" size="4" value="1" min="0" step="1" class="c-input-text qty text"> {% endcomment %}
-                                        </td>
-                                        <td class="total-pr">
-                                            <p>{{ i.total_price|intcomma }}</p>
-                                        </td>
-
-                                        <td>
-								    	    <a class="btn hvr-hover" href="{% url 'increase_from_basket' id=i.shopproduct.id %}">
-                                            <i class="fas fa-arrow-up"></i>
-                                            افزایش تعداد
-                                            </a>
-                                        </td>
-
-                                        <td>
-								    	    <a class="btn hvr-hover" href="{% url 'decrease_from_basket' id=i.shopproduct.id %}">
-                                            <i class="fas fa-arrow-down"></i>
-                                            کاهش تعداد
-                                            </a>
-                                        </td>
-
-                                        {% comment %} <td class="remove-pr">
-                                            <a href="#">
-								    	        <i class="fas fa-times"></i>
-								            </a>
-                                        </td> {% endcomment %}
-
-                                        <td class="remove-pr">
-                                            <a href="{% url 'remove_from_basket' id=i.shopproduct.id %}">
-								    	        <i class="fas fa-times"></i>
-								            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
+                                <div>{{ j.basket_price|intcomma }} تومان</div>
                             {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row my-5">
-                <div class="col-lg-6 col-sm-6">
-                    <div class="coupon-box">
-                        <div class="input-group input-group-sm">
-                            <input class="form-control" placeholder="Enter your coupon code" aria-label="Coupon code" type="text">
-                            <div class="input-group-append">
-                                <button class="btn btn-theme" type="button">Apply Coupon</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-sm-6">
-                    <div class="update-box">
-                        <input value="Update Cart" type="submit">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row my-5">
-                <div class="col-lg-8 col-sm-12"></div>
-                <div class="col-lg-4 col-sm-12">
-                    <div class="order-box">
-                        <h3>Order summary</h3>
-                        <div class="d-flex">
-                            <h4>Sub Total</h4>
+                        </td>
+                        <td>مجموع فاکتور</td>
+                    </tr>
+                    <tr>
+                        <td>0.0</td>
+                        <td>مجموع تخفیف کالا</td>
+                    </tr>
+                    <tr>
+                        <td>0.0</td>
+                        <td>کد تخفیف</td>
+                    </tr>
+                    <tr>
+                        <td>0.0</td>
+                        <td>هزینه جابجایی</td>
+                    </tr>
+                    <tr>
+                        <td>
                             {% for j in object_list %}
-                                <div class="ml-auto font-weight-bold"> {{ j.basket_price|intcomma }} </div>
+                                <div class="btn btn-danger">تومان {{ j.basket_price|intcomma }}</div>
                             {% endfor %}
-                        </div>
-                        <div class="d-flex">
-                            <h4>Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $ 40 </div>
-                        </div>
-                        <hr class="my-1">
-                        <div class="d-flex">
-                            <h4>Coupon Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $ 10 </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Tax</h4>
-                            <div class="ml-auto font-weight-bold"> $ 2 </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Shipping Cost</h4>
-                            <div class="ml-auto font-weight-bold"> Free </div>
-                        </div>
-                        <hr>
-                        <div class="d-flex gr-total">
-                            <h5>Grand Total</h5>
-                            <div class="ml-auto h5"> --- </div>
-                        </div>
-                        <hr> </div>
-                </div>
-                <div class="col-12 d-flex shopping-box"><a href="checkout.html" class="ml-auto btn hvr-hover">Checkout</a> </div>
+                        </td>
+                        <td>قابل پرداخت</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-
         </div>
     </div>
+
     <!-- End Cart -->
 
-
-
-    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
 
 
