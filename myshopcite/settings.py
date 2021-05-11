@@ -56,7 +56,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4' # adition config for django-crispy-form
 
 
 MIDDLEWARE = [
-    'siteview.middleware.ProcessViewNoneMiddleware',
+    # 'siteview.middleware.ProcessViewNoneMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
