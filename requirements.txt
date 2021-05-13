@@ -2,3 +2,5 @@ Django~=3.1.4
 Pillow~=7.0.0
 Django-filter~=2.4.0
 Django-crispy-forms~=1.11.2
+Djangorestframework~=3.12.4
+Pygments~=2.9.0

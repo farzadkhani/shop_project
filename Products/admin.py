@@ -60,7 +60,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(models.ShopProduct)
 class ShopProductAdmin(admin.ModelAdmin):
     # inlines = [InLineShopProduct]
-    list_display = ('id', 'product', 'shop', 'price', 'size', 'color', 'image_tag') # 'quantity', 'create', 'update'
+    list_display = ('id', 'product', 'shop', 'price', 'size', 'color') # 'quantity', 'create', 'update', 'image_tag'
     search_fields = ('product', 'price', 'shop', 'quantity')
     list_filter = ('created_at', 'updated_at', 'publish_time')
     list_display_links = ('shop', )# 'parent_self', 

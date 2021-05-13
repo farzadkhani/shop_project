@@ -11,29 +11,7 @@ from django.contrib.auth.models import User
 
 
 # for call user from call "settings.AUTH_USER_MODEL"
-'''
- on_delete =>
-    CASCADE: whenever the refrenced object is deleted, the objects refrending it are deleted as well
-    PROTECT: django will prevent a post from deletion if it already has refrenced
-    SET_NULL: when we can use if set the "null=True". delete the refrenced object and leave the refrencing object 
-        in databace with out deleting. 
-        Sometimes this option is what you need. For instance, if you want to delete a user and keep the number of 
-        times he has logged into your app for audit purposes.
-    SET_DEFAULT: requires you to set a default value when definfing the relationship.means when delete the 
-        refrenced object the refrencing object is ralate to defaul object you defin.
-    SET(): same as 'SET_DEFAULT' by have more option
-        from django.conf import settings
-        from django.contrib.auth import get_user_model
-        from django.db import models
-        def get_sentinel_user():
-            return get_user_model().objects.get_or_create(username='deleted')[0]
-        class MyModel(models.Model):
-            user = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete=models.SET(get_sentinel_user),
-            )
-    DO_NOTHING: it means do noting. it has integrityerror.
-'''
+
 
 class Product(models.Model):  # make product data
     brand = models.ForeignKey(
@@ -44,7 +22,7 @@ class Product(models.Model):  # make product data
         # similar as 'product_set' in  Branditem.product_set.all() or similar as Branditem.Product.all()
         related_query_name='Product'
     )
-    slug = models.SlugField(_('slug'))
+    slug = models.SlugField(_('slug'), unique=True)
     name = models.CharField(_('product name'), max_length=500)
     detail = models.TextField(_('product detail'), blank=True, null=True)
     category = models.ForeignKey(
@@ -62,6 +40,7 @@ class Product(models.Model):  # make product data
     class Meta:
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
+        ordering = ['-id']
 
     @property
     def find_all_size_and_color(self):
@@ -89,7 +68,8 @@ class Product(models.Model):  # make product data
     @property
     def first_image(self):
         img = Image.objects.filter(product=self)
-        return img[0].image
+        if img:
+            return img[0].image
 
     @property
     def min_price(self):
@@ -186,6 +166,7 @@ class Category(models.Model):  # make cagories
     class Meta:
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -464,6 +445,7 @@ class Comment(models.Model):
         verbose_name = _('Comment')
         verbose_name_plural = _('Comments')
         unique_together = ['user', 'product']
+        ordering = ['-id']
 
 
     def __str__(self):

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'Orders',
     'django_filters',
     'crispy_forms',# django-crispy-forms
+    'rest_framework',
     # 'bootstrapform',
 ]
 
@@ -121,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'de-ch'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Tehran'
 

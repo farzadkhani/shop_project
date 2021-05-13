@@ -14,9 +14,13 @@ from .views import (
     )
 from django.conf import settings
 from django.conf.urls.static import static
-
-
 from django.contrib.auth.decorators import login_required, permission_required
+
+from .api import (
+    product_list, product_detail,
+    category_detail, category_list,
+    comments_list, comment_detail
+)
 
 urlpatterns = [
     path('category/<slug:slug>/', ProductListCategory.as_view(), name='search_product'),
@@ -36,8 +40,15 @@ urlpatterns = [
     path('edit_comment/<slug:slug>/<int:id>/', EditCommentView.as_view(), name='edit_comment'),
     path('edit_comment/<slug:slug>/', EditCommentView.as_view(), name='edit_comment_not_seller'),
 
-    
 
+
+
+    path('json/products/', product_list, name='json_products_list'),
+    path('json/products/<int:pk>/', product_detail, name='json_product_detail'),
+    path('json/categories/', category_list, name='json_categories_list'),
+    path('json/categories/<int:pk>/', category_detail, name='json_category_detail'),
+    path('json/comments/', comments_list, name='json_comments_list'),
+    path('json/comments/<int:pk>/', comment_detail, name='json_comment_detail'),
     #Basket Urls
     #path('increase_from_basket/<int:id>/', increase_from_basket, name='increase_from_basket'),
 ]
