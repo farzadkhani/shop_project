@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.urls import reverse
 from Products.models import ShopProduct
+from Orders.models import Basket
 
 
 class UserManager(BaseUserManager):
@@ -66,6 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+        ordering = ['-id']
         #abstract = True
 
 
@@ -86,6 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['mobile', 'first_name', 'last_name']
+
 
     def clean(self):
         super().clean()
@@ -124,6 +127,25 @@ class User(AbstractBaseUser, PermissionsMixin):
         shop = Shop.objects.get(user=self)
         return shop
 
+    @property
+    def have_shop(self):
+        try:
+            shop = Shop.objects.get(user=self)
+            if shop.is_active == True:
+                return True
+            else:
+                return False
+        except:
+            return False
+
+    @property
+    def get_basket(self):
+        try:
+            basket = Basket.objects.get(user=self)
+            return basket
+        except:
+            basket = Basket.objects.create(user=self)
+            return  basket
 
 class Profile(models.Model):
     pass
@@ -148,6 +170,7 @@ class Address(models.Model):    #for address of users
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
+        ordering = ['-id']
         #unique_together = [['user', 'city', 'street', 'allay', 'zip_code']]
 
     def __str__(self):
@@ -187,6 +210,7 @@ class Shop(models.Model):   #the saler hear is registrate
     class Meta:
         verbose_name = _('Shop')
         verbose_name_plural = _('Shops')
+        unique_together = ['user', ]
 
     def __str__(self):
         return self.name

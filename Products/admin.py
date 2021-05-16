@@ -78,7 +78,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(models.Image)
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ('product', 'image') #, 'created', 'updated'
+    list_display = ('product', 'shop', 'is_active', 'image') #, 'created', 'updated'
     search_fields = ('product',)
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
@@ -106,15 +106,15 @@ class OffAdmin(admin.ModelAdmin):
 
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('product', 'user', 'text', 'is_active')  #, 'created', 'updated'
+    list_display = ('id', 'product', 'user', 'text', 'is_active')  #, 'created', 'updated'
     search_fields = ('product', 'user', 'text', 'is_active') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')
 
 
 @admin.register(models.CommentLike)
 class CommentLikeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'comment', 'like')  #, 'created', 'updated'
-    search_fields = ('user', 'comment', 'like') #, 'created', 'updated'
+    list_display = ('user', 'comment', 'is_active')  #, 'created', 'updated'
+    search_fields = ('user', 'comment', 'is_active') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')
 #     #fields = '__all__'
 #     # fieldsets = (
@@ -130,8 +130,8 @@ class CommentLikeAdmin(admin.ModelAdmin):
 
 @admin.register(models.CommentDisLike)
 class CommentDisLikeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'comment', 'dislike')  #, 'created', 'updated'
-    search_fields = ('user', 'comment', 'dislike') #, 'created', 'updated'
+    list_display = ('user', 'comment', 'is_active')  #, 'created', 'updated'
+    search_fields = ('user', 'comment', 'is_active') #, 'created', 'updated'
     list_filter = ('created_at', 'updated_at')
 
 

@@ -1,8 +1,20 @@
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
 from .views import SignUp, LogIn, LogOut, Profile, PersonalDetailEdit, PersonalAddressEdit, remove_address, CreateNewAddress, CreateShop, UpdateShop
-from django.contrib.auth.decorators import login_required, permission_required
+
+from .api import (
+    UserModelViewSet, ShopModelViewSet,
+    AddressModelViewSet, EmailModelViewSet
+)
+# from rest_framework.urlpatterns import format_suffix_patterns
+from myshopcite.urls import router
+
+
+router.register(r'accounts/users', UserModelViewSet)
+router.register(r'accounts/addresses', AddressModelViewSet)
+router.register(r'accounts/shops', ShopModelViewSet)
+router.register(r'accounts/emails', EmailModelViewSet)
+
+
 
 urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),

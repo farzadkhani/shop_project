@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path , include
 from .views import (
     ProductListCategory, ProductListSeller, 
     ProductDetail, SearchInProducts, 
@@ -19,8 +19,38 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .api import (
     product_list, product_detail,
     category_detail, category_list,
-    comments_list, comment_detail
+    CommentList, CommentDetail,
+    BrandListMixin, BrandDetailMixin,
+    ImagesListGeneric, ImagesDetailGeneric,
+    ProductModelViewSet, ProductMetaModelViewSet,
+    CategoryModelViewSet, ShopProductModelViewSet,
+    OffModelViewSet, BrandModelViewSet,
+    ImageModelViewSet, ColorModelViewSet, SizeModelViewSet,
+    CommentModelViewSet, WishListModelViewSet,
+    CommentLikeModelViewSet, CommentDisLikeModelViewSet
 )
+# from rest_framework.urlpatterns import format_suffix_patterns
+from myshopcite.urls import router
+
+
+router.register(r'products/products', ProductModelViewSet)
+router.register(r'products/product_metas', ProductMetaModelViewSet)
+router.register(r'products/categoryes', CategoryModelViewSet)
+router.register(r'products/shop_products', ShopProductModelViewSet)
+router.register(r'products/offs', OffModelViewSet)
+router.register(r'products/brands', BrandModelViewSet)
+router.register(r'products/images', ImageModelViewSet)
+router.register(r'products/colors', ColorModelViewSet)
+router.register(r'products/size', SizeModelViewSet)
+router.register(r'products/comments', CommentModelViewSet)
+router.register(r'products/comment_likes', CommentLikeModelViewSet)
+router.register(r'products/comment_dis_likes', CommentDisLikeModelViewSet)
+router.register(r'products/wishlist', WishListModelViewSet)
+
+# we can defind ModelViewSet view urls by router simply
+# router import from base urls.py
+# attention: we should includ that in Base urlpatterns like[ path('api/', include(router.urls)),]
+
 
 urlpatterns = [
     path('category/<slug:slug>/', ProductListCategory.as_view(), name='search_product'),
@@ -47,9 +77,21 @@ urlpatterns = [
     path('json/products/<int:pk>/', product_detail, name='json_product_detail'),
     path('json/categories/', category_list, name='json_categories_list'),
     path('json/categories/<int:pk>/', category_detail, name='json_category_detail'),
-    path('json/comments/', comments_list, name='json_comments_list'),
-    path('json/comments/<int:pk>/', comment_detail, name='json_comment_detail'),
+    path('json/comments/', CommentList.as_view(), name='json_comments_list'),
+    path('json/comments/<int:pk>/', CommentDetail.as_view(), name='json_comment_detail'),
+    path('json/brands/', BrandListMixin.as_view(), name='json_brands_list'),
+    path('json/brands/<int:pk>/', BrandDetailMixin.as_view(), name='json_brand_detail'),
+    path('json/images/', ImagesListGeneric.as_view(), name='json_images_list'),
+    path('json/images/<int:pk>/', ImagesDetailGeneric.as_view(), name='json_image_detail'),
+
+
+    # path('json/colors/', ColorModelViewSet.as_view({'get':'list', 'post':'create'}), name='json_colors_list'),
+    # path('json/colors/<int:pk>/', ColorModelViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete':'destroy'}), name='json_color_detail'),
+
+
+
     #Basket Urls
     #path('increase_from_basket/<int:id>/', increase_from_basket, name='increase_from_basket'),
 ]
+# urlpatterns = format_suffix_patterns(urlpatterns)
 

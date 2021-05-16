@@ -29,7 +29,7 @@ class UserAdmin (BaseUserAdmin):
         }),
     )
     
-    list_display = ('email', 'mobile', 'is_staff', 'is_active', 'last_login')
+    list_display = ('id', 'email', 'mobile', 'is_staff', 'is_active', 'last_login')
     #settings for admin page in group
     #show the 'username'and 'imail' in admin list
     ordering =('email',)
@@ -56,7 +56,7 @@ class AddressAdmin(admin.ModelAdmin):
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('user','slug','name', 'is_active')
+    list_display = ('id', 'user','slug','name', 'is_active')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('user',)
 

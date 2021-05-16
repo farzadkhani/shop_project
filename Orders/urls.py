@@ -4,7 +4,20 @@ from django.conf.urls.static import static
 from .views import BasketItemList, remove_from_basket, decrease_from_basket, increase_from_basket, add_to_basket
 
 
-from django.contrib.auth.decorators import login_required, permission_required
+
+from .api import (
+    BasketModelViewSet, BasketItemModelViewSet,
+    OrdersModelViewSet, PeymentModelViewSet
+)
+from myshopcite.urls import router
+
+
+router.register(r'orders/baskets', BasketModelViewSet)
+router.register(r'orders/basket_items', BasketItemModelViewSet)
+router.register(r'orders/orders', OrdersModelViewSet)
+router.register(r'orders/peyments', PeymentModelViewSet)
+
+
 
 urlpatterns = [
     #Basket Urls

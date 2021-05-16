@@ -118,6 +118,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        # 'rest_framework.permissions.DjangoModelPermissions',
+        # 'rest_framework.permissions.IsAdminUser',
+    ],
+    # 'DEFAULT_PAGINATION_CLASS':[
+    # # !!! did not work with generic views
+    #     'rest_framework.pagination.LimitOffsetPagination',
+    #     # 'rest_framework.pagination.PageNumberPagination',
+    # ],
+    # 'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # this is say Basic Authentication is work with Sessions
+    ]
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -144,3 +164,5 @@ STATICFILES_DIRS = (
 # Media URL
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+

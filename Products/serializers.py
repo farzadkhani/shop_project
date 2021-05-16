@@ -126,16 +126,45 @@ class ProductSerializer(serializers.Serializer):
 
 
 class ProductModelSerializer(serializers.ModelSerializer):
+    #just for show.cuse of get the user and product in this json post is dificalt so we write another serializer for that
+
+    # user = UserModelSerializer(read_only=True)
+    # # for show user info in comment json we can do this
+    # product = ProductSerializer(read_only=True)
+
+    # user_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=User.objects.all(), write_only=True)
+    # # !!! attention: in postman we should use user_id instead write user in json
+
+    # product_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=models.Product.objects.all(), write_only=True)
+    # # !!! attention: in postman we should use product_id instead write product in json
+
+    # user_detail = UserModelSerializer(source='user', read_only=True)
+    # # source means show this item in user field ad value
+    # # sorce by defaul search for the name of the line, hear we rewrited that
 
     # comment = serializers.PrimaryKeyRelatedField(
     #     queryset=models.Comment.objects.all()
     # )
+    # comment = CommentModelSerializer(many=True, read_only=True)
     class Meta:
         model = models.Product
-        fields = [
-            'id', 'brand', 'slug', 'name', 'detail', 'category',
-            'created_at', 'updated_at', 'publish_time',
-        ]
+        fields = '__all__'
+
+    # def create(self, validated_data):
+    #     user_id = validated_data.pop('user_id')
+    #     product_id = validated_data.pop('product_id')
+    #     return models.Comment.objects.create(**validated_data, user=user_id, product=product_id)
+
+    # def get_image_url(self, obj):
+    #     return obj.image.url
+
+
+class ProductMetaModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductMeta
+        fields = '__all__'
 
 
 class CategoryModelSerializer(serializers.ModelSerializer):
@@ -145,9 +174,6 @@ class CategoryModelSerializer(serializers.ModelSerializer):
         # fields = ['name', 'slug', 'detail', 'image', 'parent', 'created_at', 'update_at', 'publish_time']
         fields = '__all__'
         # exclude = ['name', 'slug']
-
-    # def get_image_url(self, obj):
-    #     return obj.image.url
 
 
 class ShopProductModelSerializer(serializers.ModelSerializer):
@@ -171,7 +197,8 @@ class BrandModelSerializer(serializers.ModelSerializer):
 class ImageModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Image
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['is_active',]
 
 
 class ColorModelSerializer(serializers.ModelSerializer):
@@ -187,31 +214,15 @@ class SizeModelSerializer(serializers.ModelSerializer):
 
 
 class CommentModelSerializer(serializers.ModelSerializer):
-    #just for show.cuse of get the user and product in this json post is dificalt so we write another serializer for that
 
-    # user = UserModelSerializer(read_only=True)
-    # # for show user info in comment json we can do this
-    # product = ProductSerializer(read_only=True)
-
-    # user_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=User.objects.all(), write_only=True)
-    # # !!! attention: in postman we should use user_id instead write user in json
-    # product_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=models.Product.objects.all(), write_only=True)
-    # # !!! attention: in postman we should use product_id instead write product in json
     user_detail = UserModelSerializer(source='user', read_only=True)
 
-    # source means show this item in user field ad value
-    # sorce by defaul search for the name of the line, hear we rewrited that
     Product_detail = ProductModelSerializer(source='product', read_only=True)
+
     class Meta:
         model = models.Comment
-        fields = '__all__'
-
-    # def create(self, validated_data):
-    #     user_id = validated_data.pop('user_id')
-    #     product_id = validated_data.pop('product_id')
-    #     return models.Comment.objects.create(**validated_data, user=user_id, product=product_id)
+        # fields = '__all__'
+        exclude = ['is_active',]
 
 
 class CommentLikeModelSerializer(serializers.ModelSerializer):
@@ -230,3 +241,6 @@ class WishListModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WishList
         fields = '__all__'
+
+
+

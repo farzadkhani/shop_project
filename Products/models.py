@@ -113,6 +113,10 @@ class Product(models.Model):  # make product data
         comment = Comment.objects.filter(product=self, is_active=True)
         return comment
 
+    # @property
+    # def get_name(self):
+    #     return self.name.strip()
+
     def __str__(self):
         return self.name
 
@@ -140,6 +144,7 @@ class ProductMeta(models.Model):  # product size and coloar
         verbose_name = _('ProductMeta')
         verbose_name_plural = _('ProductMetas')
         unique_together = ['text_title', 'text_value', 'product']
+        ordering = ['-id']
 
     def __str__(self):
         return str(self.product)
@@ -257,6 +262,7 @@ class ShopProduct(models.Model):  # for price and quantity relate with product a
         verbose_name = _('ShopProduct')
         verbose_name_plural = _('ShopProducts')
         unique_together = ['shop', 'product', 'color', 'size']
+        ordering = ['-id']
 
     @property
     def min_off(self):
@@ -334,6 +340,7 @@ class Brand(models.Model):  # make brand of product
     class Meta:
         verbose_name = _('Brand')
         verbose_name_plural = _('Brands')
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -347,15 +354,26 @@ class Image(models.Model):  # for more images
         related_name='Images',
         related_query_name='Image'
     )
-    image = models.ImageField(_('Image'), upload_to='Products/images/images', blank=True, null=True)
-
+    image = models.ImageField(_('Image'), upload_to='Products/images/images')
+    is_active = models.BooleanField(
+        _('is_active'),
+        default=True,
+    )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
+    shop = models.ForeignKey(
+        'Accounts.Shop',
+        verbose_name=_('Shop'),
+        on_delete=models.CASCADE,
+        related_name='Image',
+        related_query_name='Image',
+    )
 
     class Meta:
         verbose_name = _('Image')
         verbose_name_plural = _('Images')
+        ordering = ['-id']
 
     def __str__(self):
         return str(self.product)
@@ -364,6 +382,9 @@ class Image(models.Model):  # for more images
 class Color(models.Model):
     name = models.CharField(_('color name'), max_length=500)
     code = models.CharField(_("color code"), max_length=50)
+
+    class Meta:
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -467,7 +488,7 @@ class CommentLike(models.Model):
         related_name='CommentLike',
         related_query_name='CommentLikes'
     )
-    like = models.BooleanField(_('like'), default=True)
+    is_active = models.BooleanField(_('like'), default=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
@@ -495,7 +516,7 @@ class CommentDisLike(models.Model):
         related_name='CommentDisLike',
         related_query_name='CommentDisLikes'
     )
-    dislike = models.BooleanField(_('dislike'), default=True)
+    is_active = models.BooleanField(_('dislike'), default=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
@@ -528,6 +549,7 @@ class WishList(models.Model):
         verbose_name = _('WishList')
         verbose_name_plural = _('WishLists')
         unique_together = ['user', 'product']
+        ordering = ['-id']
 
     def __str__(self):
         return str(self.user) +" " +str(self.product)
