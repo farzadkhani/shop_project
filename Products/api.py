@@ -38,8 +38,6 @@ from .permissions import (
 )
 
 
-default_athentication_class = [SessionAuthentication, BasicAuthentication]
-# i defind it hear to easy change for deploy
 
 
 # class CreateUserAPIView(CreateAPIView):
@@ -256,7 +254,7 @@ class ProductModelViewSet(ModelViewSet):
     # lookup_url_kwarg = slug
     serializer_class = ProductModelSerializer
     queryset = Product.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
     @action(detail=True, methods=['GET'])
@@ -275,6 +273,13 @@ class ProductModelViewSet(ModelViewSet):
     # # autofill the user id for authenticated and superuser
     #     if self.request.user.is_authenticated and not self.request.user.is_superuser:
     #         serializer.save(user=self.request.user)
+    #     if self.request.user.is_superuser:
+    #         serializer.save()
+
+    # def perform_update(self, serializer):
+    # # autofill the user id for authenticated and superuser
+    #     if self.request.user.is_authenticated and not self.request.user.is_superuser:
+    #         serializer.save(shop=self.request.user.get_shop)
     #     if self.request.user.is_superuser:
     #         serializer.save()
 
@@ -323,21 +328,21 @@ class ProductModelViewSet(ModelViewSet):
 class ProductMetaModelViewSet(ModelViewSet):
     serializer_class = ProductMetaModelSerializer
     queryset = ProductMeta.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
 class CategoryModelViewSet(ModelViewSet):
     serializer_class = CategoryModelSerializer
     queryset = Category.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
 class ShopProductModelViewSet(ModelViewSet):
     serializer_class = ShopProductModelSerializer
     queryset = ShopProduct.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [ShopProductPermissions]
 
     def perform_create(self, serializer):
@@ -358,21 +363,21 @@ class ShopProductModelViewSet(ModelViewSet):
 class OffModelViewSet(ModelViewSet):
     serializer_class = OffModelSerializer
     queryset = Off.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [JustSuperUserViewPermissions]
 
 
 class BrandModelViewSet(ModelViewSet):
     serializer_class = BrandModelSerializer
     queryset = Brand.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
 class ImageModelViewSet(ModelViewSet):
     serializer_class = ImageModelSerializer
     queryset = Image.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [ImagePermissions]
 
     def perform_create(self, serializer):
@@ -393,21 +398,21 @@ class ImageModelViewSet(ModelViewSet):
 class ColorModelViewSet(ModelViewSet):
     serializer_class = ColorModelSerializer
     queryset = Color.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
 class SizeModelViewSet(ModelViewSet):
     serializer_class = SizeModelSerializer
     queryset = Size.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
 class CommentModelViewSet(ModelViewSet):
     serializer_class = CommentModelSerializer
     queryset = Comment.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [CommentPermissions]
 
     def get_queryset(self):
@@ -417,7 +422,6 @@ class CommentModelViewSet(ModelViewSet):
             return queryset
         else:
             return queryset.filter(is_active=True)
-
 
     def perform_create(self, serializer):
     # autofill the user id for authenticated and superuser
@@ -437,7 +441,7 @@ class CommentModelViewSet(ModelViewSet):
 class CommentLikeModelViewSet(ModelViewSet):
     serializer_class = CommentLikeModelSerializer
     queryset = CommentLike.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [CommentPermissions]
 
     def get_queryset(self):
@@ -466,7 +470,7 @@ class CommentLikeModelViewSet(ModelViewSet):
 class CommentDisLikeModelViewSet(ModelViewSet):
     serializer_class = CommentDisLikeModelSerializer
     queryset = CommentDisLike.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [CommentPermissions]
 
     def get_queryset(self):
@@ -495,7 +499,7 @@ class CommentDisLikeModelViewSet(ModelViewSet):
 class WishListModelViewSet(ModelViewSet):
     serializer_class = WishListModelSerializer
     queryset = WishList.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [WishListPermissions]
 
     def get_queryset(self):

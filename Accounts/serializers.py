@@ -63,6 +63,9 @@ class ShopModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'is_active':{"read_only":True},
+            'create_at':{"read_only":True},
+            'update_at': {"read_only": True},
+
         }
 
 

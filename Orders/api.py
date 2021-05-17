@@ -30,15 +30,14 @@ from .permissions import (
 )
 
 
-default_athentication_class = [SessionAuthentication, BasicAuthentication]
-# i defind it hear to easy change for deploy
+
 
 
 
 class BasketModelViewSet(ModelViewSet):
     serializer_class = BasketModelSerializer
     queryset = Basket.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [BasketPermissions]
     #
     def get_queryset(self):
@@ -68,7 +67,7 @@ class BasketModelViewSet(ModelViewSet):
 class BasketItemModelViewSet(ModelViewSet):
     serializer_class = BasketItemsModelSerializer
     queryset = BasketItems.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [BasketItemPermissions]
 
     def get_queryset(self):
@@ -98,14 +97,14 @@ class BasketItemModelViewSet(ModelViewSet):
 class OrdersModelViewSet(ModelViewSet):
     serializer_class = OrdersModelSerializer
     queryset = Orders.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [JustSuperUserViewPermissions]
 
 
 class PeymentModelViewSet(ModelViewSet):
     serializer_class = PeymentModelSerializer
     queryset = Peyment.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [JustSuperUserViewPermissions]
 
 

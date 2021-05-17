@@ -4,3 +4,4 @@ Django-filter~=2.4.0
 Django-crispy-forms~=1.11.2
 Djangorestframework~=3.12.4
 Pygments>=2.9.0,<3.0.0
+djangorestframework-simplejwt>=4.6.0,<4.7.0

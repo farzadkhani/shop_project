@@ -27,8 +27,8 @@ from rest_framework.exceptions import NotFound
 from .permissions import UserViewPermissions, SuperUserPermissions, ShopPermissions
 
 
-default_athentication_class = [SessionAuthentication, BasicAuthentication]
-# i defind it hear to easy change for deploy
+
+
 
 
 # class CreateUserAPIView(CreateAPIView):
@@ -58,7 +58,7 @@ default_athentication_class = [SessionAuthentication, BasicAuthentication]
 class UserModelViewSet(ModelViewSet):
     serializer_class = UserModelSerializer
     queryset = User.objects.all()
-    authentication_classes = default_athentication_class# seas what system we use for authentication
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]# seas what system we use for authentication
     permission_classes = [UserViewPermissions]# seas what permisions need to access to model
     # permission_classes = [IsAuthenticated or MYCUSTOMPERMISSION]# we can use 2 permision
     # http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
@@ -101,7 +101,7 @@ class UserModelViewSet(ModelViewSet):
 class AddressModelViewSet(ModelViewSet):
     serializer_class = AddressModelSerializer
     queryset = Address.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         queryset = super(AddressModelViewSet, self).get_queryset()
@@ -127,7 +127,7 @@ class AddressModelViewSet(ModelViewSet):
 class ShopModelViewSet(ModelViewSet):
     serializer_class = ShopModelSerializer
     queryset = Shop.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [ShopPermissions]
     def get_queryset(self):
         queryset = super(ShopModelViewSet, self).get_queryset()
@@ -156,7 +156,7 @@ class ShopModelViewSet(ModelViewSet):
 class EmailModelViewSet(ModelViewSet):
     serializer_class = EmailModelSerializer
     queryset = Email.objects.all()
-    authentication_classes = default_athentication_class
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [SuperUserPermissions]
 
 
