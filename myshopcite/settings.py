@@ -27,7 +27,7 @@ SECRET_KEY = 'wb%!4517pdre1b(ys&$08q524dt8s3yg@0o0y!f)8=p=3&9iwy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'fkhanigm.pythonanywhere.com']
 AUTH_USER_MODEL ='Accounts.User'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
