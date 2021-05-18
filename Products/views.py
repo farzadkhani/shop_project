@@ -291,9 +291,9 @@ class ProductDetail(FormMixin, DetailView):
         if Comment.objects.filter(product__slug=self.kwargs['slug'], user=self.request.user).exists():
             messages.info(request, 'شما قبلا نظر خود را ثبت کرده اید')
             if self.kwargs.get('id'):
-                return reverse_lazy ('detail_product', kwargs={'slug':self.kwargs['slug'], 'id':self.kwargs['id']})
+                return redirect ('detail_product', slug=self.kwargs['slug'], id=self.kwargs['id'])
             else:
-                return reverse_lazy ('detail_product_not_seller', kwargs={'slug':self.kwargs['slug']})
+                return redirect ('detail_product_not_seller', slug=self.kwargs['slug'])
         else:
             if form.is_valid():
                 return self.form_valid(form)
