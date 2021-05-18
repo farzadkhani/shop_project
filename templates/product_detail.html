@@ -348,13 +348,21 @@
     {% endfor %}
 </div>
 <div class="container text-right  mt-3">
-    <div class="form-group">
+    {% if request.user.is_authenticated %}
+        <div class="form-group">
         <form method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
             {{ form.as_p|safe }}
             <button class="btn btn-outline-primary" type='submit'>ارسال</button>
         </form>
+        </div>
+    {% else %}
+    <div class="mt-3 mb-5 text-center">
+        <a class="btn btn-outline-info" href="{% url 'login' %}">برای ثبت نظر وارد شوید</a>
     </div>
+    {% endif %}
+
+
 </div>
 
 

@@ -29,10 +29,10 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
     
-    list_display = ('id', 'name', 'category', 'brand', 'slug', 'combine_name_and_brand',  'is_amazing_offer')    #, 'created', 'updated', imgage_tag
+    list_display = ('id', 'name', 'slug', 'category', 'brand', 'detail',  'is_amazing_offer')    #, 'created', 'updated', imgage_tag
     search_fields = ('id', 'name', 'slug', 'brand', 'category', 'is_amazing_offer')
     list_filter = ('created_at', 'updated_at', 'publish_time', 'is_amazing_offer')
-    list_display_links = ('name', 'brand', 'is_amazing_offer')
+    # list_display_links = ('name', 'brand', 'is_amazing_offer')
     
     def combine_name_and_brand(self, obj):
         return "{} برند {}".format(obj.name, obj.brand)
@@ -40,14 +40,14 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.ProductMeta)
 class ProductMetaAdmin(admin.ModelAdmin):
-    list_display = ('product',)    #, 'created', 'updated'
+    list_display = ('id', 'product', 'text_title', 'text_value')    #, 'created', 'updated'
     search_fields = ('product',)
     list_filter = ('product',)
 
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug' ,'parent_id', 'parent', 'detail')    # 'parent', 'create', 'update'
+    list_display = ('id', 'name', 'slug' ,'parent_id', 'parent', 'detail')    # 'parent', 'create', 'update'
     search_fields = ('name', 'slug')    #'parent'
     list_filter = ('created_at', 'updated_at', 'publish_time')
 
@@ -71,7 +71,7 @@ class ShopProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'details', 'image', 'is_special', ) #,'create', 'update'
+    list_display = ('id', 'name', 'slug', 'details', 'image', 'is_special', ) #,'create', 'update'
     search_fields = ('name', 'detail', 'is_special')
     list_filter = ('created_at', 'updated_at', 'publish_time', 'is_special')
 
@@ -85,14 +85,14 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Color)
 class ColorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'code', 'color_tag') #, 'created', 'updated'
+    list_display = ('id', 'name', 'code', 'color_tag') #, 'created', 'updated'
     search_fields = ('name', 'code')
     list_filter = ('name', 'code')
 
 
 @admin.register(models.Size)
 class SizeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'code') #, 'created', 'updated'
+    list_display = ('id', 'name', 'code') #, 'created', 'updated'
     search_fields = ('name', 'code')
     list_filter = ('name', 'code')
 
