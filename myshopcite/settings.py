@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'wb%!4517pdre1b(ys&$08q524dt8s3yg@0o0y!f)8=p=3&9iwy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'fkhanigm.pythonanywhere.com', 'myshopway.herokuapp.com']
 AUTH_USER_MODEL ='Accounts.User'
