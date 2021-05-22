@@ -177,26 +177,55 @@
                         <form method='GET' action=''>
                             <!-- brand filter -->
                             <div>
-                                <select name='brand_filter'>
-                                    <option value=''>-----</option>
+                                <span> برند ها</span>
+                                <br>
                                 {% for brand in clean_brand%}
-                                    <option value='{{ brand.name }}'>{{ brand.name }}</option>
+                                    <label >{{ brand.name }}</label>
+                                    <input type="radio" value="{{ brand.name }}" name='brand_filter' {% if brand.name == selected_brand_filter %} checked {% endif %}>
+                                    <br>
                                 {% endfor %}
-                                </select>
-                                <span>برند ها</span>
+                                <br>
                             </div>
-
-                            <!-- order filter -->
+{#                            <div>#}
+{#                                <select name='brand_filter'>#}
+{#                                    <option value=''>-----</option>#}
+{#                                {% for brand in clean_brand%}#}
+{#                                    <option value='{{ brand.name }}'>{{ brand.name }}</option>#}
+{#                                {% endfor %}#}
+{#                                </select>#}
+{#                                <span>برند ها</span>#}
+{#                            </div>#}
+{##}
+{#                            <!-- order filter -->#}
                             <div>
-                                <select name='order_by'>
-                                    <option value=''>-----</option>
-                                    <option value='-publish_time'>جدید ترین</option>
-                                    <option value="publish_time">قدیمی ترین</option>
-                                    <option value="price">بیشترین قمت</option>
-                                    <option value="-price">کم ترین قیمت</option>
-                                </select>
-                                <span>دسته بندی</span>
+                                <span>مرتب سازی</span>
+                                <br>
+                                <label >جدید ترین</label>
+                                <input type="radio" value="-publish_time" name='order_by' {% if selected_order_by == '-publish_time' %} checked {% endif %}>
+                                <br>
+
+                                <label >قدیمی ترین</label>
+                                <input type="radio" value="publish_time" name='order_by' {% if selected_order_by == 'publish_time' %} checked {% endif %}>
+                                <br>
+
+                                <label >بیشترین قمیت</label>
+                                <input type="radio" value="price" name='order_by' {% if selected_order_by == 'price' %} checked {% endif %}>
+                                <br>
+
+                                <label >کم ترین قیمت</label>
+                                <input type="radio" value="-price" name='order_by' {% if selected_order_by == '-price' %} checked {% endif %}>
+                                <br>
                             </div>
+{#                            <div>#}
+{#                                <select name='order_by'>#}
+{#                                    <option value=''>-----</option>#}
+{#                                    <option value='-publish_time'>جدید ترین</option>#}
+{#                                    <option value="publish_time">قدیمی ترین</option>#}
+{#                                    <option value="price">بیشترین قمت</option>#}
+{#                                    <option value="-price">کم ترین قیمت</option>#}
+{#                                </select>#}
+{#                                <span>دسته بندی</span>#}
+{#                            </div>#}
 
                             <!-- price filter -->
                             <div>
@@ -205,14 +234,14 @@
                                     <h6 class='card-header'>قیمت</h6>
                                     <div class='list-group list-group-flush'>
                                         <li class='list-group-item'>
-                                            {{ first_price_range.first_min_price|intcomma }}
-                                            <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value'/>
-                                            {{ last_price_range.first_min_price|intcomma }}
+                                            {{ first_price_range.first_min_price|intcomma }} از قیمت :
+                                            <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value' step="10000"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                            {{ last_price_range.first_min_price|intcomma }} : تا قیمت
                                         </li>
                                         <li class='list-group-item'>
-                                            بیشترین:
-                                            <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}'/>
-                                            {{ last_price_range.first_min_price|intcomma }}
+
+                                            <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' name="max_price"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                            بیشترین قیمت:{{ last_price_range.first_min_price|intcomma }}
                                         </li>
                                     </div>
                                 </div>
