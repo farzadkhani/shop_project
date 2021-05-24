@@ -31,3 +31,60 @@
 .carousel-inner .carousel-item-left{
   transform: translateX(0);
 }
+
+.accordion > div > span {
+    background-color: #eee;
+    display: block;
+    width: 100%;
+    cursor: pointer; /* mose symgole change to touch it */
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+.accordion > div > span:after { /* plus sybol*/
+    content: "\002b";
+    float: left;
+}
+
+.accordion > div:first-child > span { /* border for accordion*/
+    border-radius: 10px 10px 0 0;
+}
+
+.accordion > div:last-child > span { /* border for accordion*/
+    border-radius: 0px 0px 10px 10px;
+    border-bottom: 0;
+}
+
+.accordion > div.show:last-child > span { /* border for accordion*/
+    border-radius: 0;
+}
+
+.accordion > div.show:last-child > div { /* border for accordion*/
+    border-radius: 0 0 10px 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.accordion > div.show > span:after { /* minuw sybol*/
+    content: "\2212";
+    float: left;
+}
+
+.accordion > div > span:hover ,  /* "," means or */ /* hover means mose on it */
+.accordion > div.show > span { /* background of title or which on have class "show" */
+    background-color: #ccc;
+}
+
+.accordion > div > div {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    /* display: none; this item means this div did not show by default */
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.5s;
+}
+
+.accordion > div.show > div { /* define which div accordion can show */ /* "show" in this div means class name */
+    /* display: block; */
+    /* max-height: 300px; */
+    padding: 15px;
+}
