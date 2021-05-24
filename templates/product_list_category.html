@@ -186,17 +186,8 @@
                                 {% endfor %}
                                 <br>
                             </div>
-{#                            <div>#}
-{#                                <select name='brand_filter'>#}
-{#                                    <option value=''>-----</option>#}
-{#                                {% for brand in clean_brand%}#}
-{#                                    <option value='{{ brand.name }}'>{{ brand.name }}</option>#}
-{#                                {% endfor %}#}
-{#                                </select>#}
-{#                                <span>برند ها</span>#}
-{#                            </div>#}
-{##}
-{#                            <!-- order filter -->#}
+
+                            <!-- order filter -->
                             <div>
                                 <span>مرتب سازی</span>
                                 <br>
@@ -216,16 +207,6 @@
                                 <input type="radio" value="-price" name='order_by' {% if selected_order_by == '-price' %} checked {% endif %}>
                                 <br>
                             </div>
-{#                            <div>#}
-{#                                <select name='order_by'>#}
-{#                                    <option value=''>-----</option>#}
-{#                                    <option value='-publish_time'>جدید ترین</option>#}
-{#                                    <option value="publish_time">قدیمی ترین</option>#}
-{#                                    <option value="price">بیشترین قمت</option>#}
-{#                                    <option value="-price">کم ترین قیمت</option>#}
-{#                                </select>#}
-{#                                <span>دسته بندی</span>#}
-{#                            </div>#}
 
                             <!-- price filter -->
                             <div>
@@ -263,23 +244,6 @@
                 <hr>
                 <hr>
                 <hr>
-                    {% comment %} <div>
-                        <form method="GET">
-                            {{ filter.form.as_p }}
-                            {{ filter.form.name }}
-                            {{ filter.form.brand }}
-                            <div class="filter-brand-left">
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                    {% for i in filter.form.price_order%}
-                                        <option value='{{ i }}'>{{ i }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-outline-primary">Search</button>
-                        </form>
-                <!--end filters-->
-                    </div>{% endcomment %}
-
 
 
 

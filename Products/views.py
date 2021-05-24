@@ -119,8 +119,7 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
             category_object = Category.objects.get(slug=self.kwargs['slug'])
             final_category_list = category_object.get_all_sub_childrens_
             final_category_list = [*list(final_category_list), category_object]
-            queryset = queryset.filter(category__in=final_category_list).order_by(
-                '-publish_time')  
+            queryset = queryset.filter(category__in=final_category_list)# .order_by('-publish_time')
             # use category list  to filter get products with slug of curent page
         
         brand_filter = self.request.GET.get('brand_filter')
@@ -134,27 +133,26 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
             if order_by == '-publish_time' or order_by== 'publish_time':
                 queryset = queryset.order_by(order_by)
             elif order_by == 'price':
-            # queryset = queryset.order_by('-ShopProduct__price').values_list('id', flat=True).distinct()
-                items, item_ids = [], []
+                item_ids = []
                 for item in queryset.order_by('-ShopProduct__price'):
                     if not item in item_ids:
-                        items.append(item)
                         item_ids.append(item)
                         queryset = item_ids
             else:
-            # queryset = queryset.order_by('ShopProduct__price').values_list('id', flat=True).distinct()
-                items, item_ids = [], []
+                item_ids = []
+                no_price_list = []
                 for item in queryset.order_by('ShopProduct__price'):
                     if not item in item_ids:
-                        items.append(item)
-                        item_ids.append(item)
-                        queryset = item_ids
+                        if item.first_min_price:
+                            item_ids.append(item)
+                        else:
+                            no_price_list.append(item)
+                    queryset = item_ids + no_price_list
 
         if max_price !='' and max_price is not None:
-            items, item_ids = [], []
+            item_ids = []
             for item in queryset:
                 if (not item in item_ids) and (type(item.first_min_price) == int) and (item.first_min_price<= int(max_price)):
-                    items.append(item)
                     item_ids.append(item)
                     queryset = item_ids
                 else:
@@ -222,6 +220,7 @@ class ProductListCategory(ListView):    # , FormView, FormMixin,
         selected_brand_filter = self.request.GET.get('brand_filter')
         selected_order_by = self.request.GET.get('order_by')
         selected_max_price = self.request.GET.get('max_price')
+
         if selected_brand_filter !='' and selected_brand_filter is not None:
             context["selected_brand_filter"] = selected_brand_filter
 
@@ -340,54 +339,98 @@ class ProductDetail(FormMixin, DetailView):
 
 class ProductListSeller(ListView):
     model = Product
-    queryset = Product.objects.all()
+    # queryset = Product.objects.all()
     template_name = 'product_list_seller.html'
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(ShopProduct__shop__slug=self.kwargs[
-            'slug'])  # use category list  to filter get products with slug of curent page
-        # print('queryset', queryset)
-        product_check_list = []
-        for i in queryset:
-            if not i.name in product_check_list:
-                product_check_list.append(i.name)
-        # print('category_check_list', product_check_list)
+        base_queryset = super().get_queryset()
+        base_queryset = base_queryset.filter(ShopProduct__shop__slug = self.kwargs['slug'])  # use category list  to filter get products with slug of curent page
 
-        # for i in product_check_list:
-        #     queryset = queryset.filter(name=i)[1:].delete()
-        # print('queryset', queryset)
+        queryset = []
+        for i in base_queryset:
+            if i not in queryset:
+                queryset.append(i)
 
-        brand_filter = self.request.GET.get('brand_filter')  # for filter
-        if brand_filter:
-            queryset = queryset.filter(brand__name=brand_filter)
+        # <-- get filters value -->
+        brand_filter = self.request.GET.get('brand_filter')
+        order_by = self.request.GET.get('order_by')
+        max_price = self.request.GET.get('max_price')
 
-        order_by = self.request.GET.get('order_by')  # for sort by date
-        if order_by:
-            queryset = queryset.order_by(order_by)
+        # <-- brand filter -->
+        if brand_filter!='' and brand_filter is not None:
+            # queryset = queryset.filter(brand__name=brand_filter)
+            for i in range(len(queryset), 0, -1):
+                if queryset[i-1].brand.name != brand_filter:
+                    queryset.remove(queryset[i-1])
 
-        category_filter = self.request.GET.get('category_filter')  # for filter
-        if category_filter:
-            queryset = queryset.filter(category__slug=category_filter)
-        # print('queryset: ', queryset)
-        # print('len queryset: ', len(queryset))
-        # print("set queryset: ", set(queryset))
-        # print("len set queryset: ", len(set(queryset)))
-        return set(queryset)
+        # # <-- sort filter -->
+        # if order_by!='' and order_by is not None:
+        #     if order_by == '-publish_time' or order_by== 'publish_time':
+        #         queryset = queryset.order_by(order_by)
+        #     elif order_by == 'price':
+        #         items, item_ids = [], []
+        #         for item in queryset.order_by('-ShopProduct__price'):
+        #             if not item in item_ids:
+        #                 items.append(item)
+        #                 item_ids.append(item)
+        #                 queryset = item_ids
+        #     else:
+        #         items, item_ids = [], []
+        #         sorted(queryset, key=lambda x: x.ShopProduct.price)
+        #         for item in queryset:
+        #         # for item in queryset.order_by('ShopProduct__price'):
+        #             if not item in item_ids:
+        #                 items.append(item)
+        #                 item_ids.append(item)
+        #                 queryset = item_ids
+
+        # <-- max price filter -->
+        if max_price !='' and max_price is not None:
+            items, item_ids = [], []
+            for item in queryset:
+                if (not item in item_ids) and (type(item.first_min_price) == int) and (item.first_min_price<= int(max_price)):
+                    items.append(item)
+                    item_ids.append(item)
+                    queryset = item_ids
+                else:
+                    queryset = item_ids
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # print('object_list', context['object_list'])
-        context['curent_slug_object'] = Shop.objects.filter(slug=self.kwargs['slug'])
+
+        # < get objects >
+        all_objexts_list = Product.objects.filter(ShopProduct__shop__slug=self.kwargs['slug'])
+        queryset = []
+        for i in all_objexts_list:
+            if i not in queryset:
+                queryset.append(i)
+        # < end get objects >
 
         # < find the brand list >
-        all_objexts_list = context['object_list']
-        cleaned_list = []
+        qs_list = []
         for i in all_objexts_list:
-            if i.brand not in cleaned_list:
-                cleaned_list.append(i.brand)
-        context['brand_list'] = cleaned_list
+            if i.brand not in qs_list:
+                qs_list.append(i.brand)
+        context['clean_brand'] = qs_list
         # < end find brand list >
+
+        context['curent_slug_object'] = Shop.objects.filter(slug=self.kwargs['slug'])
+
+        # <the price range>
+        qs_list = []
+        for i in all_objexts_list:
+            qs_list.append(i.first_min_price)
+        qs_list.sort()
+        print('the lenght is: ', type(qs_list))
+        if len(qs_list) > 0 :
+            context['first_price_range'] = qs_list[0]
+            context['last_price_range'] = qs_list[-1]
+
+        # < end the price range>
+
 
         # < entity category list >
         cleaned_list = []
@@ -397,7 +440,22 @@ class ProductListSeller(ListView):
         context['entity_category_list'] = cleaned_list
         # < end entity category list >
 
-        context["category_list"] = Category.objects.all()
+        # < filter initialize >
+        selected_brand_filter = self.request.GET.get('brand_filter')
+        selected_order_by = self.request.GET.get('order_by')
+        selected_max_price = self.request.GET.get('max_price')
+
+        if selected_brand_filter !='' and selected_brand_filter is not None:
+            context["selected_brand_filter"] = selected_brand_filter
+
+        if selected_order_by != '' and selected_order_by is not None:
+            context["selected_order_by"] = selected_order_by
+
+        if selected_max_price != '' and selected_max_price is not None:
+            context["selected_max_price"] = int(selected_max_price)
+        # < end filter initialize >
+
+
         return context
 
 

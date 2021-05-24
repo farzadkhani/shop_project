@@ -52,7 +52,7 @@
         <div class="row">
 
             <!--Shop products items -->
-            <div class="col-9">
+            <div class="col-9 border border-secondary p-4 mt-3 mr-0 mb-3 text-right">
                 <div class="row">
                     {% for product in object_list %}
                         <div class="card m-2" style="width: 250px; background-color: #D4D4D4;">
@@ -82,87 +82,119 @@
 
 
             <div class="col-3">
-                <div>
-                    <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
-                        <div class="card-header">
-                            : لیست برند ها
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            {% for i in brand_list %}
-                                <li class="btn btn-outline-info">{{ i.name }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% comment %}<a>لیست برند ها:</a>
-                    <ul>
-                        <form method='get'>
-                            {% for i in brand_list %}
-                                <li>
-                                    <button type='submit' class ='button' name='brand_filter' value='{{ i.name }}'>
-                                        {{ i.name }}
-                                    </button>
-                                </li>
-                            {% endfor %}
-                        </form>
-                    </ul>{% endcomment %}
-                </div>
-                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
-                    <div class="card-header">
-                        : مرتب سازی بر اساسه
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='publish_time'>جدیدترین</button>
-                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='-publish_time'>قدیمی ترین</button>
-                    </ul>
-                </div>
-                {% comment %}<div class="border border-secondary p-2 mt-3 mb-3 text-right">
-                    <a>مرتب سازی بر اساسه: </a>
-                    <ul>
-                        <form method='get'>
-                            <li><button type='submit' class ='button' name='order_by' value='publish_time'>جدیدترین</button></li>
-                            <li><button type='submit' class ='button' name='order_by' value='-publish_time'>قدیمی ترین</button></li>
-                        </form>
-                    </ul>
-                </div>{% endcomment %}
-                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">
-                    <div class="card-header">
-                        : لیست دسته بندی ها
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for i in entity_category_list %}
-                            <button type='submit' class ='btn btn-outline-info' name='category_filter' value='{{ i.slug }}'>
-                                {{ i }}
-                            </button>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% comment %}<div class="border border-secondary p-2 mt-3 mb-3 text-right">
-                    <a>لیست دسته بندی ها:</a>
-                    <ul>
-                        <form method='get'>
-                            {% for i in entity_category_list %}
-                                <li>
-                                    <button type='submit' class ='button' name='category_filter' value='{{ i.slug }}'>
-                                        {{ i }}
-                                    </button>
-                                </li>
-                            {% endfor %}
-                        </form>
-                    </ul>
-                </div>{% endcomment %}
-
-                <!-- End All Title Box -->
                 <div class="border border-secondary p-2 mt-3 mb-3 text-right">
-                    <form method='get'>
-                        {% for brand in clean_brand%}
-                            <li>
-                                <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>
-                                {{ brand.name }}
-                                </button>
-                            </li>
-                        {% endfor %}
-                    </form>
-                </div>
+                    <h4>فیلتر ها</h4>
+                        <hr style="border: 2px solid black;margin-top:0px;">
+                        <div>
+                            <form method='GET' action=''>
+                                <!-- brand filter -->
+                                <div>
+                                    <span> برند ها</span>
+                                    <br>
+                                    {% for brand in clean_brand%}
+                                        <label >{{ brand.name }}</label>
+                                        <input type="radio" value="{{ brand.name }}" name='brand_filter' {% if brand.name == selected_brand_filter %} checked {% endif %}>
+                                        <br>
+                                    {% endfor %}
+                                    <br>
+                                </div>
+
+                                <!-- order filter -->
+                                <div>
+                                    <span>مرتب سازی</span>
+                                    <br>
+                                    <label >جدید ترین</label>
+                                    <input type="radio" value="-publish_time" name='order_by' {% if selected_order_by == '-publish_time' %} checked {% endif %}>
+                                    <br>
+
+                                    <label >قدیمی ترین</label>
+                                    <input type="radio" value="publish_time" name='order_by' {% if selected_order_by == 'publish_time' %} checked {% endif %}>
+                                    <br>
+
+                                    <label >بیشترین قمیت</label>
+                                    <input type="radio" value="price" name='order_by' {% if selected_order_by == 'price' %} checked {% endif %}>
+                                    <br>
+
+                                    <label >کم ترین قیمت</label>
+                                    <input type="radio" value="-price" name='order_by' {% if selected_order_by == '-price' %} checked {% endif %}>
+                                    <br>
+                                </div>
+
+                                <!-- price filter -->
+                                <div>
+                                    {% if first_price_range %}
+                                    <div class='card mb-4'>
+                                        <h6 class='card-header'>قیمت</h6>
+                                        <div class='list-group list-group-flush'>
+                                            <li class='list-group-item'>
+                                                {{ first_price_range|intcomma }} از قیمت :
+                                                <input type='range' min='{{ first_price_range }}' max='{{ last_price_range }}' id='range_input' oninput='max_price.value=this.value' step="10000"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                                {{ last_price_range|intcomma }} : تا قیمت
+                                            </li>
+                                            <li class='list-group-item'>
+
+                                                <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range }}' max='{{ last_price_range }}' name="max_price"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                                بیشترین قیمت:{{ last_price_range|intcomma }}
+                                            </li>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg> Search</button>
+
+                            </form>
+                        </div>
+                    </div>
+{#                <div>#}
+{#                    <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">#}
+{#                        <div class="card-header">#}
+{#                            : لیست برند ها#}
+{#                        </div>#}
+{#                        <ul class="list-group list-group-flush">#}
+{#                            {% for i in brand_list %}#}
+{#                                <li class="btn btn-outline-info">{{ i.name }}</li>#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">#}
+{#                    <div class="card-header">#}
+{#                        : مرتب سازی بر اساسه#}
+{#                    </div>#}
+{#                    <ul class="list-group list-group-flush">#}
+{#                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='publish_time'>جدیدترین</button>#}
+{#                        <button type='submit' class ='btn btn-outline-info' name='order_by' value='-publish_time'>قدیمی ترین</button>#}
+{#                    </ul>#}
+{#                </div>#}
+{#                <div class="card border border-secondary p-2 mt-3 mb-3 text-right" style="width: 18rem; background-color: #D4D4D4;">#}
+{#                    <div class="card-header">#}
+{#                        : لیست دسته بندی ها#}
+{#                    </div>#}
+{#                    <ul class="list-group list-group-flush">#}
+{#                        {% for i in entity_category_list %}#}
+{#                            <button type='submit' class ='btn btn-outline-info' name='category_filter' value='{{ i.slug }}'>#}
+{#                                {{ i }}#}
+{#                            </button>#}
+{#                        {% endfor %}#}
+{#                    </ul>#}
+{#                </div>#}
+{##}
+{#                <!-- End All Title Box -->#}
+{#                <div class="border border-secondary p-2 mt-3 mb-3 text-right">#}
+{#                    <form method='get'>#}
+{#                        {% for brand in clean_brand%}#}
+{#                            <li>#}
+{#                                <button type='submit' class ='button' name='brand_filter' value='{{ brand.name }}'>#}
+{#                                {{ brand.name }}#}
+{#                                </button>#}
+{#                            </li>#}
+{#                        {% endfor %}#}
+{#                    </form>#}
+{#                </div>#}
 
             </div>
 
