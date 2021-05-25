@@ -1,0 +1,9 @@
+<<<<<<< HEAD
+web: gunicorn myshopcite.wsgi
+||||||| ba9c181
+web: gunicorn website.wsgi:application --log-file -
+python manage.py collectstatic --noinput
+manage.py migrate
+=======
+web: gunicorn myshopcite.wsgi
+>>>>>>> develop
