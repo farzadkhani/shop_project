@@ -176,68 +176,60 @@
                     <div>
                         <form method='GET' action=''>
                             <!-- brand filter -->
-                            <div class="accordion">
-                                <div class="show"><!--wrapper-->
-                                    <span> برند ها</span>
-                                    <div>
-                                        <br>
-                                        {% for brand in clean_brand %}
-                                            <label >{{ brand.name }}</label>
-                                            <input type="radio" value="{{ brand.name }}" name='brand_filter' {% if brand.name == selected_brand_filter %} checked {% endif %}>
-                                            <br>
-                                        {% endfor %}
-                                        <br>
-                                    </div>
-                                </div>
-
-                                <!-- order filter -->
-                                <div>
-                                    <span>مرتب سازی</span>
-                                    <div><!--wrapper-->
-                                        <br>
-                                        <label >جدید ترین</label>
-                                        <input type="radio" value="-publish_time" name='order_by' {% if selected_order_by == '-publish_time' %} checked {% endif %}>
-                                        <br>
-
-                                        <label >قدیمی ترین</label>
-                                        <input type="radio" value="publish_time" name='order_by' {% if selected_order_by == 'publish_time' %} checked {% endif %}>
-                                        <br>
-
-                                        <label >بیشترین قمیت</label>
-                                        <input type="radio" value="price" name='order_by' {% if selected_order_by == 'price' %} checked {% endif %}>
-                                        <br>
-
-                                        <label >کم ترین قیمت</label>
-                                        <input type="radio" value="-price" name='order_by' {% if selected_order_by == '-price' %} checked {% endif %}>
-                                        <br>
-                                    </div>
-                                </div>
-
-                                <!-- price filter -->
-                                <div>
-                                    <span>قیمت</span>
-                                    <div><!--wrapper-->
-                                        {% if first_price_range %}
-                                        <div class='card mb-4'>
-    {#                                        <h6 class='card-header'>قیمت</h6>#}
-                                            <div class='list-group list-group-flush'>
-                                                <li class='list-group-item'>
-                                                    {{ first_price_range.first_min_price|intcomma }} از قیمت :
-                                                    <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value' step="10000"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
-                                                    {{ last_price_range.first_min_price|intcomma }} : تا قیمت
-                                                </li>
-                                                <li class='list-group-item'>
-
-                                                    <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' name="max_price"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
-                                                    بیشترین قیمت:{{ last_price_range.first_min_price|intcomma }}
-                                                </li>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                            <div>
+                                <span> برند ها</span>
+                                <br>
+                                {% for brand in clean_brand%}
+                                    <label >{{ brand.name }}</label>
+                                    <input type="radio" value="{{ brand.name }}" name='brand_filter' {% if brand.name == selected_brand_filter %} checked {% endif %}>
+                                    <br>
+                                {% endfor %}
+                                <br>
                             </div>
-                            <button type="submit" class="btn btn-outline-primary mt-3 mb-2">
+
+                            <!-- order filter -->
+                            <div>
+                                <span>مرتب سازی</span>
+                                <br>
+                                <label >جدید ترین</label>
+                                <input type="radio" value="-publish_time" name='order_by' {% if selected_order_by == '-publish_time' %} checked {% endif %}>
+                                <br>
+
+                                <label >قدیمی ترین</label>
+                                <input type="radio" value="publish_time" name='order_by' {% if selected_order_by == 'publish_time' %} checked {% endif %}>
+                                <br>
+
+                                <label >بیشترین قمیت</label>
+                                <input type="radio" value="price" name='order_by' {% if selected_order_by == 'price' %} checked {% endif %}>
+                                <br>
+
+                                <label >کم ترین قیمت</label>
+                                <input type="radio" value="-price" name='order_by' {% if selected_order_by == '-price' %} checked {% endif %}>
+                                <br>
+                            </div>
+
+                            <!-- price filter -->
+                            <div>
+                                {% if first_price_range %}
+                                <div class='card mb-4'>
+                                    <h6 class='card-header'>قیمت</h6>
+                                    <div class='list-group list-group-flush'>
+                                        <li class='list-group-item'>
+                                            {{ first_price_range.first_min_price|intcomma }} از قیمت :
+                                            <input type='range' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' id='range_input' oninput='max_price.value=this.value' step="10000"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                            {{ last_price_range.first_min_price|intcomma }} : تا قیمت
+                                        </li>
+                                        <li class='list-group-item'>
+
+                                            <input type='number' onkeyup='range_input.value=this.value' id='max_price' min='{{ first_price_range.first_min_price }}' max='{{ last_price_range.first_min_price }}' name="max_price"  {% if selected_max_price %} value="{{ selected_max_price }}" {% endif %}/>
+                                            بیشترین قیمت:{{ last_price_range.first_min_price|intcomma }}
+                                        </li>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                                 </svg> Search</button>

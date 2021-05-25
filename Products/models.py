@@ -40,7 +40,7 @@ class Product(models.Model):  # make product data
     class Meta:
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
-        ordering = ['-id']
+        ordering = ['-publish_time']
 
     @property
     def find_all_size_and_color(self):
@@ -112,6 +112,8 @@ class Product(models.Model):  # make product data
     def get_comment(self):
         comment = Comment.objects.filter(product=self, is_active=True)
         return comment
+
+
 
     # @property
     # def get_name(self):
