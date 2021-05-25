@@ -49,3 +49,4 @@ accordions.forEach(accordion => {
         })
     })
 })
+
