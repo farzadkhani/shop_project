@@ -62,6 +62,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4' # adition config for django-crispy-form
 MIDDLEWARE = [
     # 'siteview.middleware.ProcessViewNoneMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # added for heroku server
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -161,13 +162,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'asset')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'asset')
+STATIC_ROOT = '/home/fkhanigm/shop_project/static'  #add for pythonanywhere
+# STATIC_ROOT = os.path.join(BASE_DIR, 'live-static','asset')   #add for heroku
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'   #add for heroku
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 # Media URL
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/home/fkhanigm/shop_project/media'    # add for pythonanywhere
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'live-static', 'media')   #add for heroku
 
 
 SIMPLE_JWT = {
